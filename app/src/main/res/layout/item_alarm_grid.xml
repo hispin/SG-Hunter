@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tool="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5.5dp"
+        android:layout_marginBottom="5.5dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivAlarmPic"
+            android:layout_width="168.7dp"
+            android:layout_height="125.7dp"
+            android:background="@color/gray4"
+            android:scaleType="centerInside"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.885"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/default_alarm_photo" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivIconVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_video" />
+
+    <ProgressBar
+            android:id="@+id/pbLoadPhoto"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:indeterminateTint="@color/white"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+            android:id="@+id/tvImageLoadError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/error_load_image"
+            android:textColor="@color/red"
+            android:textSize="13.7sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5.7dp"
+            android:layout_marginEnd="7.7dp"
+            app:layout_constraintEnd_toEndOf="@+id/ivAlarmPic"
+            app:layout_constraintTop_toTopOf="@+id/ivAlarmPic"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_share" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivWifiLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="7.3dp"
+            app:layout_constraintStart_toStartOf="@+id/ivAlarmPic"
+            app:layout_constraintTop_toTopOf="@+id/ivAlarmPic"
+            android:padding="3dp" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBatteryLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivWifiLevel"
+            app:layout_constraintStart_toEndOf="@+id/ivWifiLevel"
+            app:layout_constraintTop_toTopOf="@+id/ivWifiLevel"
+            android:padding="3dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="16.3dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/ivAlarmPic"
+            app:layout_constraintStart_toStartOf="@+id/ivAlarmPic"
+            app:layout_constraintTop_toBottomOf="@+id/ivAlarmPic"
+
+
+            >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="3dp"
+                android:background="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.65"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.902">
+
+            <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="9.3sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.4"
+                    tool:text="dddd" />
+
+            <View
+                    android:id="@+id/v1"
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    app:layout_constraintEnd_toStartOf="@+id/tvName" />
+
+            <TextView
+                    android:id="@+id/tvTime"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/time_title1"
+                    android:textColor="@color/white"
+                    android:textSize="9.3sp"
+                    app:layout_constraintEnd_toStartOf="@+id/v1"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.246"
+                    tool:text="dddd" />
+
+            <View
+                    android:id="@+id/v2"
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    app:layout_constraintEnd_toStartOf="@+id/tvTime"
+
+                    />
+            <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/time_title1"
+                    android:textColor="@color/white"
+                    android:textSize="9.3sp"
+                    app:layout_constraintEnd_toStartOf="@+id/v2"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.354"
+                    tool:text="dddd" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--    <TextView-->
+    <!--            android:id="@+id/tvZuraSent"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="top"-->
+    <!--            android:text="TextView"-->
+    <!--            android:textColor="@color/black"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintTop_toTopOf="parent"-->
+    <!--            />-->
+
+    <!--    <TextView-->
+    <!--            android:id="@+id/tvAccept"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="bottom"-->
+    <!--            android:textColor="@color/black"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:text="TextView"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/tvZuraSent"-->
+    <!--            />-->
+    <!--    <TextView-->
+    <!--            android:id="@+id/tvfDate"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="bottom"-->
+    <!--            android:textColor="@color/black"-->
+    <!--            android:text="TextView"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/tvAccept"-->
+    <!--            />-->
+    <!--    <TextView-->
+    <!--            android:id="@+id/tvsDate"-->
+    <!--            android:textStyle="bold"-->
+    <!--            android:layout_marginTop="10dp"-->
+    <!--            android:layout_width="wrap_content"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_gravity="bottom"-->
+    <!--            android:textColor="@color/black"-->
+    <!--            android:text="TextView"-->
+    <!--            app:layout_constraintStart_toStartOf="parent"-->
+    <!--            app:layout_constraintEnd_toEndOf="parent"-->
+    <!--            app:layout_constraintTop_toBottomOf="@+id/tvfDate"-->
+    <!--            />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tool="http://schemas.android.com/tools"
+        android:id="@+id/consContainer"
+        android:layout_height="154dp"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+
+        >
+
+
+    <TextView
+            android:id="@+id/tvDateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/date_title1"
+            android:textColor="@color/black"
+            android:textSize="14.7sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:textColor="@color/red2"
+            android:textSize="13.3sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvDateTitle"
+            app:layout_constraintStart_toEndOf="@+id/tvDateTitle"
+            app:layout_constraintTop_toTopOf="@+id/tvDateTitle"
+            tool:text="@string/date_title1" />
+
+    <TextView
+            android:id="@+id/tvTimeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/time_title1"
+            android:textColor="@color/black"
+            android:textSize="14.7sp"
+            app:layout_constraintStart_toStartOf="@+id/tvDateTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvDateTitle" />
+
+    <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:text="@string/time_title1"
+            android:textColor="@color/red2"
+            android:textSize="13.3sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvTimeTitle"
+            app:layout_constraintStart_toEndOf="@+id/tvTimeTitle"
+            app:layout_constraintTop_toTopOf="@+id/tvTimeTitle" />
+
+    <TextView
+            android:id="@+id/tvNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/name_title1"
+            android:textColor="@color/black"
+
+            android:textSize="14.7sp"
+            app:layout_constraintStart_toStartOf="@+id/tvDateTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimeTitle" />
+
+    <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:text="@string/name_title1"
+            android:textColor="@color/red2"
+            android:textSize="13.3sp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvNameTitle"
+            app:layout_constraintStart_toEndOf="@+id/tvNameTitle"
+            app:layout_constraintTop_toTopOf="@+id/tvNameTitle" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivWifiLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvDateTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.952" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivBatteryLevel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8.7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.173"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.952" />
+
+    <FrameLayout
+            android:id="@+id/flAlarmPic"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.918"
+            app:layout_constraintHorizontal_bias="0.969"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.517">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivAlarmPic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/gray4"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/default_alarm_photo" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivIconVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_video" />
+
+        <ProgressBar
+                android:id="@+id/pbLoadPhoto"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/white" />
+
+        <TextView
+                android:id="@+id/tvImageLoadError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/error_load_image"
+                android:textColor="@color/red"
+                android:textSize="14.7sp"
+                android:visibility="gone" />
+
+        <!--        <TextView-->
+        <!--                android:layout_marginTop="10dp"-->
+        <!--                android:id="@+id/tvZuraSent"-->
+        <!--                android:textStyle="bold"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="top"-->
+        <!--                android:text="TextView" />-->
+
+        <!--        <TextView-->
+        <!--                android:layout_marginTop="40dp"-->
+        <!--                android:id="@+id/tvAccept"-->
+        <!--                android:textStyle="bold"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="top"-->
+        <!--                android:text="TextView" />-->
+        <!--        <TextView-->
+        <!--                android:layout_marginTop="70dp"-->
+        <!--                android:id="@+id/tvfDate"-->
+        <!--                android:textStyle="bold"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+
+        <!--                android:layout_gravity="top"-->
+        <!--                android:text="TextView" />-->
+        <!--        <TextView-->
+        <!--                android:layout_marginTop="100dp"-->
+        <!--                android:id="@+id/tvsDate"-->
+        <!--                android:textStyle="bold"-->
+        <!--                android:textColor="@color/black"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+
+        <!--                android:layout_gravity="top"-->
+        <!--                android:text="TextView" />-->
+
+
+    </FrameLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8.7dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="14dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_share" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

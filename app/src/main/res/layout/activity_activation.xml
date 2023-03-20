@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray1"
+        tools:context=".activities.ActivationActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainMenuContainer1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.166"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/logo_big"
+                android:contentDescription="@+id/appwidget_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.553"
+
+                />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout> <!--container 1-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainMenuContainer3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/gray1"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.833"
+            app:layout_constraintTop_toBottomOf="@+id/mainMenuContainer1">
+
+
+        <Button
+                android:id="@+id/btnShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/share"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="@+id/tvImei"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tvImei"
+                app:layout_constraintTop_toTopOf="@+id/tvImei" />
+
+        <!--        android:fontFamily="@font/arialmt"-->
+
+        <TextView
+                android:id="@+id/tvImei"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="152dp"
+                android:textColor="@color/black"
+                android:textIsSelectable="true"
+                android:textSize="20sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+                android:id="@+id/etEnterCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:ems="10"
+                android:hint="@string/enter_code"
+                android:inputType="textPersonName"
+                android:padding="10dp"
+                android:textColor="@color/dark1"
+                android:textColorHint="@color/gray5"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnSignIn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.494" />
+
+        <Button
+                android:id="@+id/btnSignIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activate"
+                android:textAllCaps="false"
+                app:layout_constraintBottom_toBottomOf="@+id/etEnterCode"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/etEnterCode"
+                app:layout_constraintTop_toTopOf="@+id/etEnterCode" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/vector_smart_object"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.148"
+            />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

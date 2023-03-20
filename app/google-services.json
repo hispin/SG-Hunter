@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "291960081785",
+    "firebase_url": "https://sg-hunter.firebaseio.com",
+    "project_id": "sg-hunter",
+    "storage_bucket": "sg-hunter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291960081785:android:3cf690f566e7f5da7073a8",
+        "android_client_info": {
+          "package_name": "com.sensoguard.hunter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291960081785-9h1sik0tlmkk8bnluv9of39lt2l2t05f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sensoguard.hunter",
+            "certificate_hash": "bc291d7ef4d59024a5c3aaa298d02929fa21abf3"
+          }
+        },
+        {
+          "client_id": "291960081785-t1sgft8rbm2ldiv6j41fe8t4tsirmk23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdTtn9GX4l0yiX5MYxCkziNfIpU0zwu1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291960081785-t1sgft8rbm2ldiv6j41fe8t4tsirmk23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
