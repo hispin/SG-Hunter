@@ -619,8 +619,8 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                             it1
                         )
                     }
-                    Log.d("testCalendar", fromDateStr)
-                    Log.d("testCalendar", toDateStr)
+                    //Log.d("testCalendar", fromDateStr)
+                    //Log.d("testCalendar", toDateStr)
                     //Log.d("testCalendar", getOffsetHour().toString())
                 } catch (ex: Exception) {
                     Toast.makeText(activity, resources.getString(R.string.error), Toast.LENGTH_LONG)

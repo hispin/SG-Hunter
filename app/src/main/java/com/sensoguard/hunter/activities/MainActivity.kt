@@ -107,8 +107,7 @@ class MainActivity : LogInActivity() {
         val resultCode = apiAvailability.isGooglePlayServicesAvailable(this)
         if (resultCode != ConnectionResult.SUCCESS) {
             if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
-                    .show()
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)?.show()
             } else {
                 Log.i(TAG, "This device is not supported by Google Play Services.")
                 ToastNotify("This device is not supported by Google Play Services.", this)

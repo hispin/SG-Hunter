@@ -22,9 +22,9 @@ fun convertToGson(myEmailAccount: MyEmailAccount): String? {
         //TODO : how to get response about set shared preference
 
     } catch (ex: JSONException) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     } catch (ex: java.lang.Exception) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     }
     return ERROR_RESP
 }
@@ -40,9 +40,9 @@ fun convertToGson(camera: Camera): String? {
         //TODO : how to get response about set shared preference
 
     } catch (ex: JSONException) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     } catch (ex: java.lang.Exception) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     }
     return ERROR_RESP
 }
@@ -64,7 +64,7 @@ fun convertJsonToUserInfo(inputJsonString: String): UserInfo? {
         json = JSONObject(inputJsonString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -74,13 +74,13 @@ fun convertJsonToUserInfo(inputJsonString: String): UserInfo? {
         userInfo = Gson().fromJson(json.toString(), listType) as UserInfo
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return userInfo
@@ -104,7 +104,7 @@ fun convertJsonToSensor(inputJsonString: String): Camera? {
         json = JSONObject(inputJsonString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -114,13 +114,13 @@ fun convertJsonToSensor(inputJsonString: String): Camera? {
         mySensor = Gson().fromJson(json.toString(), listType) as Camera
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return mySensor
@@ -144,7 +144,7 @@ fun convertJsonToMyEmailAccount(inputJsonString: String): MyEmailAccount? {
         json = JSONObject(inputJsonString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -154,13 +154,13 @@ fun convertJsonToMyEmailAccount(inputJsonString: String): MyEmailAccount? {
         myEmailAccount = Gson().fromJson(json.toString(), listType) as MyEmailAccount
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return myEmailAccount
@@ -177,9 +177,9 @@ fun convertSystemSortToGson(detectorsArr: ArrayList<SystemSort>): String? {
         //TODO : how to get response about set shared preference
 
     } catch (ex: JSONException) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     } catch (ex: java.lang.Exception) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     }
     return ERROR_RESP
 }
@@ -194,9 +194,9 @@ fun convertToGson(detectorsArr: ArrayList<Camera>): String? {
         //TODO : how to get response about set shared preference
 
     } catch (ex: JSONException) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     } catch (ex: java.lang.Exception) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     }
     return ERROR_RESP
 }
@@ -210,9 +210,9 @@ fun convertToAlarmsGson(alarmsArr:ArrayList<Alarm>): String? {
         //TODO : how to get response about set shared preference
 
     } catch (ex: JSONException) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     } catch (ex: java.lang.Exception) {
-        Log.i("exception", ex.message)
+        ex.message?.let { Log.i("exception", it) }
     }
     return ERROR_RESP
 }
@@ -234,7 +234,7 @@ fun convertJsonToSystemSortList(inputJsonArrayString: String): ArrayList<SystemS
         jsonArr = JSONArray(inputJsonArrayString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -244,13 +244,13 @@ fun convertJsonToSystemSortList(inputJsonArrayString: String): ArrayList<SystemS
         mySensors?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<SystemSort>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return mySensors
@@ -273,7 +273,7 @@ fun convertJsonToSensorList(inputJsonArrayString: String): ArrayList<Camera>? {
         jsonArr= JSONArray(inputJsonArrayString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -283,13 +283,13 @@ fun convertJsonToSensorList(inputJsonArrayString: String): ArrayList<Camera>? {
         mySensors?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<Camera>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return mySensors
@@ -313,7 +313,7 @@ fun convertJsonToStringList(inputJsonArrayString: String): ArrayList<String>? {
         jsonArr = JSONArray(inputJsonArrayString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -323,13 +323,13 @@ fun convertJsonToStringList(inputJsonArrayString: String): ArrayList<String>? {
         myTags?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<String>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JsonSyntaxException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     return myTags
@@ -345,7 +345,7 @@ fun convertJsonToAlarmList(inputJsonArrayString: String): ArrayList<Alarm>? {
         jsonArr = JSONArray(inputJsonArrayString)
     } catch (e: JSONException) {
         e.printStackTrace()
-        Log.e("convertJsonToUriList", e.message)
+        e.message?.let { Log.e("convertJsonToUriList", it) }
     }
 
     try {
@@ -355,10 +355,10 @@ fun convertJsonToAlarmList(inputJsonArrayString: String): ArrayList<Alarm>? {
         myAlarms = Gson().fromJson(jsonArr.toString(), listType) as ArrayList<Alarm>
     }catch(e:JsonIOException){
         e.printStackTrace()
-        Log.e("convertJsonToAlarmList", e.message)
+        e.message?.let { Log.e("convertJsonToAlarmList", it) }
     }catch(e:JsonSyntaxException){
         e.printStackTrace()
-        Log.e("convertJsonToAlarmList", e.message)
+        e.message?.let { Log.e("convertJsonToAlarmList", it) }
     }
 
     return myAlarms

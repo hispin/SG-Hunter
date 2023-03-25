@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.microsoft.windowsazure.messaging.NotificationHub;
 import com.sensoguard.hunter.global.NotificationSettings;
 import com.sensoguard.hunter.global.UserSession;
@@ -20,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import static com.sensoguard.hunter.global.ConstsKt.REGISTER_ID_KEY;
 import static com.sensoguard.hunter.global.ConstsKt.SHARED_PREF_FILE_NAME;
 import static com.sensoguard.hunter.global.SysServerKt.checkUserGetTags;
+import com.google.firebase.messaging.FirebaseMessagingService;
+
 
 public class RegistrationIntentService extends IntentService {
 
@@ -74,16 +74,29 @@ public class RegistrationIntentService extends IntentService {
 
     private void register() {
         try {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                @Override
-                public void onSuccess(InstanceIdResult instanceIdResult) {
-                    FCM_token = instanceIdResult.getToken();
-                    Intent inn = new Intent("get.token.notification");
-                    inn.putExtra("token", FCM_token);
-                    sendBroadcast(inn);
-                    Log.d(TAG, "FCM Registration Token: " + FCM_token);
-                }
-            });
+
+            FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            FCM_token = task.getResult();
+                            Intent inn = new Intent("get.token.notification");
+                            inn.putExtra("token", FCM_token);
+                            sendBroadcast(inn);
+                            Log.d(TAG, "FCM Registration Token: " + FCM_token);
+                        }
+                    });
+
+
+//            FirebaseMessaging.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+//                @Override
+//                public void onSuccess(InstanceIdResult instanceIdResult) {
+//                    FCM_token = instanceIdResult.getToken();
+//                    Intent inn = new Intent("get.token.notification");
+//                    inn.putExtra("token", FCM_token);
+//                    sendBroadcast(inn);
+//                    Log.d(TAG, "FCM Registration Token: " + FCM_token);
+//                }
+//            });
 
             TimeUnit.SECONDS.sleep(1);
 

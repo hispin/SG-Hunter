@@ -389,8 +389,10 @@ class SensorsFragment : Fragment(), OnAdapterListener {
                 //TODO return the code
                 val bit=arg1.getIntegerArrayListExtra("data")
 
-                for(item in bit){
-                    bs?.append("  ${item.toUByte()}")
+                if (bit != null) {
+                    for(item in bit){
+                        bs?.append("  ${item.toUByte()}")
+                    }
                 }
                 bs?.append("\n")
                 tvShowLogs?.text=bs.toString()
