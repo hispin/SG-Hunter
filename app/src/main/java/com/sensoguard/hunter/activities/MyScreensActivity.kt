@@ -231,13 +231,27 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     }
 
-
     private fun setExternalPermission() {
         /*
      * Request location permission, so that we can get the location of the
      * device. The result of the permission request is handled by a callback,
      * onRequestPermissionsResult.
      */
+
+        val PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            )
+        }
+
         if (ContextCompat.checkSelfPermission(
                 this.applicationContext,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -247,10 +261,32 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         } else {
             ActivityCompat.requestPermissions(
                 this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+                PERMISSIONS,
+                PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
             )
         }
     }
+
+
+//    private fun setExternalPermission() {
+//        /*
+//     * Request location permission, so that we can get the location of the
+//     * device. The result of the permission request is handled by a callback,
+//     * onRequestPermissionsResult.
+//     */
+//        if (ContextCompat.checkSelfPermission(
+//                this.applicationContext,
+//                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//            ) == PackageManager.PERMISSION_GRANTED
+//        ) {
+//            init()
+//        } else {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+//            )
+//        }
+//    }
 
 
     // Since this is an object collection, use a FragmentStatePagerAdapter,
