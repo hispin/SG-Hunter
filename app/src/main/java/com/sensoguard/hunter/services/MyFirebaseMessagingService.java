@@ -1,5 +1,8 @@
 package com.sensoguard.hunter.services;
 
+import static com.sensoguard.hunter.global.ConstsKt.CURRENT_ITEM_TOP_MENU_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -18,9 +21,6 @@ import com.sensoguard.hunter.classes.AlarmParsing;
 
 import java.util.Objects;
 
-import static com.sensoguard.hunter.global.ConstsKt.CURRENT_ITEM_TOP_MENU_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
-
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String NOTIFICATION_CHANNEL_ID = "nh-demo-channel-id";
     public static final String NOTIFICATION_CHANNEL_NAME = "Notification Hubs Demo Channel";
@@ -28,7 +28,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final int NOTIFICATION_ID = 1;
     static Context ctx;
     NotificationCompat.Builder builder;
-    private String TAG = "FirebaseService";
+    private final String TAG = "FirebaseService";
     private NotificationManager mNotificationManager;
 
     public static void createChannelAndHandleNotifications(Context context) {
@@ -94,9 +94,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         long oneTimeID = SystemClock.uptimeMillis();
 
-        //set different request code to make different extra for each notification
-        PendingIntent contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            //set different request code to make different extra for each notification
+            contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        } else {
+            //set different request code to make different extra for each notification
+            contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
 
         //Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
