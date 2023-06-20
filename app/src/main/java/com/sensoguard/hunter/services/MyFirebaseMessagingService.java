@@ -12,7 +12,8 @@ import android.os.Build;
 import android.os.SystemClock;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -66,7 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sendBroadcast(inn);
 
             //start media
-            startServiceMedia();
+            startWorkerMedia();
 
             createChannelAndHandleNotifications(getApplicationContext());
             sendNotification(myIntent);
@@ -126,8 +127,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     //start service media
-    private void startServiceMedia() {
-        Intent serviceIntent = new Intent(this, MediaService.class);
-        ContextCompat.startForegroundService(this, serviceIntent);
+//    private void startServiceMedia() {
+//        Intent serviceIntent = new Intent(this, MediaService.class);
+//        ContextCompat.startForegroundService(this, serviceIntent);
+//    }
+
+    /**
+     * start media worker
+     */
+    private void startWorkerMedia() {
+        OneTimeWorkRequest mediaWorkRequest = new OneTimeWorkRequest.Builder(MediaWorker.class).build();//OneTimeWorkRequestBuilder < MediaWorker > ().build();
+        WorkManager.getInstance(ctx).enqueue(mediaWorkRequest);
     }
 }

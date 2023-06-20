@@ -29,7 +29,7 @@ import com.sensoguard.hunter.fragments.AlarmLogFragment
 import com.sensoguard.hunter.fragments.ConfigurationFragment
 import com.sensoguard.hunter.global.*
 import com.sensoguard.hunter.interfaces.OnFragmentListener
-import com.sensoguard.hunter.services.MediaService
+//import com.sensoguard.hunter.services.MediaService
 import kotlinx.android.synthetic.main.activity_my_screens.*
 import java.io.File
 import java.io.FileOutputStream
@@ -177,8 +177,8 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         super.onStart()
         setFilter()
         //shut down the alarm media if needed
-        val serviceIntent = Intent(this, MediaService::class.java)
-        stopService(serviceIntent)
+//        val serviceIntent = Intent(this, MediaService::class.java)
+//        stopService(serviceIntent)
     }
 
     override fun onStop() {

@@ -42,10 +42,10 @@
             android:roundIcon="@drawable/ic_launcher"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <service
-                android:name=".services.MediaService"
-                android:enabled="true"
-                android:exported="true" />
+<!--        <service-->
+<!--                android:name=".services.MediaService"-->
+<!--                android:enabled="true"-->
+<!--                android:exported="true" />-->
 
         <activity android:name=".activities.LogInActivity" />
         <activity android:name=".activities.TestScanEmail">
