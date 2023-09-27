@@ -46,7 +46,7 @@ class RegistrationWorker(val context: Context, workerParams: WorkerParameters) :
         var user: String? = null
         var pw: String? = null
         if (instance.getUser() != null) {
-            user = Objects.requireNonNull(instance.getUser()).name
+            user = Objects.requireNonNull(instance.getUser())?.name
             pw = instance.getUser()!!.pw
         }
 
