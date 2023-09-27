@@ -21,7 +21,9 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
-    <com.halilibo.bvpkotlin.BetterVideoPlayer
+
+    <androidx.media3.ui.PlayerView
+
             android:id="@+id/ivMyVideo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -36,20 +38,8 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.955"
             bvp:bvp_captionColor="@android:color/holo_blue_light"
-            bvp:bvp_captionSize="20sp"
+            bvp:bvp_captionSize="20sp" />
 
-            />
-    <!--    <VideoView-->
-    <!--            android:id="@+id/ivMyVideo"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:layout_gravity="center"-->
-    <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toTopOf="parent"-->
-    <!--            android:visibility="gone"-->
-    <!--            />-->
 
     <androidx.appcompat.widget.AppCompatImageButton
             android:padding="5dp"

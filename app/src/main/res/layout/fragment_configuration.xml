@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -10,8 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-        android:background="@color/gray2"
->
+            android:background="@color/gray2">
 
         <ProgressBar
                 android:id="@+id/pbValidationEmail"
@@ -149,17 +146,17 @@
                 app:layout_constraintHorizontal_bias="0.654"
                 android:id="@+id/btnDefault"/>
 
-        <tools:ToggleButton
-                android:id="@+id/togChangeAlarmSound"
-                android:text="ToggleButton"
-                android:layout_width="44dp"
-                android:layout_height="25dp"
-                android:background="@color/transparent"
-                android:button="@drawable/toggle_selector_active"
-                android:textOff=""
-                android:textOn=""
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+            <ToggleButton
+                    android:id="@+id/togChangeAlarmSound"
+                    android:layout_width="44dp"
+                    android:layout_height="25dp"
+                    android:background="@color/transparent"
+                    android:button="@drawable/toggle_selector_active"
+                    android:text="ToggleButton"
+                    android:textOff=""
+                    android:textOn=""
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.954"
@@ -202,7 +199,7 @@
                 app:layout_constraintStart_toStartOf="parent"
         />
 
-        <tools:ToggleButton
+        <ToggleButton
                 android:id="@+id/togChangeAlarmVibrate"
                 android:text="ToggleButton"
                 android:layout_width="44dp"
@@ -321,7 +318,7 @@
                 app:layout_constraintStart_toStartOf="parent"
         />
 
-        <tools:ToggleButton
+        <ToggleButton
                 android:id="@+id/togChangeLoadSettings"
                 android:text="ToggleButton"
                 android:layout_width="44dp"
@@ -551,7 +548,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            <tools:ToggleButton
+            <ToggleButton
                     android:id="@+id/togChangeBackgroundRestrict"
                     android:layout_width="44dp"
                     android:layout_height="25dp"

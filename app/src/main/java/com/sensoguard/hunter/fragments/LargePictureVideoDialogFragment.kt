@@ -1,5 +1,7 @@
 package com.sensoguard.hunter.fragments
 
+//haggay import com.halilibo.bvpkotlin.BetterVideoPlayer
+//import kotlinx.android.synthetic.main.activity_my_screens.*
 import android.app.Dialog
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -15,25 +17,39 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.halilibo.bvpkotlin.BetterVideoPlayer
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.TouchImageView
-import com.sensoguard.hunter.global.*
-import kotlinx.android.synthetic.main.activity_my_screens.*
+import com.sensoguard.hunter.global.ACTION_PICTURE_KEY
+import com.sensoguard.hunter.global.ACTION_TYPE_KEY
+import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
+import com.sensoguard.hunter.global.IMAGE_PATH_KEY
+import com.sensoguard.hunter.global.IMAGE_TIME_KEY
+import com.sensoguard.hunter.global.SaveImageInGalleryTask
+import com.sensoguard.hunter.global.shareImage
+import com.sensoguard.hunter.global.showToast
 import java.io.File
 
 
+@UnstableApi
 class LargePictureVideoDialogFragment : DialogFragment() {
 
     private var timeImage: String? = null
     private var imgPath: String? = null
     private var actionType: Int? = null
     private var ibClose: AppCompatImageButton? = null
-    private var ivMyVideo: BetterVideoPlayer? = null
+    private var ivMyVideo: PlayerView? = null
     private var ivMyCaptureImage: TouchImageView? = null
     private var ibLargeImgShare: AppCompatImageButton? = null
     private var ibSaveLargeImgShare: AppCompatImageButton? = null
@@ -70,10 +86,94 @@ class LargePictureVideoDialogFragment : DialogFragment() {
     private fun showVideo(imgPath: String) {
         ivMyVideo?.visibility = View.VISIBLE
         ivMyCaptureImage?.visibility = View.GONE
-        //val imgFile = File(imgPath)
-        val imgFile = File(context?.filesDir, imgPath)
-        ivMyVideo?.setSource(Uri.fromFile(imgFile))
+        //val imgFile = File(context?.filesDir, imgPath)
+        //ivMyVideo?.setSource(Uri.fromFile(imgFile))
+        //val mediaItem = MediaItem.fromUri(Uri.fromFile(imgFile))
+        //ivMyVideo.צק(mediaItem)
+        //initializePlayer(imgFile)
+        ivMyVideo?.player?.play()
     }
+
+    ////////////// VIDEO configuration
+    private val playbackStateListener: Player.Listener = playbackStateListener()
+    private var player: ExoPlayer? = null
+    private var playWhenReady = true
+    private var currentItem = 0
+    private var playbackPosition = 0L
+    private fun initializePlayer(imgFile: File) {
+        val trackSelector = DefaultTrackSelector(requireActivity()).apply {
+            setParameters(buildUponParameters().setMaxVideoSizeSd())
+        }
+        player = ExoPlayer.Builder(requireActivity())
+            .setTrackSelector(trackSelector)
+            .build()
+            .also { exoPlayer ->
+                ivMyVideo?.player = exoPlayer
+
+                val mediaItem = MediaItem.Builder()
+                    .setUri(Uri.fromFile(imgFile))
+                    .setMimeType(MimeTypes.APPLICATION_MPD)
+                    .build()
+                exoPlayer.setMediaItem(mediaItem)
+                exoPlayer.playWhenReady = playWhenReady
+                exoPlayer.seekTo(currentItem, playbackPosition)
+                exoPlayer.addListener(playbackStateListener)
+                exoPlayer.prepare()
+            }
+    }
+
+    private fun releasePlayer() {
+        player?.let { exoPlayer ->
+            playbackPosition = exoPlayer.currentPosition
+            currentItem = exoPlayer.currentMediaItemIndex
+            playWhenReady = exoPlayer.playWhenReady
+            exoPlayer.removeListener(playbackStateListener)
+            exoPlayer.release()
+        }
+        player = null
+    }
+
+//    @SuppressLint("InlinedApi")
+//    private fun hideSystemUi() {
+//        WindowCompat.setDecorFitsSystemWindows(window, false)
+//        WindowInsetsControllerCompat(window, video_view).let { controller ->
+//            controller.hide(WindowInsetsCompat.Type.systemBars())
+//            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+//        }
+//    }
+
+    private fun playbackStateListener() = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            val stateString: String = when (playbackState) {
+                ExoPlayer.STATE_IDLE -> "ExoPlayer.STATE_IDLE      -"
+                ExoPlayer.STATE_BUFFERING -> "ExoPlayer.STATE_BUFFERING -"
+                ExoPlayer.STATE_READY -> "ExoPlayer.STATE_READY     -"
+                ExoPlayer.STATE_ENDED -> "ExoPlayer.STATE_ENDED     -"
+                else -> "UNKNOWN_STATE             -"
+            }
+            //Log.d(TAG, "changed state to $stateString")
+        }
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT <= 23) {
+            releasePlayer()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //hideSystemUi()
+        if (Util.SDK_INT <= 23 || player == null) {
+            val imgFile = imgPath?.let { File(context?.filesDir, it) }
+            imgFile?.let { initializePlayer(it) }
+        }
+    }
+
+    //////////////
+
 
     private fun showPicture(path: String?) {
         ivMyVideo?.visibility = View.GONE
@@ -181,7 +281,7 @@ class LargePictureVideoDialogFragment : DialogFragment() {
     }
 
     private fun disableOrientation() {
-        toolbar.visibility = View.VISIBLE
+        //haggay toolbar.visibility = View.VISIBLE
         //tab_layout.visibility=View.VISIBLE
         if (activity == null) {
             return
@@ -191,7 +291,7 @@ class LargePictureVideoDialogFragment : DialogFragment() {
     }
 
     private fun enableOrientation() {
-        toolbar.visibility = View.GONE
+        //haggay toolbar.visibility = View.GONE
 //        activity.findViewById<>(R.id.layout_table)
 //        tab_layout.visibility=View.GONE
 //        val layout =
@@ -207,6 +307,9 @@ class LargePictureVideoDialogFragment : DialogFragment() {
     override fun onStop() {
         disableOrientation()
         super.onStop()
+        if (Util.SDK_INT > 23) {
+            releasePlayer()
+        }
     }
 
     override fun onStart() {
@@ -221,5 +324,9 @@ class LargePictureVideoDialogFragment : DialogFragment() {
         }
 
         super.onStart()
+        if (Util.SDK_INT > 23) {
+            val imgFile = imgPath?.let { File(context?.filesDir, it) }
+            imgFile?.let { initializePlayer(it) }
+        }
     }
 }

@@ -12,10 +12,24 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.UserInfo
-import com.sensoguard.hunter.global.*
-import com.sensoguard.hunter.services.RegistrationIntentService
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_ERROR_NO_DATA
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_NO_USER
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_OK
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_UNHUTHORIZED
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_USER_NO_ACTIVE
+import com.sensoguard.hunter.global.REGISTER_ID_KEY
+import com.sensoguard.hunter.global.ToastNotify
+import com.sensoguard.hunter.global.UserSession
+import com.sensoguard.hunter.global.getTagsFromLocally
+import com.sensoguard.hunter.global.getUserFromLocally
+import com.sensoguard.hunter.global.removePreference
+import com.sensoguard.hunter.global.validIsEmpty
+import com.sensoguard.hunter.services.RegistrationWorker
 
 open class LogInActivity : AppCompatActivity() {
 
@@ -33,9 +47,7 @@ open class LogInActivity : AppCompatActivity() {
 
     fun sendPostHubs() {
         // Start IntentService to register this application with FCM.
-        val intent = Intent(this, RegistrationIntentService::class.java)
-        intent.putExtra("actionType", "post")
-        startService(intent)
+        startRegister()
     }
 
     //register token and tags to azura
@@ -50,10 +62,21 @@ open class LogInActivity : AppCompatActivity() {
             UserSession.instance.setInstanceUser(userInfo)
 
             // Start IntentService to register this application with FCM.
-            val intent = Intent(this, RegistrationIntentService::class.java)
-            intent.putExtra("actionType", "register")
-            startService(intent)
+            startRegister()
+
+//            val intent = Intent(this, RegistrationIntentService::class.java)
+//            intent.putExtra("actionType", "register")
+//            startService(intent)
         }
+    }
+
+    private fun startRegister() {
+        val registrationWorker: OneTimeWorkRequest.Builder =
+            OneTimeWorkRequest.Builder(RegistrationWorker::class.java) //OneTimeWorkRequestBuilder < MediaWorker > ().build();
+        val data = Data.Builder()
+        data.putString("actionType", "register")
+        registrationWorker.setInputData(data.build())
+        WorkManager.getInstance(this).enqueue(registrationWorker.build())
     }
 
     var positiveButton: Button? = null
