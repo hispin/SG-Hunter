@@ -5,38 +5,45 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
+import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.halilibo.bvpkotlin.BetterVideoPlayer
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.TouchImageView
-import com.sensoguard.hunter.global.*
-import kotlinx.android.synthetic.main.activity_my_screens.*
-import java.io.File
+import com.sensoguard.hunter.classes.VideoManager
+import com.sensoguard.hunter.global.ACTION_PICTURE_KEY
+import com.sensoguard.hunter.global.ACTION_TYPE_KEY
+import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
+import com.sensoguard.hunter.global.IMAGE_PATH_KEY
+import com.sensoguard.hunter.global.IMAGE_TIME_KEY
+import com.sensoguard.hunter.global.SaveImageInGalleryTask
+import com.sensoguard.hunter.global.shareImage
+import com.sensoguard.hunter.global.showToast
 
 
-class LargePictureVideoDialogFragment : DialogFragment() {
+class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback {
 
     private var timeImage: String? = null
     private var imgPath: String? = null
     private var actionType: Int? = null
     private var ibClose: AppCompatImageButton? = null
-    private var ivMyVideo: BetterVideoPlayer? = null
+    private var ivMyVideo: PlayerView? = null
     private var ivMyCaptureImage: TouchImageView? = null
     private var ibLargeImgShare: AppCompatImageButton? = null
     private var ibSaveLargeImgShare: AppCompatImageButton? = null
+    private var pbLoadPhoto: ProgressBar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,21 +67,22 @@ class LargePictureVideoDialogFragment : DialogFragment() {
         if (actionType == ACTION_PICTURE_KEY) {
             showPicture(imgPath)
         } else if (actionType == ACTION_VIDEO_KEY) {
-            imgPath?.let { showVideo(it) }
+            ibSaveLargeImgShare?.visibility = View.GONE
+            ibLargeImgShare?.visibility = View.GONE
         }
-
         // Inflate the layout for this fragment
         return view
     }
 
-    private fun showVideo(imgPath: String) {
-        ivMyVideo?.visibility = View.VISIBLE
-        ivMyCaptureImage?.visibility = View.GONE
-        //val imgFile = File(imgPath)
-        val imgFile = File(context?.filesDir, imgPath)
-        ivMyVideo?.setSource(Uri.fromFile(imgFile))
+
+    override fun onPause() {
+        super.onPause()
+        if (actionType == ACTION_VIDEO_KEY) {
+            VideoManager(this).releasePlayer()
+        }
     }
 
+    //show static picture
     private fun showPicture(path: String?) {
         ivMyVideo?.visibility = View.GONE
         ivMyCaptureImage?.visibility = View.VISIBLE
@@ -83,18 +91,6 @@ class LargePictureVideoDialogFragment : DialogFragment() {
             return
 
         showPicture(path, ivMyCaptureImage)
-
-
-//        //from external storage
-//        val imgFile = File(path)
-//
-//        //from internal storage
-//        //val imgFile = File(context?.filesDir, path)
-//
-//        if (imgFile.exists()) {
-//            //Picasso.get().load(File(imgFile.absolutePath)).into(ivMyCaptureImage)
-//            showPicture(imgFile, ivMyCaptureImage)
-//        }
     }
 
 
@@ -170,7 +166,6 @@ class LargePictureVideoDialogFragment : DialogFragment() {
             val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
             Thread {
                 val res = timeImage?.let { it1 ->
-                    //saveImageInGallery(bitmap,requireContext(), it1)
                     SaveImageInGalleryTask(bitmap, requireContext(), it1).execute()
 
                 }
@@ -178,11 +173,10 @@ class LargePictureVideoDialogFragment : DialogFragment() {
             }.start()
 
         }
+        pbLoadPhoto = view?.findViewById(R.id.pbLoadPhoto)
     }
 
     private fun disableOrientation() {
-        toolbar.visibility = View.VISIBLE
-        //tab_layout.visibility=View.VISIBLE
         if (activity == null) {
             return
         }
@@ -191,17 +185,10 @@ class LargePictureVideoDialogFragment : DialogFragment() {
     }
 
     private fun enableOrientation() {
-        toolbar.visibility = View.GONE
-//        activity.findViewById<>(R.id.layout_table)
-//        tab_layout.visibility=View.GONE
-//        val layout =
-//            view!!.findViewById(layout_table) as TableLayout // change id here
-//
-//        layout.visibility = View.GONE
         if (activity == null) {
             return
         }
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
     }
 
     override fun onStop() {
@@ -221,5 +208,16 @@ class LargePictureVideoDialogFragment : DialogFragment() {
         }
 
         super.onStart()
+
+        if (activity != null && actionType == ACTION_VIDEO_KEY) {
+            pbLoadPhoto?.visibility = View.VISIBLE
+            ivMyVideo?.visibility = View.VISIBLE
+            ivMyCaptureImage?.visibility = View.GONE
+            imgPath?.let { VideoManager(this).initializePlayer(ivMyVideo, requireActivity(), it) }
+        }
+    }
+
+    override fun stopProgressBar() {
+        pbLoadPhoto?.visibility = View.GONE
     }
 }
