@@ -31,7 +31,7 @@ class LoginAmazonIntentWorker(val context: Context, workerParams: WorkerParamete
                 if (task.isSuccessful && task.result != null) {
                     FCM_token = task.result
                     val currentToken = getStringInPreference(context, TOKEN_AMAZON_KEY_PREF, "")
-
+                    val temp = FCM_token
                     if (amazonProcessType.equals(AMAZON_PRECESS_DIALOG_VALUE)) {
 
                         // if the process come from dialog then send request immediately
