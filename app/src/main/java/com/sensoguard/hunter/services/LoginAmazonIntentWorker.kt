@@ -24,8 +24,6 @@ class LoginAmazonIntentWorker(val context: Context, workerParams: WorkerParamete
         //get Input Data back using "inputData" variable
         amazonProcessType = inputData.getString(AMAZON_PRECESS_TYPE_KEY)
 
-
-
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task: Task<String> ->
                 if (task.isSuccessful && task.result != null) {
