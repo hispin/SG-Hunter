@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.activities
 
+//import com.crashlytics.android.Crashlytics
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -13,11 +14,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-//import com.crashlytics.android.Crashlytics
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.CryptoHandler
 import com.sensoguard.hunter.classes.MyExceptionHandler
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ACTIVATION_CODE_KEY
+import com.sensoguard.hunter.global.IMEI_KEY
+import com.sensoguard.hunter.global.IS_LOAD_APP
+import com.sensoguard.hunter.global.NO_DATA
+import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_READ_PHONE_STATE
+import com.sensoguard.hunter.global.getStringInPreference
 
 //import io.fabric.sdk.android.Fabric
 
@@ -37,11 +42,7 @@ class InitAppActivity : AppCompatActivity() {
    }
 
     private fun configureGeneralCatch() {
-
-
         Thread.setDefaultUncaughtExceptionHandler(MyExceptionHandler(this))
-
-
     }
 
 
