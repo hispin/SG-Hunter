@@ -20,7 +20,22 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.classes.LanguageManager
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.AMAZON
+import com.sensoguard.hunter.global.AMAZON_PRECESS_WITH_USER_VALUE
+import com.sensoguard.hunter.global.AZURE
+import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
+import com.sensoguard.hunter.global.CURRENT_LANG_KEY_PREF
+import com.sensoguard.hunter.global.LOGIN_TYPE_KEY
+import com.sensoguard.hunter.global.ToastNotify
+import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
+import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
+import com.sensoguard.hunter.global.UserSession
+import com.sensoguard.hunter.global.getAppLanguage
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.getTagsFromLocally
+import com.sensoguard.hunter.global.getUserAmazonFromLocally
+import com.sensoguard.hunter.global.getUserAzureFromLocally
+import com.sensoguard.hunter.global.setAppLanguage
 
 //import net.danlew.android.joda.JodaTimeAndroid
 
@@ -133,7 +148,13 @@ class MainActivity : LogInActivity() {
                 initViews(true)
                 //check if the device has google service
                 if (checkPlayServices()) {
-                    startLoginIfNeeded()
+                    //do login AZURE or AMAZON
+                    val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+                    if (loginType.equals(AZURE)) {
+                        isUserAzureForLoginExist()
+                    } else if (loginType.equals(AMAZON)) {
+                        isUserAmazonForLoginExist()
+                    }
                 }
             }
         }
@@ -181,22 +202,40 @@ class MainActivity : LogInActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CODE_REQUEST) {
             initViews(true)
-            startLoginIfNeeded()
+            //do login AZURE or AMAZON
+            val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+            if (loginType.equals(AZURE)) {
+                isUserAzureForLoginExist()
+            } else if (loginType.equals(AMAZON)) {
+                isUserAmazonForLoginExist()
+            }
         }
     }
 
-    //open log in dialog if there is no tags or user&password
-    private fun startLoginIfNeeded() {
+    //AZURE: open log in dialog if there is no tags or user&password
+    private fun isUserAzureForLoginExist() {
         //check is has already tags
         val tags = getTagsFromLocally(this)
-        val userInfo = getUserFromLocally(this)
+        val userInfo = getUserAzureFromLocally(this, USER_INFO_AZURE_KEY)
         if (tags == null || userInfo == null) {
             openLogInDialog()
             //sendPostHubs()
         } else {
             UserSession.instance.setTags(tags)
-            UserSession.instance.setInstanceUser(userInfo)
+            UserSession.instance.setInstanceUserAzure(userInfo)
             registerTokenAndTagToHubs()
+        }
+    }
+
+    //AMAZON : open log in dialog if there is no tags or user&password
+    private fun isUserAmazonForLoginExist() {
+        //check is has already tags
+        val userInfo = getUserAmazonFromLocally(this, USER_INFO_AMAZON_KEY)
+        if (userInfo == null) {
+            openLogInDialog()
+        } else {
+            UserSession.instance.setInstanceUserAmazon(userInfo)
+            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE)
         }
     }
 

@@ -461,7 +461,9 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
     //open large picture
     private fun openLargePictureDialog(alarm: Alarm) {
-        if (alarm.imgsPath != null && alarm.imgsPath!!.endsWith("mp4")) {
+        if (alarm.imgsPath != null &&
+            (alarm.imgsPath!!.endsWith("mp4") || alarm.imgsPath!!.endsWith("mov"))
+        ) {
             openLargePictureVideoByType(ACTION_VIDEO_KEY, alarm.imgsPath, 0, 0)
         } else {
             openLargePictureVideoByType(ACTION_PICTURE_KEY, alarm.imgsPath, alarm.timeInMillis, 0)

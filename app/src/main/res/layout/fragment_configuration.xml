@@ -149,7 +149,7 @@
                 app:layout_constraintHorizontal_bias="0.654"
                 android:id="@+id/btnDefault"/>
 
-        <tools:ToggleButton
+        <ToggleButton
                 android:id="@+id/togChangeAlarmSound"
                 android:text="ToggleButton"
                 android:layout_width="44dp"

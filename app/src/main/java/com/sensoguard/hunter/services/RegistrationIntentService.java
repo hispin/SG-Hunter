@@ -1,5 +1,9 @@
 package com.sensoguard.hunter.services;
 
+import static com.sensoguard.hunter.global.ConstsKt.REGISTER_ID_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.SHARED_PREF_FILE_NAME;
+import static com.sensoguard.hunter.global.SysServerKt.checkUserGetTags;
+
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +18,6 @@ import com.sensoguard.hunter.global.UserSession;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import static com.sensoguard.hunter.global.ConstsKt.REGISTER_ID_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.SHARED_PREF_FILE_NAME;
-import static com.sensoguard.hunter.global.SysServerKt.checkUserGetTags;
-import com.google.firebase.messaging.FirebaseMessagingService;
 
 
 public class RegistrationIntentService extends IntentService {
@@ -49,9 +48,9 @@ public class RegistrationIntentService extends IntentService {
         String actionType = Objects.requireNonNull(intent.getExtras()).getString("actionType", null);
         String user = null;
         String pw = null;
-        if (UserSession.Companion.getInstance().getUser() != null) {
-            user = Objects.requireNonNull(UserSession.Companion.getInstance().getUser()).getName();
-            pw = UserSession.Companion.getInstance().getUser().getPw();
+        if (UserSession.Companion.getInstance().getUserAzure() != null) {
+            user = Objects.requireNonNull(UserSession.Companion.getInstance().getUserAzure()).getName();
+            pw = UserSession.Companion.getInstance().getUserAzure().getPw();
         }
 
         if (actionType != null && actionType.equals("post")) {

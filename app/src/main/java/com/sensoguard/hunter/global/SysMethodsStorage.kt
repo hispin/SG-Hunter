@@ -11,7 +11,8 @@ import com.google.gson.JsonArray
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.Camera
 import com.sensoguard.hunter.classes.MyEmailAccount
-import com.sensoguard.hunter.classes.UserInfo
+import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAzure
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -129,20 +130,40 @@ fun getTagsFromLocally(context: Context): ArrayList<String>? {
 
 
 //set user info to locally
-fun storeUserToLocally(userInfo: UserInfo, context: Context) {
+fun storeUserAzureToLocally(userInfo: UserInfoAzure, context: Context, key: String) {
     val jsonObject = Gson().toJson(userInfo)
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    setStringInPreference(wContext.get(), USER_INFO_KEY, jsonObject.toString())
+    setStringInPreference(wContext.get(), key, jsonObject.toString())
 }
 
-//get user info to locally
-fun getUserFromLocally(context: Context): UserInfo? {
+fun storeUserAmazonToLocally(userInfo: UserInfoAmazon, context: Context, key: String) {
+    val jsonObject = Gson().toJson(userInfo)
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    val userJ = getStringInPreference(wContext.get(), USER_INFO_KEY, null)
+    setStringInPreference(wContext.get(), key, jsonObject.toString())
+}
+
+//get user info azure to locally
+fun getUserAzureFromLocally(context: Context, key: String): UserInfoAzure? {
+    val wContext: WeakReference<Context> =
+        WeakReference(context)
+    val userJ = getStringInPreference(wContext.get(), key, null)
     userJ?.let {
-        val userInfo = convertJsonToUserInfo(it)
+        val userInfo = convertJsonToUserInfoAzure(it)
+        return userInfo
+    }// Gson().fromJson<UserInfo>(userJ, UserInfo::class.java)
+
+    return null
+}
+
+//get user  info amazon to locally
+fun getUserAmazonFromLocally(context: Context, key: String): UserInfoAmazon? {
+    val wContext: WeakReference<Context> =
+        WeakReference(context)
+    val userJ = getStringInPreference(context, key, null)
+    userJ?.let {
+        val userInfo = convertJsonToUserInfoAmazon(it)
         return userInfo
     }// Gson().fromJson<UserInfo>(userJ, UserInfo::class.java)
 

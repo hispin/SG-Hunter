@@ -1,11 +1,13 @@
 package com.sensoguard.hunter.global
 
 import com.sensoguard.hunter.classes.AlarmSensor
-import com.sensoguard.hunter.classes.UserInfo
+import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAzure
 
 class UserSession private constructor() {
 
-    private var userInfo: UserInfo? = null
+    private var userInfoAzure: UserInfoAzure? = null
+    private var userInfoAmazon: UserInfoAmazon? = null
 
     private var tags: ArrayList<String>? = null
 
@@ -20,23 +22,39 @@ class UserSession private constructor() {
         val instance: UserSession by lazy { Holder.INSTANCE }
     }
 
-    fun getUser(): UserInfo? {
-        return userInfo
+    fun getUserAzure(): UserInfoAzure? {
+        return userInfoAzure
+    }
+
+    fun getUserAmazon(): UserInfoAmazon? {
+        return userInfoAmazon
     }
 
     fun getTags(): ArrayList<String>? {
         return tags
     }
 
-    fun setInstanceUser(name: String, pw: String) {
-        userInfo = UserInfo(
+    fun setInstanceUserAzure(name: String, pw: String) {
+        userInfoAzure = UserInfoAzure(
             name,
             pw
         )
     }
 
-    fun setInstanceUser(userInfo: UserInfo) {
-        this.userInfo = userInfo
+    fun setInstanceUserAmazon(name: String, pw: String, token: String) {
+        userInfoAmazon = UserInfoAmazon(
+            name,
+            pw,
+            token
+        )
+    }
+
+    fun setInstanceUserAzure(userInfo: UserInfoAzure) {
+        this.userInfoAzure = userInfo
+    }
+
+    fun setInstanceUserAmazon(userInfo: UserInfoAmazon) {
+        this.userInfoAmazon = userInfo
     }
 
     fun setTags(tags: ArrayList<String>) {

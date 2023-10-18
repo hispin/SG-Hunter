@@ -18,7 +18,6 @@ import com.bumptech.glide.request.target.Target
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.global.getStrDateTimeByMilliSeconds
-import java.util.*
 
 
 class AlarmAdapter(
@@ -313,7 +312,8 @@ class AlarmAdapter(
                         ): Boolean {
                             //if the the image is video then show the video icon
                             if (myAlarm.imgsPath != null
-                                && myAlarm.imgsPath!!.endsWith("mp4")
+                                && (myAlarm.imgsPath!!.endsWith("mp4")
+                                        || myAlarm.imgsPath!!.endsWith("mov"))
                             ) {
                                 ivIconVideo?.visibility = View.VISIBLE
                             } else {

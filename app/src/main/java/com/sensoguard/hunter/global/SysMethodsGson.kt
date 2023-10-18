@@ -6,7 +6,12 @@ import com.google.gson.JsonIOException
 import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import com.sensoguard.hunter.classes.*
+import com.sensoguard.hunter.classes.Alarm
+import com.sensoguard.hunter.classes.Camera
+import com.sensoguard.hunter.classes.MyEmailAccount
+import com.sensoguard.hunter.classes.SystemSort
+import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAzure
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -48,15 +53,15 @@ fun convertToGson(camera: Camera): String? {
 }
 
 
-//convert json to UserInfo
-fun convertJsonToUserInfo(inputJsonString: String): UserInfo? {
+//convert json to UserInfo azure
+fun convertJsonToUserInfoAzure(inputJsonString: String): UserInfoAzure? {
 
     //if the json string is empty, then return empty array list
     if (inputJsonString.isNullOrEmpty()) {
         return null
     }
 
-    var userInfo: UserInfo? = null
+    var userInfo: UserInfoAzure? = null
     //mySensors?.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
@@ -68,10 +73,50 @@ fun convertJsonToUserInfo(inputJsonString: String): UserInfo? {
     }
 
     try {
-        val listType = object : TypeToken<UserInfo>() {
+        val listType = object : TypeToken<UserInfoAzure>() {
 
         }.type
-        userInfo = Gson().fromJson(json.toString(), listType) as UserInfo
+        userInfo = Gson().fromJson(json.toString(), listType) as UserInfoAzure
+    } catch (e: JsonIOException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    } catch (e: JsonSyntaxException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    }
+
+    return userInfo
+    //when jsonArr is null will return value of new ArrayList<>()
+}//convertJsonToUriList
+
+
+//convert json to UserInfo amazon
+fun convertJsonToUserInfoAmazon(inputJsonString: String): UserInfoAmazon? {
+
+    //if the json string is empty, then return empty array list
+    if (inputJsonString.isNullOrEmpty()) {
+        return null
+    }
+
+    var userInfo: UserInfoAmazon? = null
+    //mySensors?.add(Camera("ID","NAME"))
+
+    var json: JSONObject? = null
+    try {
+        json = JSONObject(inputJsonString)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    }
+
+    try {
+        val listType = object : TypeToken<UserInfoAmazon>() {
+
+        }.type
+        userInfo = Gson().fromJson(json.toString(), listType) as UserInfoAmazon
     } catch (e: JsonIOException) {
         e.printStackTrace()
         e.message?.let { Log.e("convertJsonToUriList", it) }

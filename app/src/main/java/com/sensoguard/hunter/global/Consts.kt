@@ -24,6 +24,10 @@ const val IS_NOTIFICATION_SOUND_KEY = "isNotificationSoundKey"
 const val ACTIVATION_CODE_KEY = "activationCodeKey"
 const val IMEI_KEY = "imeiKey"
 const val ALARM_DISPLAY_KEY = "alarmDisplay"
+const val LOGIN_TYPE_KEY = "loginType"
+const val AZURE = "azure"
+const val AMAZON = "amazon"
+
 const val ERROR_VALIDATION_EMAIL_MSG_KEY = "errorValidationEmailMessageKey"
 
 const val REGISTER_ID_KEY = "registrationID"
@@ -34,6 +38,7 @@ const val VALIDATION_EMAIL_RESULT = "validationEmailResult"
 const val CURRENT_LANG_KEY_PREF = "currentLangKey"
 const val CURRENT_LATITUDE_PREF = "currentLatitudePref"
 const val CURRENT_LONGTUDE_PREF = "currentLongtudePref"
+const val TOKEN_AMAZON_KEY_PREF = "tokenAmazonKeyPref"
 const val NO_DATA = "-1"
 
 
@@ -46,6 +51,9 @@ const val USB_CONNECTION_FAILED = "usbConnectionFailed"
 const val CREATE_ALARM_ID_KEY = "CreateAlarmIdKey"
 const val CREATE_ALARM_NAME_KEY = "CreateAlarmNameKey"
 const val CREATE_ALARM_TYPE_KEY = "CreateAlarmTypeKey"
+const val AMAZON_PRECESS_TYPE_KEY = "AmazonProcessTypeKey"
+const val AMAZON_PRECESS_DIALOG_VALUE = "AmazonProcessDialogValue"
+const val AMAZON_PRECESS_WITH_USER_VALUE = "AmazonProcessWithUserValue"
 const val MAP_TYPE_KEY = "mapTypeKey"
 
 
@@ -60,7 +68,8 @@ const val CAMERA_KEY = "cameraKey"
 const val EMAIL_ACCOUNT_KEY = "emailAccount"
 
 const val TAGS_KEY = "tagsKey"
-const val USER_INFO_KEY = "userInfo"
+const val USER_INFO_AZURE_KEY = "userInfoAzure"
+const val USER_INFO_AMAZON_KEY = "userInfoAmazon"
 
 const val SORT_TYPE_KEY = "sortType"
 const val SORT_BY_SYSTEM_KEY = 1
@@ -101,6 +110,9 @@ const val HUNTER_LOG = "hunterLog"
 const val NO_SORTED = 0
 const val DATE_SORTED = 1
 const val CAMERA_SORTED = 2
+
+const val AMAZONE_POST_LOGIN_RESULT_SUCCESS = "amazonLoginSuccess"
+const val AMAZONE_POST_LOGIN_RESULT_FAILED = "amazonLoginFailed"
 
 const val AZURA_POST_RESULT_OK = "1"
 const val AZURA_POST_RESULT_UNHUTHORIZED = "-1"

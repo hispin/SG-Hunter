@@ -5,16 +5,44 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.sensoguard.hunter.R
-import com.sensoguard.hunter.classes.UserInfo
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAzure
+import com.sensoguard.hunter.global.AMAZON
+import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_FAILED
+import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_SUCCESS
+import com.sensoguard.hunter.global.AMAZON_PRECESS_DIALOG_VALUE
+import com.sensoguard.hunter.global.AMAZON_PRECESS_TYPE_KEY
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_ERROR_NO_DATA
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_NO_USER
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_OK
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_UNHUTHORIZED
+import com.sensoguard.hunter.global.AZURA_POST_RESULT_USER_NO_ACTIVE
+import com.sensoguard.hunter.global.AZURE
+import com.sensoguard.hunter.global.LOGIN_TYPE_KEY
+import com.sensoguard.hunter.global.REGISTER_ID_KEY
+import com.sensoguard.hunter.global.ToastNotify
+import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
+import com.sensoguard.hunter.global.UserSession
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.getTagsFromLocally
+import com.sensoguard.hunter.global.getUserAzureFromLocally
+import com.sensoguard.hunter.global.removePreference
+import com.sensoguard.hunter.global.setStringInPreference
+import com.sensoguard.hunter.global.validIsEmpty
+import com.sensoguard.hunter.services.LoginAmazonIntentWorker
 import com.sensoguard.hunter.services.RegistrationIntentService
 
 open class LogInActivity : AppCompatActivity() {
@@ -42,18 +70,33 @@ open class LogInActivity : AppCompatActivity() {
     fun registerTokenAndTagToHubs() {
 
         val tags = getTagsFromLocally(this)
-        val userInfo = getUserFromLocally(this)
+        val userInfo = getUserAzureFromLocally(this, USER_INFO_AZURE_KEY)
 
         if (tags != null && userInfo != null) {
 
             UserSession.instance.setTags(tags)
-            UserSession.instance.setInstanceUser(userInfo)
+            UserSession.instance.setInstanceUserAzure(userInfo)
 
             // Start IntentService to register this application with FCM.
             val intent = Intent(this, RegistrationIntentService::class.java)
             intent.putExtra("actionType", "register")
             startService(intent)
         }
+    }
+
+    /**
+     * start login amazon worker
+     */
+    fun loginAmazonFromDialog(processType: String) {
+        val loginAmazonRequest: OneTimeWorkRequest.Builder =
+            OneTimeWorkRequest.Builder(LoginAmazonIntentWorker::class.java) //OneTimeWorkRequestBuilder < MediaWorker > ().build();
+        val data = Data.Builder()
+        //Add parameter in Data class. just like bundle. You can also add Boolean and Number in parameter.
+        data.putString(AMAZON_PRECESS_TYPE_KEY, processType)
+        //Set Input Data
+        loginAmazonRequest.setInputData(data.build())
+
+        WorkManager.getInstance(this).enqueue(loginAmazonRequest.build())
     }
 
     var positiveButton: Button? = null
@@ -64,16 +107,34 @@ open class LogInActivity : AppCompatActivity() {
         val li: LayoutInflater = LayoutInflater.from(this)
         val promptsView: View = li.inflate(R.layout.user_password_dialog, null)
 
+        var loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+        //select AMAZON or AZURE
+        val rgLoginType: RadioGroup? = promptsView.findViewById(R.id.rgLoginType)
+        rgLoginType?.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == R.id.rbV1) {
+                loginType = AZURE
+                setStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+            } else if (checkedId == R.id.rbV2) {
+                loginType = AMAZON
+                setStringInPreference(this, LOGIN_TYPE_KEY, AMAZON)
+            }
+        }
+        if (loginType.equals(AZURE)) {
+            rgLoginType?.check(R.id.rbV1)
+        } else if (loginType.equals(AMAZON)) {
+            rgLoginType?.check(R.id.rbV2)
+        }
+
         val userInput: EditText = promptsView
             .findViewById(R.id.editTextDialogUserInput) as EditText
 
-        val userName = UserSession.instance.getUser()?.name
+        val userName = UserSession.instance.getUserAzure()?.name
         userName?.let { userInput.setText(it) }
 
         val pwInput: EditText = promptsView
             .findViewById(R.id.editTextDialogPasswordInput) as EditText
 
-        val pw = UserSession.instance.getUser()?.pw
+        val pw = UserSession.instance.getUserAzure()?.pw
         pw?.let { pwInput.setText(it) }
 
         tvError = promptsView.findViewById<TextView>(R.id.tvError)
@@ -99,14 +160,27 @@ open class LogInActivity : AppCompatActivity() {
 
                 pbValidation?.visibility = View.VISIBLE
 
-                UserSession.instance.setInstanceUser(
-                    UserInfo(
-                        userInput.text.toString(),
-                        pwInput.text.toString()
+                if (loginType.equals(AZURE)) {
+
+                    UserSession.instance.setInstanceUserAzure(
+                        UserInfoAzure(
+                            userInput.text.toString(),
+                            pwInput.text.toString()
+                        )
                     )
-                )
-                //send post
-                sendPostHubs()
+                    //send post
+                    sendPostHubs()
+                } else if (loginType.equals(AMAZON)) {
+                    UserSession.instance.setInstanceUserAmazon(
+                        UserInfoAmazon(
+                            userInput.text.toString(),
+                            pwInput.text.toString(),
+                            null
+                        )
+                    )
+                    //send post
+                    loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE)
+                }
             }
 
             //     Toast.makeText(SysManagerActivity.this, "dialog is open", Toast.LENGTH_SHORT).show();
@@ -135,7 +209,14 @@ open class LogInActivity : AppCompatActivity() {
         filter.addAction(AZURA_POST_RESULT_NO_USER)
         filter.addAction(AZURA_POST_RESULT_USER_NO_ACTIVE)
         filter.addAction(AZURA_POST_RESULT_ERROR_NO_DATA)
-        registerReceiver(usbReceiver, filter)
+        filter.addAction(AMAZONE_POST_LOGIN_RESULT_SUCCESS)
+        filter.addAction(AMAZONE_POST_LOGIN_RESULT_FAILED)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
     }
 
     //define class broadcast
@@ -156,16 +237,35 @@ open class LogInActivity : AppCompatActivity() {
                 arg1.action == AZURA_POST_RESULT_UNHUTHORIZED -> {
                     showErrorMsg(resources.getString(R.string.validation_error))
                 }
+
                 arg1.action == AZURA_POST_RESULT_NO_USER -> {
                     showErrorMsg(resources.getString(R.string.no_user_found))
                 }
+
                 arg1.action == AZURA_POST_RESULT_USER_NO_ACTIVE -> {
                     showErrorMsg(resources.getString(R.string.no_active_user_found))
                 }
+
                 arg1.action == AZURA_POST_RESULT_ERROR_NO_DATA -> {
                     showErrorMsg(resources.getString(R.string.error_no_data))
                 }
 
+                arg1.action == AZURA_POST_RESULT_UNHUTHORIZED -> {
+                    showErrorMsg(resources.getString(R.string.validation_error))
+                }
+
+                arg1.action == AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
+                    ToastNotify(
+                        resources.getString(R.string.validation_successfully),
+                        this@LogInActivity
+                    )
+                    dialog?.dismiss()
+                    pbValidation?.visibility = View.INVISIBLE
+                }
+
+                arg1.action == AMAZONE_POST_LOGIN_RESULT_FAILED -> {
+                    showErrorMsg(resources.getString(R.string.validation_error))
+                }
             }
             positiveButton?.isEnabled = true
         }

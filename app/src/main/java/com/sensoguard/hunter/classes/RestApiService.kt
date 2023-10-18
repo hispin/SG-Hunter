@@ -14,7 +14,7 @@ import retrofit2.Response
  *
  */
 class RestApiService {
-    fun addUser(userData: UserInfo, onResult: (JsonObject?) -> Unit) {
+    fun addUser(userData: UserInfoAzure, onResult: (JsonObject?) -> Unit) {
         val retrofit = ServiceBuilder.buildService(RestApi::class.java)
         retrofit.addUser(userData).enqueue(
             object : Callback<JsonObject> {
@@ -27,15 +27,27 @@ class RestApiService {
                     val tags = response.body()
                     onResult(tags)
                 }
-//                override fun onFailure(call: Call<UserInfo>, t: Throwable) {
-//                    onResult(null)
-//                }
-//
-//                override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
-//                    val addedUser = response.body()
-//                    onResult(addedUser)
-//                }
             }
         )
     }
+
+    //send login amazon request
+    fun loginAmazon(userData: UserInfoAmazon, onResult: (AuthResult?) -> Unit) {
+        val retrofit = ServiceBuilder.buildService(RestApi::class.java)
+        retrofit.loginAmazon(userData).enqueue(
+            object : Callback<AuthResult> {
+                override fun onFailure(call: Call<AuthResult>, t: Throwable) {
+                    Log.d("", t.toString())
+                    onResult(null)
+                }
+
+                override fun onResponse(call: Call<AuthResult>, response: Response<AuthResult>) {
+                    val tags = response.body()
+                    onResult(tags)
+                }
+            }
+        )
+    }
+
+
 }
