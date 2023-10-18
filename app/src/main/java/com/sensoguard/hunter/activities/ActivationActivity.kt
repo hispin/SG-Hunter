@@ -28,7 +28,6 @@ class ActivationActivity : AppCompatActivity() {
     var etEnterCode: EditText? = null
     var btnSignIn: Button? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_activation)
