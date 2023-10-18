@@ -21,7 +21,7 @@ import java.io.OutputStream
 //convert bitmap to bitmap discriptor
 fun convertBitmapToBitmapDiscriptor(context: Context, resId: Int): BitmapDescriptor? {
     val bitmap = context.let { getBitmapFromVectorDrawable(it, resId) }
-    return BitmapDescriptorFactory.fromBitmap(bitmap)
+    return bitmap?.let { BitmapDescriptorFactory.fromBitmap(it) }
 }
 
 //convert resId to bitmap
@@ -79,7 +79,9 @@ fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String)
 
     uri?.let {
         stream = resolver.openOutputStream(uri)
-        saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+        if (stream != null) {
+            saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream!!)
+        }
     }
     return saved
 }
@@ -88,7 +90,7 @@ class SaveImageInGalleryTask(val finalBitmap: Bitmap, val context: Context, val 
     AsyncTask<Void, Void, Boolean>() {
 
 
-    override fun doInBackground(vararg params: Void?): Boolean? {
+    override fun doInBackground(vararg params: Void?): Boolean {
         return saveImageInGallery(finalBitmap, context, imageName)
     }
 

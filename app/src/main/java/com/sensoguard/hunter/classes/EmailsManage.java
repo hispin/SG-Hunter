@@ -1,5 +1,25 @@
 package com.sensoguard.hunter.classes;
 
+import static com.sensoguard.hunter.global.ConstsKt.ADD_ATTACHED_PHOTOS_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.ALARM_OTHER;
+import static com.sensoguard.hunter.global.ConstsKt.CHANNEL_ID;
+import static com.sensoguard.hunter.global.ConstsKt.CHANNEL_NAME;
+import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_ID_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_NAME_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_TYPE_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.ERROR_RESULT_VALIDATION_EMAIL_ACTION;
+import static com.sensoguard.hunter.global.ConstsKt.ERROR_VALIDATION_EMAIL_MSG_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.IS_MYSCREENACTIVITY_FOREGROUND;
+import static com.sensoguard.hunter.global.ConstsKt.LAST_DATE_ALARM;
+import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getBooleanInPreference;
+import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getLongInPreference;
+import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.setLongInPreference;
+import static com.sensoguard.hunter.global.SysMethodsStorageKt.getAlarmsFromLocally;
+import static com.sensoguard.hunter.global.SysMethodsStorageKt.getSensorsFromLocally;
+import static com.sensoguard.hunter.global.SysMethodsStorageKt.writeFile;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -47,30 +67,10 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
 
-import static com.sensoguard.hunter.global.ConstsKt.ADD_ATTACHED_PHOTOS_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.ALARM_OTHER;
-import static com.sensoguard.hunter.global.ConstsKt.CHANNEL_ID;
-import static com.sensoguard.hunter.global.ConstsKt.CHANNEL_NAME;
-import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_ID_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_NAME_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.CREATE_ALARM_TYPE_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.ERROR_RESULT_VALIDATION_EMAIL_ACTION;
-import static com.sensoguard.hunter.global.ConstsKt.ERROR_VALIDATION_EMAIL_MSG_KEY;
-import static com.sensoguard.hunter.global.ConstsKt.IS_MYSCREENACTIVITY_FOREGROUND;
-import static com.sensoguard.hunter.global.ConstsKt.LAST_DATE_ALARM;
-import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getBooleanInPreference;
-import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getLongInPreference;
-import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.setLongInPreference;
-import static com.sensoguard.hunter.global.SysMethodsStorageKt.getAlarmsFromLocally;
-import static com.sensoguard.hunter.global.SysMethodsStorageKt.getSensorsFromLocally;
-import static com.sensoguard.hunter.global.SysMethodsStorageKt.writeFile;
-
 
 public class EmailsManage {
     private static final EmailsManage ourInstance = new EmailsManage();
-    private static Alarm prevAlarm = new Alarm();
+    private static final Alarm prevAlarm = new Alarm();
     private static Calendar lastEmailDate = null;
 
     private EmailsManage() {
@@ -1045,7 +1045,7 @@ public class EmailsManage {
 
         //Enable press on notification to open app
         Intent notificationIntent = new Intent(context, InitAppActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
 
         if (mNotificationManager != null) {

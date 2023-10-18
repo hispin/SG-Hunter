@@ -19,6 +19,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.global.CURRENT_LOCATION
 import com.sensoguard.hunter.global.GET_CURRENT_LOCATION_KEY
@@ -30,11 +31,13 @@ class ServiceFindLocation :Service(){
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             run {
-                Log.d(TAG,"get location")
-                location = locationResult.lastLocation
-                var inn = Intent(GET_CURRENT_LOCATION_KEY)
-                inn.putExtra(CURRENT_LOCATION,location)
-                sendBroadcast(inn)
+                Log.d(TAG, "get location")
+                if (locationResult.lastLocation != null) {
+                    location = locationResult.lastLocation!!
+                    val inn = Intent(GET_CURRENT_LOCATION_KEY)
+                    inn.putExtra(CURRENT_LOCATION, location)
+                    sendBroadcast(inn)
+                }
             }
         }
     }
@@ -53,8 +56,10 @@ class ServiceFindLocation :Service(){
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //FusedLocationProviderClient is for interacting with the location using fused location provider
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
-        locationRequest = LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(1000).setFastestInterval(1000).setNumUpdates(1)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest =
+            LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(1000)
+                .setFastestInterval(1000).setNumUpdates(1)
         startGetLocation()
 
         return START_NOT_STICKY

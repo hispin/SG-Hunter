@@ -15,7 +15,7 @@ import java.io.StringWriter;
 
 public class MyExceptionHandler implements Thread.UncaughtExceptionHandler {
 
-    private Activity activity;
+    private final Activity activity;
 
     public MyExceptionHandler(Activity a) {
         activity = a;
@@ -73,7 +73,7 @@ public class MyExceptionHandler implements Thread.UncaughtExceptionHandler {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
         AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pendingIntent);
         activity.finish();

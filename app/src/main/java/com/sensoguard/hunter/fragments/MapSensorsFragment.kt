@@ -54,7 +54,6 @@ import com.sensoguard.hunter.interfaces.OnAdapterListener
 import com.sensoguard.hunter.interfaces.OnFragmentListener
 import com.sensoguard.hunter.services.ServiceFindLocation
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -254,7 +253,7 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
+    override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
         mMap?.clear()
@@ -262,24 +261,9 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
         //set satellite as default
         mMap?.mapType = mapType
 
-        //set the location of the current touching ic_map_main
-//        mMap?.setOnMapLongClickListener { arg0 ->
-//            //bug fixed: crash when accept alarm
-//            if (arg0 != null) {
-//                currentLongitude = arg0.longitude
-//                currentLatitude = arg0.latitude
-//                showDialogSensorsList()
-//            } else {
-//                Toast.makeText(activity, "error in location1", Toast.LENGTH_LONG).show()
-//            }
-//        }
-
         mMap?.setOnCameraMoveListener {
             val cp = mMap?.cameraPosition
             mCenterLatLong = cp?.target
-
-            //remove the action of set current location as current central location
-            //mCenterLatLong?.let { setMyLocate(it) }
         }
 
         //go to last location
@@ -325,7 +309,7 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
         }
         //add marker at the focus of the ic_map_main
         myLocate?.let{
-            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocate, 15.0f))
+            mMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(myLocate!!, 15.0f))
 
             mMap?.clear()
             showCurrentLocationMarker()
@@ -477,7 +461,7 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
            }
 
 
-       val loc:LatLng? = LatLng(sensorItem.getLatitude()!!, sensorItem.getLongtitude()!!)
+       val loc: LatLng = LatLng(sensorItem.getLatitude()!!, sensorItem.getLongtitude()!!)
        if(loc!=null) {
            val marker = mMap?.addMarker(
                MarkerOptions()
@@ -493,25 +477,32 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
    }
 
    //show marker of current location
-   private fun showCurrentLocationMarker(){
+   private fun showCurrentLocationMarker() {
 
-           if(mMap==null){
-               return
-           }
+       if (mMap == null) {
+           return
+       }
 
        if (myLocate == null) {
            return
        }
 
-            mMap?.addMarker(
-                myLocate?.let {
-                    MarkerOptions()
-                        .position(it)
-                        .draggable(true)
-                        .icon(context?.let { con -> convertBitmapToBitmapDiscriptor(con,R.drawable.ic_my_locate) })
-                }
-            )
-        }
+       myLocate?.let {
+           MarkerOptions()
+               .position(it)
+               .draggable(true)
+               .icon(context?.let { con ->
+                   convertBitmapToBitmapDiscriptor(
+                       con,
+                       R.drawable.ic_my_locate
+                   )
+               })
+       }?.let {
+           mMap?.addMarker(
+               it
+           )
+       }
+   }
 
     //show marker of sensor
     private fun showSensorMarker(sensorItem: Camera) {
@@ -746,7 +737,7 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
 
                 if (editText.text.isNullOrBlank()) {
                     editText.error =
-                        resources.getString(com.sensoguard.hunter.R.string.empty_field_error)
+                        resources.getString(R.string.empty_field_error)
                     isValid=false
                 }
 
