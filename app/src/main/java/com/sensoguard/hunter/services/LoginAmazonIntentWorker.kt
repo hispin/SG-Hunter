@@ -44,7 +44,6 @@ class LoginAmazonIntentWorker(val context: Context, workerParams: WorkerParamete
                             UserSession.instance.getUserAmazon()?.password,
                             FCM_token
                         )
-
                     } else if (amazonProcessType.equals(AMAZON_PRECESS_WITH_USER_VALUE)) {
                         if (!currentToken.equals(FCM_token)) {
                             setStringInPreference(context, TOKEN_AMAZON_KEY_PREF, FCM_token)
