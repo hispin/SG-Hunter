@@ -85,12 +85,8 @@ fun requestLoginAmazon(context: Context, user: String?, pw: String?, token: Stri
             if (it != null) {
 
                 val result: AuthResult = it
-
                 if (result.success == true) {
                     if (UserSession.instance.getUserAmazon() != null) {
-                        //UserSession.instance.setTags(tags!!)
-                        //val test = UserSession.instance.getTags()
-                        //wContext.get()?.let { it1 -> storeUserAzureToLocally(tags!!, it1) }
                         wContext.get()
                             ?.let { it1 ->
                                 storeUserAmazonToLocally(
@@ -103,14 +99,10 @@ fun requestLoginAmazon(context: Context, user: String?, pw: String?, token: Stri
                 } else {
                     context.sendBroadcast(Intent(AMAZONE_POST_LOGIN_RESULT_FAILED))
                 }
-                //context.sendBroadcast(Intent(result.asString))
 
                 Log.d("retrofit", "accept user id")
-                // it = newly added user parsed as response
-                // it?.id = newly added user ID
             } else {
-                context.sendBroadcast(Intent(AZURA_POST_RESULT_ERROR_NO_DATA))
-                //Timber.d("Error registering new user")
+                context.sendBroadcast(Intent(AMAZONE_POST_LOGIN_RESULT_FAILED))
             }
 
         }

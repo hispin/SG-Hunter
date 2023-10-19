@@ -14,7 +14,13 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.ListPopupWindow
+import android.widget.ProgressBar
+import android.widget.RadioGroup
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.ToggleButton
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -25,7 +31,34 @@ import com.sensoguard.hunter.adapters.GeneralItemMenuAdapter
 import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.classes.LanguageManager
 import com.sensoguard.hunter.classes.MyEmailAccount
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ALARM_DISPLAY_KEY
+import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
+import com.sensoguard.hunter.global.CURRENT_LANG_KEY_PREF
+import com.sensoguard.hunter.global.EMAIL_ACCOUNT_KEY
+import com.sensoguard.hunter.global.ERROR_RESULT_VALIDATION_EMAIL_ACTION
+import com.sensoguard.hunter.global.ERROR_VALIDATION_EMAIL_MSG_KEY
+import com.sensoguard.hunter.global.IS_EMAIL_CONFIG_PREF_KEY
+import com.sensoguard.hunter.global.IS_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.IS_VIBRATE_WHEN_ALARM_KEY
+import com.sensoguard.hunter.global.LAST_DATE_ALARM
+import com.sensoguard.hunter.global.MAP_SHOW_NORMAL_VALUE
+import com.sensoguard.hunter.global.MAP_SHOW_SATELLITE_VALUE
+import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
+import com.sensoguard.hunter.global.RESULT_VALIDATION_EMAIL_ACTION
+import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.VALIDATION_EMAIL_RESULT
+import com.sensoguard.hunter.global.getBooleanInPreference
+import com.sensoguard.hunter.global.getIntInPreference
+import com.sensoguard.hunter.global.getLongInPreference
+import com.sensoguard.hunter.global.getScreenWidth
+import com.sensoguard.hunter.global.getSensorsFromLocally
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.removePreference
+import com.sensoguard.hunter.global.setBooleanInPreference
+import com.sensoguard.hunter.global.setIntInPreference
+import com.sensoguard.hunter.global.setLongInPreference
+import com.sensoguard.hunter.global.setStringInPreference
+import com.sensoguard.hunter.global.storeMyEmailAccountToLocaly
 import com.sensoguard.hunter.interfaces.CallToParentInterface
 import com.sensoguard.hunter.interfaces.OnFragmentListener
 
@@ -555,7 +588,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
                     Toast.makeText(
                         activity,
-                        resources.getString(R.string.validation_successfully),
+                        resources.getString(R.string.verification_successfully),
                         Toast.LENGTH_LONG
                     ).show()
                     //store the email account locally

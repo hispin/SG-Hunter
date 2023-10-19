@@ -94,7 +94,7 @@
     <string name="ok">אישור</string>
     <string name="date_older">לא ניתן שתאריך הסיום יהיה מוקדם מתאריך ההתחלה</string>
     <string name="validation_error">שגיאת אימות</string>
-    <string name="validation_successfully">האימות הצליח</string>
+    <string name="verification_successfully">האימות הצליח</string>
     <string name="no_photo">אין תמונה</string>
     <string name="select_all">בחר הכל</string>
     <string name="select">בחר</string>
@@ -141,6 +141,7 @@
     <string name="error_no_data">שגיאה ללא מידע</string>
     <string name="save_file_success">שמירת הקובץ הצליחה</string>
     <string name="save_file_failed">שמירת הקובץ נכשלה</string>
+    <string name="verification_failed">האימות נכשל</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

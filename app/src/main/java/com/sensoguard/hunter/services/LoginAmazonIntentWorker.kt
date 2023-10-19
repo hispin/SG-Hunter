@@ -1,6 +1,7 @@
 package com.sensoguard.hunter.services
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.Task
@@ -33,7 +34,7 @@ class LoginAmazonIntentWorker(val context: Context, workerParams: WorkerParamete
                     val currentToken = getStringInPreference(context, TOKEN_AMAZON_KEY_PREF, "")
 
                     if (amazonProcessType.equals(AMAZON_PRECESS_DIALOG_VALUE)) {
-
+                        Log.d("testToken", FCM_token + "")
                         // if the process come from dialog then send request immediately
                         //send request
                         setStringInPreference(context, TOKEN_AMAZON_KEY_PREF, FCM_token)

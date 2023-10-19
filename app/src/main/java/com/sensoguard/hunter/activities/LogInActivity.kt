@@ -225,7 +225,7 @@ open class LogInActivity : AppCompatActivity() {
             when {
                 arg1.action == AZURA_POST_RESULT_OK -> {
                     ToastNotify(
-                        resources.getString(R.string.validation_successfully),
+                        resources.getString(R.string.verification_successfully),
                         this@LogInActivity
                     )
                     dialog?.dismiss()
@@ -256,7 +256,7 @@ open class LogInActivity : AppCompatActivity() {
 
                 arg1.action == AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
                     ToastNotify(
-                        resources.getString(R.string.validation_successfully),
+                        resources.getString(R.string.verification_successfully),
                         this@LogInActivity
                     )
                     dialog?.dismiss()
@@ -264,7 +264,7 @@ open class LogInActivity : AppCompatActivity() {
                 }
 
                 arg1.action == AMAZONE_POST_LOGIN_RESULT_FAILED -> {
-                    showErrorMsg(resources.getString(R.string.validation_error))
+                    showErrorMsg(resources.getString(R.string.verification_failed))
                 }
             }
             positiveButton?.isEnabled = true

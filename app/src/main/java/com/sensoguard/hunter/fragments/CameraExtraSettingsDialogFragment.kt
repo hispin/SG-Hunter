@@ -20,12 +20,27 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.appcompat.widget.*
+import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.appcompat.widget.AppCompatSpinner
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.DialogFragment
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.Camera
 import com.sensoguard.hunter.classes.ImageStorageManager
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.CAMERA_KEY
+import com.sensoguard.hunter.global.ERROR_RESULT_VALIDATION_EMAIL_ACTION
+import com.sensoguard.hunter.global.ERROR_VALIDATION_EMAIL_MSG_KEY
+import com.sensoguard.hunter.global.LAST_DATE_ALARM
+import com.sensoguard.hunter.global.RESULT_VALIDATION_EMAIL_ACTION
+import com.sensoguard.hunter.global.TAKE_PICTURE_REQUEST_CODE
+import com.sensoguard.hunter.global.VALIDATION_EMAIL_RESULT
+import com.sensoguard.hunter.global.convertJsonToSensor
+import com.sensoguard.hunter.global.convertToGson
+import com.sensoguard.hunter.global.getScreenWidth
+import com.sensoguard.hunter.global.removePreference
 import java.util.*
 
 
@@ -301,7 +316,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
                     saveLastVisitPicture()
                     Toast.makeText(
                         activity,
-                        resources.getString(R.string.validation_successfully),
+                        resources.getString(R.string.verification_successfully),
                         Toast.LENGTH_LONG
                     ).show()
                     sendResult()
