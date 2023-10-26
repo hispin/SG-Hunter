@@ -30,6 +30,7 @@ import com.sensoguard.hunter.global.IMAGE_PATH_KEY
 import com.sensoguard.hunter.global.IMAGE_TIME_KEY
 import com.sensoguard.hunter.global.SaveImageInGalleryTask
 import com.sensoguard.hunter.global.shareImage
+import com.sensoguard.hunter.global.shareVideo
 import com.sensoguard.hunter.global.showToast
 
 
@@ -68,7 +69,6 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
             showPicture(imgPath)
         } else if (actionType == ACTION_VIDEO_KEY) {
             ibSaveLargeImgShare?.visibility = View.GONE
-            ibLargeImgShare?.visibility = View.GONE
         }
         // Inflate the layout for this fragment
         return view
@@ -152,12 +152,18 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
         ivMyCaptureImage = view?.findViewById(R.id.ivMyCaptureImage)
         ibLargeImgShare = view?.findViewById(R.id.ibLargeImgShare)
         ibLargeImgShare?.setOnClickListener {
-            val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
-            try {
-                bitmap?.let { shareImage(it, requireActivity()) }
-            } catch (ex: java.lang.Exception) {
-                ex.printStackTrace()
-                showToast(activity, resources.getString(R.string.error))
+            if (actionType == ACTION_PICTURE_KEY) {
+                val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
+                try {
+                    bitmap?.let { shareImage(it, requireActivity()) }
+                } catch (ex: java.lang.Exception) {
+                    ex.printStackTrace()
+                    showToast(activity, resources.getString(R.string.error))
+                }
+            } else if (actionType == ACTION_VIDEO_KEY) {
+                if (activity != null) {
+                    imgPath?.let { it1 -> shareVideo(it1, requireActivity()) }
+                }
             }
         }
 

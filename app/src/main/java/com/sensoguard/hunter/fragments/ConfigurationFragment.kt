@@ -70,12 +70,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private var myEmailAccount: MyEmailAccount? = null
     private var listPopupWindow: ListPopupWindow? = null
     private var generalItemMenuAdapter: GeneralItemMenuAdapter? = null
-
-    //private var etSensorValue: AppCompatEditText?=null
-    //private var btnSaveSensors: AppCompatButton?=null
     private var togChangeAlarmVibrate: ToggleButton? = null
-    private var ibSatelliteMode: AppCompatButton? = null
-    private var ibNormalMode: AppCompatButton? = null
     private var etAlarmFlickerValue: AppCompatEditText? = null
     private var btnSaveFlicker: AppCompatButton? = null
     private var constAlarmSound: ConstraintLayout? = null
@@ -123,30 +118,37 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         )
 
         togChangeAlarmVibrate = view.findViewById(com.sensoguard.hunter.R.id.togChangeAlarmVibrate)
-        togChangeAlarmVibrate?.isChecked=getBooleanInPreference(activity,IS_VIBRATE_WHEN_ALARM_KEY,true)
+        togChangeAlarmVibrate?.isChecked =
+            getBooleanInPreference(activity, IS_VIBRATE_WHEN_ALARM_KEY, true)
         togChangeAlarmVibrate?.setOnCheckedChangeListener { buttonView, isChecked ->
             //update the status of the alarm vibrate : on/off
-            setBooleanInPreference(activity,IS_VIBRATE_WHEN_ALARM_KEY,isChecked)
+            setBooleanInPreference(activity, IS_VIBRATE_WHEN_ALARM_KEY, isChecked)
         }
 
-        ibSatelliteMode = view.findViewById(com.sensoguard.hunter.R.id.ibSatelliteMode)
-        ibSatelliteMode?.setOnClickListener{
-            setMapSatellite()
-        }
-
-        ibNormalMode = view.findViewById(com.sensoguard.hunter.R.id.ibNormalMode)
-        ibNormalMode?.setOnClickListener{
+//        ibSatelliteMode = view.findViewById(com.sensoguard.hunter.R.id.ibSatelliteMode)
+//        ibSatelliteMode?.setOnClickListener{
+//            setMapSatellite()
+//        }
+//
+//        ibNormalMode = view.findViewById(com.sensoguard.hunter.R.id.ibNormalMode)
+//        ibNormalMode?.setOnClickListener{
+//            setMapNormal()
+//        }
+        val mapType = getIntInPreference(activity, MAP_SHOW_VIEW_TYPE_KEY, -1)
+        if (mapType == MAP_SHOW_NORMAL_VALUE) {
             setMapNormal()
-        }
-        val mapType = getIntInPreference(activity,MAP_SHOW_VIEW_TYPE_KEY,-1)
-        if(mapType==MAP_SHOW_NORMAL_VALUE){
-            setMapNormal()
-        }else if(mapType== MAP_SHOW_SATELLITE_VALUE){
+        } else if (mapType == MAP_SHOW_SATELLITE_VALUE) {
             setMapSatellite()
         }
 
         etAlarmFlickerValue = view.findViewById(com.sensoguard.hunter.R.id.etAlarmFlickerValue)
-        etAlarmFlickerValue?.setText(getLongInPreference(activity,ALARM_FLICKERING_DURATION_KEY,-1L).toString())
+        etAlarmFlickerValue?.setText(
+            getLongInPreference(
+                activity,
+                ALARM_FLICKERING_DURATION_KEY,
+                -1L
+            ).toString()
+        )
 
         btnSaveFlicker = view.findViewById(com.sensoguard.hunter.R.id.btnSaveFlicker)
         //update the time flickering
@@ -352,15 +354,15 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     }
 
     private fun setMapSatellite() {
-        ibNormalMode?.isEnabled = true
-        ibSatelliteMode?.isEnabled = false
-        setIntInPreference(activity,MAP_SHOW_VIEW_TYPE_KEY, MAP_SHOW_SATELLITE_VALUE)
+        //ibNormalMode?.isEnabled = true
+        //ibSatelliteMode?.isEnabled = false
+        setIntInPreference(activity, MAP_SHOW_VIEW_TYPE_KEY, MAP_SHOW_SATELLITE_VALUE)
     }
 
 
     private fun setMapNormal() {
-        ibNormalMode?.isEnabled = false
-        ibSatelliteMode?.isEnabled = true
+        //ibNormalMode?.isEnabled = false
+        //ibSatelliteMode?.isEnabled = true
         setIntInPreference(activity, MAP_SHOW_VIEW_TYPE_KEY, MAP_SHOW_NORMAL_VALUE)
     }
 

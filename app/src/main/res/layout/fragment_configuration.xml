@@ -26,72 +26,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <!--sensor amount-->
-        <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--            android:id="@+id/constSensorAmount"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            style="@style/general_configuration"-->
-        <!--            app:layout_constraintTop_toTopOf="parent"-->
-        <!--    >-->
-        <!--        <androidx.appcompat.widget.AppCompatImageView-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                app:srcCompat="@drawable/config_ic_sensor_amount"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintHorizontal_bias="0.041"-->
-        <!--                android:id="@+id/appCompatImageView"/>-->
-        <!--        <View android:layout_width="match_parent"-->
-        <!--              android:layout_height="0.7dp"-->
-        <!--              app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--              android:layout_marginStart="10.7dp"-->
-        <!--              android:layout_marginEnd="10.7dp"-->
-        <!--              android:background="@color/gray4"/>-->
-        <!--        <TextView-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:text="@string/define_sensor_amount"-->
-        <!--                style="@style/configContentItem"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                />-->
-
-        <!--        <androidx.appcompat.widget.AppCompatEditText-->
-        <!--                android:id="@+id/etSensorValue"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:layout_constraintWidth_default="percent"-->
-        <!--                app:layout_constraintWidth_percent=".181"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintHorizontal_bias="0.735"-->
-        <!--                android:inputType="number"-->
-        <!--                android:gravity="center"-->
-        <!--                android:hint="0"-->
-        <!--                android:background="@drawable/shape_bottom_border"-->
-
-        <!--        />-->
-        <!--        <androidx.appcompat.widget.AppCompatButton-->
-        <!--                android:id="@+id/btnSaveSensors"-->
-        <!--                android:layout_width="65.3dp"-->
-        <!--                android:layout_height="0dp"-->
-        <!--                android:textAllCaps="false"-->
-        <!--                app:layout_constraintTop_toTopOf="@+id/etSensorValue"-->
-        <!--                app:layout_constraintBottom_toBottomOf="@+id/etSensorValue"-->
-        <!--                app:layout_constraintStart_toEndOf="@+id/etSensorValue"-->
-        <!--                android:background="@color/turquoise_blue"-->
-        <!--                android:text="@string/save"-->
-        <!--                android:textColor="@color/gray2"-->
-        <!--                android:textSize="13.3sp"-->
-        <!--         />-->
-
-
-        <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
         <!--alarm sound-->
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constAlarmSound"
@@ -282,151 +216,151 @@
                 android:background="@color/turquoise_blue"
                 android:text="@string/save"
                 android:textColor="@color/gray2"
-                android:textSize="13.3sp"
-        />
+                android:textSize="13.3sp" />
 
-        <View android:layout_width="match_parent"
-              android:layout_height="0.7dp"
-              app:layout_constraintBottom_toBottomOf="parent"
-              android:layout_marginStart="10.7dp"
-              android:layout_marginEnd="10.7dp"
-              android:background="@color/gray4"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="0.7dp"
+                android:layout_marginStart="10.7dp"
+                android:layout_marginEnd="10.7dp"
+                android:background="@color/gray4"
+                app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--load setting-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constLoadSettings"
-            android:layout_width="match_parent"
-            style="@style/general_configuration"
+        <!--load setting-->
+        <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/constLoadSettings"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            style="@style/general_configuration"-->
 
-            app:layout_constraintTop_toBottomOf="@+id/constAlarmFlicker"
-    >
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/config_ic_load_export"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.041"
-        />
+        <!--            app:layout_constraintTop_toBottomOf="@+id/constAlarmFlicker"-->
+        <!--    >-->
+        <!--        <androidx.appcompat.widget.AppCompatImageView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:srcCompat="@drawable/config_ic_load_export"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintHorizontal_bias="0.041"-->
+        <!--        />-->
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/load_settings_export_settings"
-                style="@style/configContentItem"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-        />
+        <!--        <TextView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="@string/load_settings_export_settings"-->
+        <!--                style="@style/configContentItem"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--        />-->
 
-        <tools:ToggleButton
-                android:id="@+id/togChangeLoadSettings"
-                android:text="ToggleButton"
-                android:layout_width="44dp"
-                android:layout_height="25dp"
-                android:background="@color/transparent"
-                android:button="@drawable/toggle_selector_active"
-                android:textOff=""
-                android:textOn=""
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.954"
-        />
+        <!--        <tools:ToggleButton-->
+        <!--                android:id="@+id/togChangeLoadSettings"-->
+        <!--                android:text="ToggleButton"-->
+        <!--                android:layout_width="44dp"-->
+        <!--                android:layout_height="25dp"-->
+        <!--                android:background="@color/transparent"-->
+        <!--                android:button="@drawable/toggle_selector_active"-->
+        <!--                android:textOff=""-->
+        <!--                android:textOn=""-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintHorizontal_bias="0.954"-->
+        <!--        />-->
 
-        <View android:layout_width="match_parent"
-              android:layout_height="0.7dp"
-              app:layout_constraintBottom_toBottomOf="parent"
-              android:layout_marginStart="10.7dp"
-              android:layout_marginEnd="10.7dp"
-              android:background="@color/gray4"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--ic_map_main view-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constMapView"
-            android:layout_width="match_parent"
-            style="@style/general_configuration"
+        <!--        <View android:layout_width="match_parent"-->
+        <!--              android:layout_height="0.7dp"-->
+        <!--              app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--              android:layout_marginStart="10.7dp"-->
+        <!--              android:layout_marginEnd="10.7dp"-->
+        <!--              android:background="@color/gray4"/>-->
+        <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <!--ic_map_main view-->
+        <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/constMapView"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            style="@style/general_configuration"-->
 
-            app:layout_constraintTop_toBottomOf="@+id/constLoadSettings"
-    >
-        <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:srcCompat="@drawable/config_ic_map"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.041"
-        />
+        <!--            app:layout_constraintTop_toBottomOf="@+id/constLoadSettings"-->
+        <!--    >-->
+        <!--        <androidx.appcompat.widget.AppCompatImageView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:srcCompat="@drawable/config_ic_map"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintHorizontal_bias="0.041"-->
+        <!--        />-->
 
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/map_view"
-                style="@style/configContentItem"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-        />
+        <!--        <TextView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:text="@string/map_view"-->
+        <!--                style="@style/configContentItem"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--        />-->
 
-        <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/ibSatelliteMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.781"
-                android:drawableTop="@drawable/selected_map_satellite_status"
-                android:background="@color/transparent"
-                android:text="@string/satellite"
-                android:textColor="@drawable/selected_text_color_status"
-                android:textAllCaps="false"
-                android:textSize="10sp"
-        />
+        <!--        <androidx.appcompat.widget.AppCompatButton-->
+        <!--                android:id="@+id/ibSatelliteMode"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintHorizontal_bias="0.781"-->
+        <!--                android:drawableTop="@drawable/selected_map_satellite_status"-->
+        <!--                android:background="@color/transparent"-->
+        <!--                android:text="@string/satellite"-->
+        <!--                android:textColor="@drawable/selected_text_color_status"-->
+        <!--                android:textAllCaps="false"-->
+        <!--                android:textSize="10sp"-->
+        <!--        />-->
 
-        <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/ibNormalMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                android:drawableTop="@drawable/selected_map_normal_status"
-                android:background="@color/transparent"
-                android:text="@string/map"
-                android:textAllCaps="false"
-                android:textColor="@drawable/selected_text_color_status"
-                android:textSize="10sp"
-                android:enabled="false"
+        <!--        <androidx.appcompat.widget.AppCompatButton-->
+        <!--                android:id="@+id/ibNormalMode"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintHorizontal_bias="1.0"-->
+        <!--                android:drawableTop="@drawable/selected_map_normal_status"-->
+        <!--                android:background="@color/transparent"-->
+        <!--                android:text="@string/map"-->
+        <!--                android:textAllCaps="false"-->
+        <!--                android:textColor="@drawable/selected_text_color_status"-->
+        <!--                android:textSize="10sp"-->
+        <!--                android:enabled="false"-->
 
-        />
+        <!--        />-->
 
-        <View android:layout_width="match_parent"
-              android:layout_height="0.7dp"
-              app:layout_constraintBottom_toBottomOf="parent"
-              android:layout_marginStart="10.7dp"
-              android:layout_marginEnd="10.7dp"
-              android:background="@color/gray4"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--language-->
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constLangView"
-            android:layout_width="match_parent"
-            style="@style/general_configuration"
+        <!--        <View android:layout_width="match_parent"-->
+        <!--              android:layout_height="0.7dp"-->
+        <!--              app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--              android:layout_marginStart="10.7dp"-->
+        <!--              android:layout_marginEnd="10.7dp"-->
+        <!--              android:background="@color/gray4"/>-->
+        <!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <!--language-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constLangView"
+                style="@style/general_configuration"
+                android:layout_width="match_parent"
 
-            app:layout_constraintTop_toBottomOf="@+id/constMapView"
-            android:clickable="true"
-            android:focusable="true">
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@+id/constAlarmFlicker">
 
-        <androidx.appcompat.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ivSelectLanguage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

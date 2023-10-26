@@ -142,6 +142,7 @@
     <string name="save_file_success">שמירת הקובץ הצליחה</string>
     <string name="save_file_failed">שמירת הקובץ נכשלה</string>
     <string name="verification_failed">האימות נכשל</string>
+    <string name="share_title">שליחת וידאו מסנסוגארד</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

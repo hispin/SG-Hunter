@@ -34,10 +34,12 @@ import com.sensoguard.hunter.global.AZURE
 import com.sensoguard.hunter.global.LOGIN_TYPE_KEY
 import com.sensoguard.hunter.global.REGISTER_ID_KEY
 import com.sensoguard.hunter.global.ToastNotify
+import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
 import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getTagsFromLocally
+import com.sensoguard.hunter.global.getUserAmazonFromLocally
 import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.removePreference
 import com.sensoguard.hunter.global.setStringInPreference
@@ -104,8 +106,26 @@ open class LogInActivity : AppCompatActivity() {
     //open dialog for log in
     fun openLogInDialog() {
 
+        //show user info from locally if exist
+        fun showUserIfExist(userInfoKey: String, userInput: EditText, pwInput: EditText) {
+            val userInfo = getUserAmazonFromLocally(
+                this,
+                userInfoKey
+            )
+            if (userInfo != null) {
+                userInput.setText(userInfo.email)
+                pwInput.setText(userInfo.password)
+            }
+        }
+
+
         val li: LayoutInflater = LayoutInflater.from(this)
         val promptsView: View = li.inflate(R.layout.user_password_dialog, null)
+
+        val userInput: EditText = promptsView
+            .findViewById(R.id.editTextDialogUserInput) as EditText
+        val pwInput: EditText = promptsView
+            .findViewById(R.id.editTextDialogPasswordInput) as EditText
 
         var loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
         //select AMAZON or AZURE
@@ -114,25 +134,24 @@ open class LogInActivity : AppCompatActivity() {
             if (checkedId == R.id.rbV1) {
                 loginType = AZURE
                 setStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+                showUserIfExist(USER_INFO_AZURE_KEY, userInput, pwInput)
             } else if (checkedId == R.id.rbV2) {
                 loginType = AMAZON
                 setStringInPreference(this, LOGIN_TYPE_KEY, AMAZON)
+                showUserIfExist(USER_INFO_AMAZON_KEY, userInput, pwInput)
             }
         }
         if (loginType.equals(AZURE)) {
             rgLoginType?.check(R.id.rbV1)
+            showUserIfExist(USER_INFO_AZURE_KEY, userInput, pwInput)
         } else if (loginType.equals(AMAZON)) {
             rgLoginType?.check(R.id.rbV2)
+            showUserIfExist(USER_INFO_AMAZON_KEY, userInput, pwInput)
         }
 
-        val userInput: EditText = promptsView
-            .findViewById(R.id.editTextDialogUserInput) as EditText
 
         val userName = UserSession.instance.getUserAzure()?.name
         userName?.let { userInput.setText(it) }
-
-        val pwInput: EditText = promptsView
-            .findViewById(R.id.editTextDialogPasswordInput) as EditText
 
         val pw = UserSession.instance.getUserAzure()?.pw
         pw?.let { pwInput.setText(it) }

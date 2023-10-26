@@ -62,6 +62,27 @@ fun shareImage(bitmap: Bitmap, activity: Activity?) {
     }
 }
 
+/**
+ * share link of video
+ */
+fun shareVideo(imgPath: String, context: Context) {
+
+    val intentToEmailFile = Intent(Intent.ACTION_SEND)
+    intentToEmailFile.type = "text/plain"
+    //intentToEmailFile.setPackage("com.google.android.gm")
+    intentToEmailFile.putExtra(
+        Intent.EXTRA_TEXT, imgPath
+    )
+    intentToEmailFile.putExtra(
+        Intent.EXTRA_SUBJECT,
+        context.resources.getString(R.string.share_title)
+    )
+    val chooserIntent: Intent =
+        Intent.createChooser(intentToEmailFile, "Send email")
+    context.startActivity(chooserIntent)
+
+}
+
 //save the picture in locally gallery
 fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String): Boolean {
     var saved: Boolean = false
