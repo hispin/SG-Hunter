@@ -69,6 +69,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
             showPicture(imgPath)
         } else if (actionType == ACTION_VIDEO_KEY) {
             ibSaveLargeImgShare?.visibility = View.GONE
+            ibLargeImgShare?.visibility = View.GONE
         }
         // Inflate the layout for this fragment
         return view
