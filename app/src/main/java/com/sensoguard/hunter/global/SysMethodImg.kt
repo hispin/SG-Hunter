@@ -100,7 +100,9 @@ fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String)
 
     uri?.let {
         stream = resolver.openOutputStream(uri)
-        saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+        if (stream != null) {
+            saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream!!)
+        }
     }
     return saved
 }

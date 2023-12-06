@@ -21,12 +21,12 @@ repositories {
 }
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "33.0.1"
+    compileSdkVersion 34
+    //buildToolsVersion "33.0.1"
     defaultConfig {
         applicationId "com.sensoguard.hunter"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdkVersion 26
+        targetSdkVersion 34
         versionCode 60
         versionName "1.60"
         vectorDrawables.useSupportLibrary = true
@@ -101,11 +101,11 @@ dependencies {
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    implementation 'com.android.support:design:33.0.0'
+    implementation 'com.android.support:design:34.0.0'
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
-    implementation 'com.android.support:support-v4:33.0.0'
+    implementation 'com.android.support:support-v4:34.0.0'
     implementation 'com.google.firebase:firebase-crashlytics:18.3.5'
     implementation 'com.google.firebase:firebase-analytics:21.2.0'
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
