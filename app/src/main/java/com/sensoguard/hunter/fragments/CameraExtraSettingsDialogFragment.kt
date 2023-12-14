@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageButton
@@ -299,7 +301,11 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
     private fun setFilter() {
         val filter = IntentFilter(RESULT_VALIDATION_EMAIL_ACTION)
         filter.addAction(ERROR_RESULT_VALIDATION_EMAIL_ACTION)
-        activity?.registerReceiver(reciever, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity?.registerReceiver(reciever, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
+        } else {
+            activity?.registerReceiver(reciever, filter)
+        }
     }
 
     override fun onStart() {
@@ -504,21 +510,8 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
                 command = addPhoneNumToCommand(command, etField1)
                 command = addPhoneNumToCommand(command, etField2)
                 command = addPhoneNumToCommand(command, etField3)
-
-
-//                if (command == "#N#") {
-//                command = addPhoneNumToCommand(command, etField1)
-//                command = addPhoneNumToCommand(command, etField2)
-//                command = addPhoneNumToCommand(command, etField3)
-//                    Toast.makeText(
-//                        activity,
-//                        resources.getString(R.string.you_need_at_least_one_phone_num),
-//                        Toast.LENGTH_LONG
-//                    ).show()
-//                } else {
-                    sendSMS(command)
-                    dialog.dismiss()
-//                }
+                sendSMS(command)
+                dialog.dismiss()
             }
             val btnCancel = dialog.findViewById<AppCompatButton>(R.id.btnCancel)
             btnCancel.setOnClickListener {

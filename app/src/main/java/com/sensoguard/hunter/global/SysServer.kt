@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.google.gson.JsonArray
-import com.sensoguard.hunter.classes.AuthResult
 import com.sensoguard.hunter.classes.RestApiService
 import java.lang.ref.WeakReference
 
@@ -61,55 +60,5 @@ fun checkUserGetTags(context: Context, user: String, pw: String): JsonArray? {
     }
     return tags
 }
-
-/**
- *send request of login amazon
- */
-fun requestLoginAmazon(context: Context, user: String?, pw: String?, token: String?) {
-    val wContext =
-        WeakReference<Context>(context)
-    val apiService = RestApiService()
-
-
-    if (user != null && pw != null && token != null) {
-        UserSession.instance.setInstanceUserAmazon(
-            name = user,
-            pw = pw,
-            token
-        )
-    }
-
-    UserSession.instance.getUserAmazon()?.let { user ->
-        apiService.loginAmazon(user) {
-
-            if (it != null) {
-
-                val result: AuthResult = it
-                if (result.success == true) {
-                    if (UserSession.instance.getUserAmazon() != null) {
-                        wContext.get()
-                            ?.let { it1 ->
-                                storeUserAmazonToLocally(
-                                    UserSession.instance.getUserAmazon()!!,
-                                    it1, USER_INFO_AMAZON_KEY
-                                )
-                            }
-                    }
-                    context.sendBroadcast(Intent(AMAZONE_POST_LOGIN_RESULT_SUCCESS))
-                } else {
-                    context.sendBroadcast(Intent(AMAZONE_POST_LOGIN_RESULT_FAILED))
-                }
-
-                Log.d("retrofit", "accept user id")
-            } else {
-                context.sendBroadcast(Intent(AMAZONE_POST_LOGIN_RESULT_FAILED))
-            }
-
-        }
-    }
-}
-
-
-
 
 

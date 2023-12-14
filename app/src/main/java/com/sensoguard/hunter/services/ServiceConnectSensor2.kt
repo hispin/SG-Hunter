@@ -82,7 +82,11 @@ class ServiceConnectSensor2 : Service() {
         filter.addAction("handle.read.data")
         filter.addAction("stop.data.command")
         filter.addAction(ACTION_USB_PERMISSION)
-        registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
     }
 
     fun findDriversForDevices(){
@@ -116,15 +120,26 @@ class ServiceConnectSensor2 : Service() {
         val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
         val filter = IntentFilter(ACTION_USB_PERMISSION)
         filter.addAction("handle.read.data")
-        registerReceiver(usbPermissionReceiver, filter)
-        val mPermissionIntent = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbPermissionReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbPermissionReceiver, filter)
+        }
+        val mPermissionIntent =
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                Intent(ACTION_USB_PERMISSION),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
         usbManager.requestPermission(usbDevice, mPermissionIntent)
         connection = manager?.openDevice(device)
-        if(connection==null){
-            Toast.makeText(this,"connection failed",Toast.LENGTH_SHORT).show()
+        if (connection == null) {
+            Toast.makeText(this, "connection failed", Toast.LENGTH_SHORT).show()
 
-        }else{
-            Toast.makeText(this,"connection success",Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "connection success", Toast.LENGTH_SHORT).show()
             readData()
         }
     }

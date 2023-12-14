@@ -29,6 +29,7 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -54,7 +55,6 @@ import com.sensoguard.hunter.interfaces.OnAdapterListener
 import com.sensoguard.hunter.interfaces.OnFragmentListener
 import com.sensoguard.hunter.services.ServiceFindLocation
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -597,7 +597,11 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
         val filter = IntentFilter(CREATE_ALARM_KEY)
         filter.addAction(RESET_MARKERS_KEY)
         filter.addAction(GET_CURRENT_LOCATION_KEY)
-        activity?.registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity?.registerReceiver(usbReceiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
+        } else {
+            activity?.registerReceiver(usbReceiver, filter)
+        }
     }
 
     override fun onStart() {
@@ -699,8 +703,9 @@ class MapSensorsFragment : Fragment() ,OnMapReadyCallback,OnAdapterListener{
        rvDetector?.adapter = sensorsDialogAdapter
        val mLayoutManager = LinearLayoutManager(context)
        rvDetector?.layoutManager = mLayoutManager
-                dialog?.show()
-            }
+       dialog?.show()
+       //dialog?.show()
+   }
 
    private fun showTestEventDialog() {
 

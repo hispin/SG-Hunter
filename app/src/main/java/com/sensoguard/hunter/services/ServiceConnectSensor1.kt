@@ -81,7 +81,11 @@ open class ServiceConnectSensor1 : Service() {
         filter.addAction(STOP_READ_DATA_KEY)
         filter.addAction("handle.read.data.exception")
         filter.addAction(ACTION_USB_PERMISSION)
-        registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
     }
 
     //check if the drivers (for usb connection) is available
@@ -178,13 +182,24 @@ open class ServiceConnectSensor1 : Service() {
     }
 
     // get permission to connect to usb device
-    private fun requestPermission(usbDevice: UsbDevice){
+    private fun requestPermission(usbDevice: UsbDevice) {
         val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
 
         //if(ContextCompat.checkSelfPermission(this, ACTION_USB_PERMISSION)!=PackageManager.PERMISSION_GRANTED){
         val filter = IntentFilter(ACTION_USB_PERMISSION)
-        registerReceiver(usbPermissionReceiver, filter)
-        val mPermissionIntent = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
+
+        val mPermissionIntent =
+            PendingIntent.getBroadcast(
+                this,
+                0,
+                Intent(ACTION_USB_PERMISSION),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
         usbManager.requestPermission(usbDevice, mPermissionIntent)
     }
 

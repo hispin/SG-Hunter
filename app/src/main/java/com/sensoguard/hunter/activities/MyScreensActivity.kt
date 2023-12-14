@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.activities
 
+//import com.sensoguard.hunter.services.MediaService
 import android.Manifest
 import android.app.Activity
 import android.content.BroadcastReceiver
@@ -27,9 +28,26 @@ import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.fragments.AlarmLogFragment
 import com.sensoguard.hunter.fragments.ConfigurationFragment
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
+import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
+import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
+import com.sensoguard.hunter.global.IS_MYSCREENACTIVITY_FOREGROUND
+import com.sensoguard.hunter.global.MAIN_MENU_NUM_ITEM
+import com.sensoguard.hunter.global.MAP_SHOW_SATELLITE_VALUE
+import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
+import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
+import com.sensoguard.hunter.global.getIntInPreference
+import com.sensoguard.hunter.global.getLongInPreference
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.setAppLanguage
+import com.sensoguard.hunter.global.setBooleanInPreference
+import com.sensoguard.hunter.global.setIntInPreference
+import com.sensoguard.hunter.global.setLongInPreference
+import com.sensoguard.hunter.global.setStringInPreference
 import com.sensoguard.hunter.interfaces.OnFragmentListener
-//import com.sensoguard.hunter.services.MediaService
 import kotlinx.android.synthetic.main.activity_my_screens.*
 import java.io.File
 import java.io.FileOutputStream
@@ -109,7 +127,11 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private fun setFilter() {
         val filter = IntentFilter(USB_CONNECTION_FAILED)
 
-        registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
     }
 
 

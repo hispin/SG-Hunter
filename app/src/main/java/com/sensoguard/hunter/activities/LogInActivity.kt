@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -14,17 +15,15 @@ import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
+import androidx.lifecycle.ViewModelProvider
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.UserInfoAmazon
 import com.sensoguard.hunter.classes.UserInfoAzure
+import com.sensoguard.hunter.controler.LoginViewModel
 import com.sensoguard.hunter.global.AMAZON
 import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_FAILED
 import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_SUCCESS
 import com.sensoguard.hunter.global.AMAZON_PRECESS_DIALOG_VALUE
-import com.sensoguard.hunter.global.AMAZON_PRECESS_TYPE_KEY
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_ERROR_NO_DATA
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_NO_USER
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_OK
@@ -44,17 +43,40 @@ import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.removePreference
 import com.sensoguard.hunter.global.setStringInPreference
 import com.sensoguard.hunter.global.validIsEmpty
-import com.sensoguard.hunter.services.LoginAmazonIntentWorker
 import com.sensoguard.hunter.services.RegistrationIntentService
 
 open class LogInActivity : AppCompatActivity() {
 
+    private var viewModel: LoginViewModel? = null
     private var dialog: AlertDialog? = null
 
     override fun onStart() {
         super.onStart()
         setFilter()
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        setListener()
+    }
 
+    /**
+     * set observers
+     */
+    private fun setListener() {
+        viewModel?.response?.observe(this) {
+            when (it) {
+                AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
+                    ToastNotify(
+                        resources.getString(R.string.verification_successfully),
+                        this@LogInActivity
+                    )
+                    dialog?.dismiss()
+                    pbValidation?.visibility = View.INVISIBLE
+                }
+
+                AMAZONE_POST_LOGIN_RESULT_FAILED -> {
+                    showErrorMsg(resources.getString(R.string.verification_failed))
+                }
+            }
+        }
     }
 
     private var tvError: TextView? = null
@@ -90,16 +112,11 @@ open class LogInActivity : AppCompatActivity() {
      * start login amazon worker
      */
     fun loginAmazonFromDialog(processType: String) {
-        val loginAmazonRequest: OneTimeWorkRequest.Builder =
-            OneTimeWorkRequest.Builder(LoginAmazonIntentWorker::class.java) //OneTimeWorkRequestBuilder < MediaWorker > ().build();
-        val data = Data.Builder()
-        //Add parameter in Data class. just like bundle. You can also add Boolean and Number in parameter.
-        data.putString(AMAZON_PRECESS_TYPE_KEY, processType)
-        //Set Input Data
-        loginAmazonRequest.setInputData(data.build())
+        viewModel?.requestLoginAmazon(processType)
 
-        WorkManager.getInstance(this).enqueue(loginAmazonRequest.build())
+
     }
+
 
     var positiveButton: Button? = null
 
@@ -112,6 +129,7 @@ open class LogInActivity : AppCompatActivity() {
                 this,
                 userInfoKey
             )
+            userInfo?.password?.let { Log.d("testUser", it) }
             if (userInfo != null) {
                 userInput.setText(userInfo.email)
                 pwInput.setText(userInfo.password)
@@ -167,7 +185,6 @@ open class LogInActivity : AppCompatActivity() {
             .show()
 
         positiveButton = promptsView.findViewById(R.id.btnSubmit) as Button
-        //dialog?.getButton(AlertDialog.BUTTON_POSITIVE)!!
         positiveButton?.setOnClickListener(View.OnClickListener {
 
             if (validIsEmpty(userInput, this)
@@ -201,11 +218,8 @@ open class LogInActivity : AppCompatActivity() {
                     loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE)
                 }
             }
-
-            //     Toast.makeText(SysManagerActivity.this, "dialog is open", Toast.LENGTH_SHORT).show();
         })
         val negativeButton: Button = promptsView.findViewById(R.id.btnCancel) as Button
-        //dialog?.getButton(AlertDialog.BUTTON_POSITIVE)!!
         negativeButton.setOnClickListener(View.OnClickListener {
             dialog?.dismiss()
         })

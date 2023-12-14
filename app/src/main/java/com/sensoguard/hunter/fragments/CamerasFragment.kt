@@ -12,6 +12,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.*
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,6 +23,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -96,12 +98,17 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         cameras = ArrayList()
 
         //sensors?.add(Camera(resources.getString(R.string.id_title),resources.getString(R.string.name_title)))
-
-        val itemDecorator= DividerItemDecoration(context!!, DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(context!!, R.drawable.divider)!!)
+        if (activity == null) return
+        val itemDecorator = DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL)
+        itemDecorator.setDrawable(
+            ContextCompat.getDrawable(
+                requireActivity(),
+                R.drawable.divider
+            )!!
+        )
         rvSensor?.addItemDecoration(itemDecorator)
 
-        sensorsAdapter=activity?.let { adapter ->
+        sensorsAdapter = activity?.let { adapter ->
             cameras?.let { arr ->
                 CamerasAdapter(arr, adapter, this) { _camera ->
                     selectedCamera = _camera
@@ -109,7 +116,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
                 }
             }
         }
-        rvSensor?.adapter=sensorsAdapter
+        rvSensor?.adapter = sensorsAdapter
         val layoutManager= LinearLayoutManager(activity)
         rvSensor?.layoutManager=layoutManager
 
@@ -140,18 +147,19 @@ class SensorsFragment : Fragment(), OnAdapterListener {
                         while (items != null && items.hasNext()) {
                             val item = items.next()
 
-                            val id=item.getId()
+                            val id = item.getId()
                             try {
                                 if (id.toInt() > numSensorsRequest!!) {
                                     items.remove()
                                 }
-                            }catch(ex:NumberFormatException){
+                            } catch (ex: NumberFormatException) {
                                 //do nothing
                             }
                         }
                     }
-
-                    cameras?.let { sen -> storeSensorsToLocally(sen, activity!!) }
+                    if (activity != null) {
+                        cameras?.let { sen -> storeSensorsToLocally(sen, requireActivity()) }
+                    }
                     dialog.dismiss()
                 }
 
@@ -167,7 +175,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
             return
         }
 
-        val dialog = Dialog(activity!!)
+        val dialog = Dialog(requireActivity())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.dialog_new_sensor)
@@ -214,7 +222,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
                     && numSensorsRequest!! < sensors.size){
                     askBeforeDeleteExtraSensor()
                 }else if(activity!=null) {
-                    sensors?.let { sen -> storeSensorsToLocally(sen, activity!!) }
+                    sensors?.let { sen -> storeSensorsToLocally(sen, requireActivity()) }
                 }
 
                 dialog.dismiss()
@@ -353,7 +361,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
 
         if(detectorListStr.equals(ERROR_RESP)){
             cameras?.add(Camera("1"))
-            cameras?.let { storeSensorsToLocally(it, activity!!) }
+            cameras?.let { storeSensorsToLocally(it, requireActivity()) }
         }else {
 
             detectorListStr?.let {
@@ -379,7 +387,11 @@ class SensorsFragment : Fragment(), OnAdapterListener {
 
     private fun setFilter() {
         val filter = IntentFilter("handle.read.data")
-        activity?.registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity?.registerReceiver(usbReceiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
+        } else {
+            activity?.registerReceiver(usbReceiver, filter)
+        }
     }
 
     private val usbReceiver = object : BroadcastReceiver() {

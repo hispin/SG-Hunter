@@ -18,7 +18,11 @@ import androidx.core.app.NotificationCompat
 import com.felhr.usbserial.UsbSerialDevice
 import com.felhr.usbserial.UsbSerialInterface
 import com.sensoguard.hunter.R
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.CHECK_AVAILABLE_KEY
+import com.sensoguard.hunter.global.HANDLE_READ_DATA_EXCEPTION
+import com.sensoguard.hunter.global.READ_DATA_KEY
+import com.sensoguard.hunter.global.STOP_READ_DATA_KEY
+import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
 
 
 class ServiceConnectSensor : Service() {
@@ -109,7 +113,11 @@ class ServiceConnectSensor : Service() {
         filter.addAction(HANDLE_READ_DATA_EXCEPTION)
         filter.addAction(STOP_READ_DATA_KEY)
         filter.addAction(ACTION_USB_PERMISSION)
-        registerReceiver(usbReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(usbReceiver, filter)
+        }
     }
 
     //try to find devices connection to usb
@@ -163,12 +171,17 @@ class ServiceConnectSensor : Service() {
 
    //request usb permission
     private fun registerUsbPermission(usbDevice: UsbDevice) {
-        val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
-        //val filter = IntentFilter(ACTION_USB_PERMISSION)
-        //filter.addAction("handle.read.data")
-        //registerReceiver(usbPermissionReceiver, filter)
-        val mPermissionIntent = PendingIntent.getBroadcast(this, 0, Intent(ACTION_USB_PERMISSION), 0)
-        usbManager.requestPermission(usbDevice, mPermissionIntent)
+       val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+       //val filter = IntentFilter(ACTION_USB_PERMISSION)
+       //filter.addAction("handle.read.data")
+       //registerReceiver(usbPermissionReceiver, filter)
+       val mPermissionIntent = PendingIntent.getBroadcast(
+           this,
+           0,
+           Intent(ACTION_USB_PERMISSION),
+           PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+       )
+       usbManager.requestPermission(usbDevice, mPermissionIntent)
 //        connection = manager?.openDevice(usbDevice)
 //        if(connection==null){
 //            Toast.makeText(this,"connection failed",Toast.LENGTH_SHORT).show()
@@ -176,7 +189,7 @@ class ServiceConnectSensor : Service() {
 //            Toast.makeText(this,"connection success",Toast.LENGTH_SHORT).show()
 //            readData()
 //        }
-    }
+   }
 
 
 //    private var usbPermissionReceiver: BroadcastReceiver = object : BroadcastReceiver() {
