@@ -274,27 +274,10 @@ class MainActivity : LogInActivity() {
     }
 
 
-    //    private fun setOnClickSensorTable() {
-//        clickConsCamerasTable?.setOnClickListener {
-//            val inn=Intent(this,MyScreensActivity::class.java)
-//            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY,0)
-//            inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//            startActivity(inn)
-//        }
-//    }
-//    private fun setOnClickMapTable() {
-//        clickConsMap?.setOnClickListener {
-//            val inn = Intent(this, MyScreensActivity::class.java)
-//            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 0)
-//            inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//            startActivity(inn)
-//        }
-//    }
-
     private fun setOnClickConfigTable() {
         clickConsConfiguration?.setOnClickListener {
             val inn = Intent(this, MyScreensActivity::class.java)
-            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1)
+            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 0)
             inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(inn)
         }
@@ -303,25 +286,19 @@ class MainActivity : LogInActivity() {
     private fun setOnClickAlarmLogTable() {
         clickAlarmLog?.setOnClickListener {
             val inn = Intent(this, MyScreensActivity::class.java)
-            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 2)
+            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1)
             inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(inn)
         }
     }
 
     private fun initViews(status: Boolean) {
-        //clickConsCamerasTable = findViewById(R.id.clickConsCamerasTable)
-        //clickConsCamerasTable?.isEnabled=status
-//        clickConsMap = findViewById(R.id.clickConsMap)
-//        clickConsMap?.isEnabled = status
         clickConsConfiguration = findViewById(R.id.clickConsConfiguration)
         clickConsConfiguration?.isEnabled = status
         clickAlarmLog = findViewById(R.id.clickAlarmLog)
         clickAlarmLog?.isEnabled = status
         tvShowVer = findViewById(R.id.tvShowVer)
         if (status) {
-            //setOnClickSensorTable()
-            //setOnClickMapTable()
             setOnClickConfigTable()
             setOnClickAlarmLogTable()
         }

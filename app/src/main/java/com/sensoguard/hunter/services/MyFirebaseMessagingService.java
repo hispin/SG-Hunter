@@ -1,7 +1,11 @@
 package com.sensoguard.hunter.services;
 
+import static com.sensoguard.hunter.global.ConstsKt.AMAZON;
+import static com.sensoguard.hunter.global.ConstsKt.AZURE;
 import static com.sensoguard.hunter.global.ConstsKt.CURRENT_ITEM_TOP_MENU_KEY;
 import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
+import static com.sensoguard.hunter.global.ConstsKt.LOGIN_TYPE_KEY;
+import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getStringInPreference;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -84,7 +88,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         String title = Objects.requireNonNull(myIntent.getExtras()).getString("title");
-        String message = Objects.requireNonNull(myIntent.getExtras()).getString("message");
+
+
+        String message = "";
+        String result = getStringInPreference(ctx, LOGIN_TYPE_KEY, "-1");
+        if (result != null) {
+            if (result.equals(AZURE)) {
+                message = Objects.requireNonNull(myIntent.getExtras()).getString("message");
+            } else if (result.equals(AMAZON)) {
+                String cameraName = myIntent.getStringExtra("cameraName");
+                message = "Event from " + cameraName;
+            }
+        }
+
 
         //add extras data that accepted from push
         intent.putExtras(myIntent);

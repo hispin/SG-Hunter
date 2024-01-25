@@ -195,7 +195,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
         if (activity == null) {
             return
         }
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
     }
 
     override fun onStop() {

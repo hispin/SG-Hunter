@@ -181,14 +181,10 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
         //relate the tab layout to viewpager because we need to add the icons
         tabs.setupWithViewPager(vPager)
-        //tabs.getTabAt(0)?.icon = ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_sensor_tab)
-//        tabs.getTabAt(0)?.icon =
-//            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_map_tab)
         tabs.getTabAt(0)?.icon =
             ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_config_tab)
         tabs.getTabAt(1)?.icon =
             ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_alarm_log_tab)
-
         viewPager.currentItem = currentItemTopMenu
 
 
@@ -198,9 +194,6 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     override fun onStart() {
         super.onStart()
         setFilter()
-        //shut down the alarm media if needed
-//        val serviceIntent = Intent(this, MediaService::class.java)
-//        stopService(serviceIntent)
     }
 
     override fun onStop() {
