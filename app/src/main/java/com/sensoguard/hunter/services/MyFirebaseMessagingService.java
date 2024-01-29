@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.services;
 
+import static com.sensoguard.hunter.global.CommonKt.checkBackgroundNotifRestrict;
 import static com.sensoguard.hunter.global.ConstsKt.AMAZON;
 import static com.sensoguard.hunter.global.ConstsKt.AZURE;
 import static com.sensoguard.hunter.global.ConstsKt.CURRENT_ITEM_TOP_MENU_KEY;
@@ -58,10 +59,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //nhMessage = remoteMessage.getData().values().iterator().next();
         Intent myIntent = remoteMessage.toIntent();
 
-        if (myIntent != null) {
-
-//                int[] arr= new int[1];
-//                arr[1]=5;
+        boolean enabledAlarms = checkBackgroundNotifRestrict(this);
+        if (myIntent != null && enabledAlarms) {
 
             //parse extra intent to alarm and add it to locally
             AlarmParsing.getInstance().parsePushToAlarm(myIntent).addAlarmToHistory(this);

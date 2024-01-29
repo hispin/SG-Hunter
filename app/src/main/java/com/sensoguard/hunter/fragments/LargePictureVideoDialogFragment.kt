@@ -45,6 +45,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
     private var ibLargeImgShare: AppCompatImageButton? = null
     private var ibSaveLargeImgShare: AppCompatImageButton? = null
     private var pbLoadPhoto: ProgressBar? = null
+    var videoManager: VideoManager? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,7 +80,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
     override fun onPause() {
         super.onPause()
         if (actionType == ACTION_VIDEO_KEY) {
-            VideoManager(this).releasePlayer()
+            videoManager?.releasePlayer()
         }
     }
 
@@ -220,7 +221,10 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
             pbLoadPhoto?.visibility = View.VISIBLE
             ivMyVideo?.visibility = View.VISIBLE
             ivMyCaptureImage?.visibility = View.GONE
-            imgPath?.let { VideoManager(this).initializePlayer(ivMyVideo, requireActivity(), it) }
+            imgPath?.let {
+                videoManager = VideoManager(this)
+                videoManager?.initializePlayer(ivMyVideo, requireActivity(), it)
+            }
         }
     }
 

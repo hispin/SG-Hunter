@@ -3,6 +3,7 @@ package com.sensoguard.hunter.global
 import android.content.Context
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.app.NotificationManagerCompat
 import com.sensoguard.hunter.R
 
 fun ToastNotify(notificationMessage: String?, context: Context) {
@@ -29,4 +30,12 @@ fun showToast(context: Context?, msg: String) {
         Toast.LENGTH_LONG
     )
         .show()
+}
+
+/**
+ * check if the app has battery restriction of accepting notifications in background
+ */
+fun checkBackgroundNotifRestrict(context: Context) = when {
+    NotificationManagerCompat.from(context).areNotificationsEnabled() -> true
+    else -> false
 }

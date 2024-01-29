@@ -1,7 +1,6 @@
 package com.sensoguard.hunter.fragments
 
 import android.app.Activity
-import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -48,6 +47,7 @@ import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
 import com.sensoguard.hunter.global.RESULT_VALIDATION_EMAIL_ACTION
 import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
 import com.sensoguard.hunter.global.VALIDATION_EMAIL_RESULT
+import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
 import com.sensoguard.hunter.global.getBooleanInPreference
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
@@ -80,20 +80,13 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private var togChangeBackgroundRestrict: ToggleButton? = null
     private var btnDefault: AppCompatButton? = null
 
-    //private var ivSelectLanguage: AppCompatImageView?=null
     private var constLangView: ConstraintLayout? = null
     private var languageValue: TextView? = null
     private var listener: OnFragmentListener? = null
     private var rgAlarmDisplay: RadioGroup? = null
 
-    //private var etMailAddress: AppCompatEditText? = null
-    //private var etPassword: AppCompatEditText? = null
-    //private var etMailServer: AppCompatEditText? = null
-    //private var etMailServerPort: AppCompatEditText? = null
-    //private var rgIsSSL: RadioGroup? = null
     private var pbValidationEmail: ProgressBar? = null
 
-    //private var btnSave: AppCompatButton? = null
     private var btnEditUser: AppCompatButton? = null
 
 
@@ -106,7 +99,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         }
     }
 
-    //(activity,ALARM_FLICKERING_DURATION_KEY,ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -126,15 +118,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             setBooleanInPreference(activity, IS_VIBRATE_WHEN_ALARM_KEY, isChecked)
         }
 
-//        ibSatelliteMode = view.findViewById(com.sensoguard.hunter.R.id.ibSatelliteMode)
-//        ibSatelliteMode?.setOnClickListener{
-//            setMapSatellite()
-//        }
-//
-//        ibNormalMode = view.findViewById(com.sensoguard.hunter.R.id.ibNormalMode)
-//        ibNormalMode?.setOnClickListener{
-//            setMapNormal()
-//        }
         val mapType = getIntInPreference(activity, MAP_SHOW_VIEW_TYPE_KEY, -1)
         if (mapType == MAP_SHOW_NORMAL_VALUE) {
             setMapNormal()
@@ -186,7 +169,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
 
         togChangeBackgroundRestrict = view.findViewById(R.id.togChangeBackgroundRestrict)
-        togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict()
+        togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict(requireActivity())
         togChangeBackgroundRestrict?.setOnCheckedChangeListener { buttonView, isChecked ->
             openBatterySettings()
         }
@@ -350,7 +333,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
                     resources.getString(com.sensoguard.hunter.R.string.no_selected_sound)
             }
         } else if (requestCode == CODE_REQUEST) {
-            togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict()
+            togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict(requireActivity())
         }
     }
 
@@ -626,21 +609,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
     }
 
-    //check if the app has battery restriction of accepting notifications in background
-    private fun checkBackgroundNotifRestrict(): Boolean {
-
-        //check if the system restrict accepting notifications in background
-        val activityManager: ActivityManager? =
-            activity?.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val msg = activityManager?.isBackgroundRestricted
-            if (msg != null && msg) {
-                // "restricted"
-                return false
-            }
-        }
-        return true
-    }
 
     private fun openBatterySettings() {
         val intent = Intent(
