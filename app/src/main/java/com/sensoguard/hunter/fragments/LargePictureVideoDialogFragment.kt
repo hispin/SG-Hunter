@@ -1,12 +1,15 @@
 package com.sensoguard.hunter.fragments
 
 import android.app.Dialog
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.MutableLiveData
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
@@ -23,14 +27,17 @@ import com.bumptech.glide.request.target.Target
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.TouchImageView
 import com.sensoguard.hunter.classes.VideoManager
+import com.sensoguard.hunter.fragments.LargePictureVideoDialogFragment.CheckDownloadComplete.Factory.isComplete
 import com.sensoguard.hunter.global.ACTION_PICTURE_KEY
 import com.sensoguard.hunter.global.ACTION_TYPE_KEY
 import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
 import com.sensoguard.hunter.global.IMAGE_PATH_KEY
 import com.sensoguard.hunter.global.IMAGE_TIME_KEY
 import com.sensoguard.hunter.global.SaveImageInGalleryTask
+import com.sensoguard.hunter.global.openDownloadedAttachment
+import com.sensoguard.hunter.global.saveVideoInForShare
+import com.sensoguard.hunter.global.saveVideoInGallery
 import com.sensoguard.hunter.global.shareImage
-import com.sensoguard.hunter.global.shareVideo
 import com.sensoguard.hunter.global.showToast
 
 
@@ -46,6 +53,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
     private var ibSaveLargeImgShare: AppCompatImageButton? = null
     private var pbLoadPhoto: ProgressBar? = null
     var videoManager: VideoManager? = null
+    var videoFileId: Long? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +69,17 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
 
         initViews(view)
 
+        //set listener to download complete for sharing
+        isComplete.observe(requireActivity()) {
+            //Log.d("testDownload","accept complete")
+            if (it && activity != null) {
+                if (videoFileId != null) {
+                    stopProgressBar()
+                    context?.let { openDownloadedAttachment(requireActivity(), videoFileId!!) }
+                }
+            }
+        }
+
 
         val bundle = arguments
         actionType = bundle?.getInt(ACTION_TYPE_KEY, -1)
@@ -69,8 +88,8 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
         if (actionType == ACTION_PICTURE_KEY) {
             showPicture(imgPath)
         } else if (actionType == ACTION_VIDEO_KEY) {
-            ibSaveLargeImgShare?.visibility = View.GONE
-            ibLargeImgShare?.visibility = View.GONE
+            ibSaveLargeImgShare?.visibility = View.VISIBLE
+            ibLargeImgShare?.visibility = View.VISIBLE
         }
         // Inflate the layout for this fragment
         return view
@@ -164,21 +183,46 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
                 }
             } else if (actionType == ACTION_VIDEO_KEY) {
                 if (activity != null) {
-                    imgPath?.let { it1 -> shareVideo(it1, requireActivity()) }
+                    pbLoadPhoto?.visibility = View.VISIBLE
+                    imgPath?.let { it1 ->
+                        Thread {
+                            //save video file for sharing
+                            videoFileId = saveVideoInForShare(requireActivity(), it1)
+                        }.start()
+
+                    }
                 }
             }
         }
 
         ibSaveLargeImgShare = view?.findViewById(R.id.ibSaveLargeImgShare)
         ibSaveLargeImgShare?.setOnClickListener {
-            val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
-            Thread {
-                val res = timeImage?.let { it1 ->
-                    SaveImageInGalleryTask(bitmap, requireContext(), it1).execute()
+            if (actionType == ACTION_PICTURE_KEY) {
+                val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
+                Thread {
+                    val res = timeImage?.let { it1 ->
+                        SaveImageInGalleryTask(bitmap, requireContext(), it1).execute()
 
-                }
-                Log.d("test_save", res.toString())
-            }.start()
+                    }
+                    //Log.d("test_save", res.toString())
+                }.start()
+            } else if (actionType == ACTION_VIDEO_KEY) {
+                Thread {
+                    imgPath?.let { it1 ->
+                        val result = saveVideoInGallery(requireActivity(), it1)
+                        var msg = ""
+                        activity?.runOnUiThread {
+                            if (result) {
+                                msg = context?.resources?.getString(R.string.save_file_success)!!
+                                showToast(context, msg)
+                            } else {
+                                msg = context?.resources?.getString(R.string.save_file_failed)!!
+                                showToast(context, msg)
+                            }
+                        }
+                    }
+                }.start()
+            }
 
         }
         pbLoadPhoto = view?.findViewById(R.id.pbLoadPhoto)
@@ -218,7 +262,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
         super.onStart()
 
         if (activity != null && actionType == ACTION_VIDEO_KEY) {
-            pbLoadPhoto?.visibility = View.VISIBLE
+            //pbLoadPhoto?.visibility = View.VISIBLE
             ivMyVideo?.visibility = View.VISIBLE
             ivMyCaptureImage?.visibility = View.GONE
             imgPath?.let {
@@ -230,5 +274,26 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
 
     override fun stopProgressBar() {
         pbLoadPhoto?.visibility = View.GONE
+    }
+
+    // class to accept indication when saving video is completed
+    class CheckDownloadComplete : BroadcastReceiver() {
+
+        companion object Factory {
+
+            var isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
+            fun create(): CheckDownloadComplete = CheckDownloadComplete()
+        }
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null) {
+                val action = intent.action
+                if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    //Log.d("testDownload","complete")
+                    isComplete.value = true
+                }
+            }
+        }
+
     }
 }

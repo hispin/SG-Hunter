@@ -1,20 +1,28 @@
 package com.sensoguard.hunter.global
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.ActivityNotFoundException
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.ImageStorageManager
+import java.io.File
 import java.io.OutputStream
 
 
@@ -75,7 +83,7 @@ fun shareVideo(imgPath: String, context: Context) {
     )
     intentToEmailFile.putExtra(
         Intent.EXTRA_SUBJECT,
-        context.resources.getString(R.string.share_title)
+        context.resources.getString(com.sensoguard.hunter.R.string.share_title)
     )
     val chooserIntent: Intent =
         Intent.createChooser(intentToEmailFile, "Send email")
@@ -107,6 +115,144 @@ fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String)
     return saved
 }
 
+/**
+ * save video
+ */
+fun saveVideoInGallery(context: Context, videoUrl: String): Boolean {
+    try {
+        val request = DownloadManager.Request(Uri.parse(videoUrl))
+        request.setTitle("download")
+        request.setDescription("your file is downloading ...")
+        request.allowScanningByMediaScanner()
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        val videoFileName = "video_" + System.currentTimeMillis() + ".mp4"
+
+        request.setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOWNLOADS,
+            videoFileName
+        )
+
+        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        val result = manager!!.enqueue(request)
+        Log.d("testSaveVideo", "result:" + result)
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return false
+    }
+    return true
+}
+
+
+/**
+ * save video for share
+ */
+fun saveVideoInForShare(context: Context, videoUrl: String): Long {
+    var result = -1L
+    try {
+        val request = DownloadManager.Request(Uri.parse(videoUrl))
+        request.setTitle("download")
+        request.setDescription("your file is downloading ...")
+        request.allowScanningByMediaScanner()
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        val videoFileName = "video_" + System.currentTimeMillis() + ".mp4"
+
+        request.setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOWNLOADS,
+            videoFileName
+        )
+
+        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        if (manager != null) {
+            result = manager.enqueue(request)
+        }
+        Log.d("testSaveVideo", "result:" + result)
+
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return -1L
+    }
+    return result
+}
+
+/**
+ * open downloaded file
+ */
+fun openDownloadedAttachment(context: Context, downloadId: Long) {
+    val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    val query = DownloadManager.Query()
+    query.setFilterById(downloadId)
+    val cursor: Cursor = downloadManager.query(query)
+    if (cursor.moveToFirst()) {
+        val downloadStatus: Int =
+            cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+        val downloadLocalUri: String =
+            cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+        val downloadMimeType: String =
+            cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_MEDIA_TYPE))
+        if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL && downloadLocalUri != null) {
+            openDownloadedAttachment(context, Uri.parse(downloadLocalUri), downloadMimeType)
+        }
+    }
+    cursor.close()
+}
+
+/**
+ * attach video file
+ */
+private fun openDownloadedAttachment(
+    context: Context,
+    attachmentUri: Uri,
+    attachmentMimeType: String
+) {
+    var attachmentUri: Uri? = attachmentUri
+    if (attachmentUri != null) {
+        // Get Content Uri.
+        if (ContentResolver.SCHEME_FILE == attachmentUri.scheme) {
+            // FileUri - Convert it to contentUri.
+            val file = File(attachmentUri.path)
+            attachmentUri = //Uri.fromFile(file)
+                FileProvider.getUriForFile(context, "${context.packageName}.contentprovider", file)
+        }
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "video/mp4g"
+        intent.putExtra(Intent.EXTRA_STREAM, attachmentUri)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(Intent.createChooser(intent, "Share video"))
+    }
+}
+
+/**
+ * attach video file
+ */
+private fun openDownloadedAttachment1(
+    context: Context,
+    attachmentUri: Uri,
+    attachmentMimeType: String
+) {
+    var attachmentUri: Uri? = attachmentUri
+    if (attachmentUri != null) {
+        // Get Content Uri.
+        if (ContentResolver.SCHEME_FILE == attachmentUri.scheme) {
+            // FileUri - Convert it to contentUri.
+            val file = File(attachmentUri.path)
+            attachmentUri = //Uri.fromFile(file)
+                FileProvider.getUriForFile(context, "${context.packageName}.contentprovider", file)
+        }
+        val openAttachmentIntent = Intent(Intent.ACTION_VIEW)
+        openAttachmentIntent.setDataAndType(attachmentUri, attachmentMimeType)
+        openAttachmentIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        try {
+            context.startActivity(openAttachmentIntent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
+    }
+}
+
 class SaveImageInGalleryTask(val finalBitmap: Bitmap, val context: Context, val imageName: String) :
     AsyncTask<Void, Void, Boolean>() {
 
@@ -118,9 +264,15 @@ class SaveImageInGalleryTask(val finalBitmap: Bitmap, val context: Context, val 
     override fun onPostExecute(result: Boolean?) {
         super.onPostExecute(result)
         if (result != null && result) {
-            showToast(context, context.resources.getString(R.string.save_file_success))
+            showToast(
+                context,
+                context.resources.getString(com.sensoguard.hunter.R.string.save_file_success)
+            )
         } else {
-            showToast(context, context.resources.getString(R.string.save_file_failed))
+            showToast(
+                context,
+                context.resources.getString(com.sensoguard.hunter.R.string.save_file_failed)
+            )
         }
     }
 }
