@@ -1,4 +1,4 @@
-//package com.sensoguard.hunter.services
+package com.sensoguard.hunter.services//package com.sensoguard.hunter.services
 //
 //import android.app.NotificationChannel
 //import android.app.NotificationManager
