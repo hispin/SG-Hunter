@@ -19,18 +19,16 @@ import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.sensoguard.hunter.classes.ImageStorageManager
 import java.io.File
 import java.io.OutputStream
 
 
 //convert bitmap to bitmap discriptor
-fun convertBitmapToBitmapDiscriptor(context: Context, resId: Int): BitmapDescriptor? {
-    val bitmap = context.let { getBitmapFromVectorDrawable(it, resId) }
-    return BitmapDescriptorFactory.fromBitmap(bitmap)
-}
+//fun convertBitmapToBitmapDiscriptor(context: Context, resId: Int): BitmapDescriptor? {
+//    val bitmap = context.let { getBitmapFromVectorDrawable(it, resId) }
+//    return BitmapDescriptorFactory.fromBitmap(bitmap)
+//}
 
 //convert resId to bitmap
 fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap? {

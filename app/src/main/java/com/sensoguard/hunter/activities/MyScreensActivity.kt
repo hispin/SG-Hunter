@@ -26,6 +26,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.GeneralItemMenu
+import com.sensoguard.hunter.classes.NonSwipeAbleViewPager
 import com.sensoguard.hunter.fragments.AlarmLogFragment
 import com.sensoguard.hunter.fragments.ConfigurationFragment
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
@@ -48,7 +49,6 @@ import com.sensoguard.hunter.global.setIntInPreference
 import com.sensoguard.hunter.global.setLongInPreference
 import com.sensoguard.hunter.global.setStringInPreference
 import com.sensoguard.hunter.interfaces.OnFragmentListener
-import kotlinx.android.synthetic.main.activity_my_screens.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -63,6 +63,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private lateinit var collectionPagerAdapter: CollectionPagerAdapter
     private lateinit var viewPager: ViewPager
     private var currentItemTopMenu = 0
+    private var vPager: NonSwipeAbleViewPager?=null
     //private var togChangeStatus: ToggleButton? = null
 
 
@@ -76,6 +77,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
         setContentView(R.layout.activity_my_screens)
 
+        init()
 
         //store locally default values of configuration
         setConfigurationDefault()
@@ -136,6 +138,8 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
 
     private fun init() {
+
+        vPager=findViewById(R.id.vPager)
 
         configureActionBar()
 

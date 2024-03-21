@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        package="com.sensoguard.hunter">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -93,9 +92,7 @@
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="AIzaSyC7lrolhXNPEeiNJuBccG6LgOwGRrBRQos" /> <!-- TODO restrict the api key -->
-        <service
-                android:name=".services.ServiceFindLocation"
-                android:exported="false" />
+
         <service
                 android:name=".services.RegistrationIntentService"
                 android:exported="false" /> <!-- <service -->
@@ -108,8 +105,7 @@
         <service
                 android:name=".services.MyFirebaseMessagingService"
                 android:directBootAware="true"
-                android:exported="false"
-                tools:targetApi="n">
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
