@@ -28,6 +28,7 @@ import com.sensoguard.hunter.classes.ImageStorageManager
 import com.sensoguard.hunter.classes.SystemSort
 import com.sensoguard.hunter.global.*
 import com.sensoguard.hunter.interfaces.OnAdapterListener
+import com.sensoguard.hunter.interfaces.OnFragmentListener
 import java.util.*
 
 
@@ -73,7 +74,17 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
     var mySortedCameras: ArrayList<SystemSort>? = null
     var fromCalendar: Calendar? = null
     var toCalendar: Calendar? = null
+    private var listener: OnFragmentListener?=null
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentListener) {
+            listener=context
+        } else {
+            throw RuntimeException("$context must implement OnAdapterListener")
+        }
+    }
 
 
 
@@ -119,16 +130,9 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                     }
                     if (type == 1) {
                         alarm.let { openLargePictureDialog(it) }
+                        //share option
                     } else if (type == 2) {
-                        //alarm.myBitmap?.let { shareImage(it) }
-                        try {
-                            alarm.myBitmap?.let { shareImage(it) }
-                        } catch (ex: java.lang.Exception) {
-                            ex.printStackTrace()
-                            //sendEmail("cause"+ex.cause.toString()+" ****message "+ex.message)
-                            if (activity != null)
-                                showToast(requireActivity(), resources.getString(R.string.error))
-                        }
+                        shareImageOrVideo(alarm)
                     }
                 }
             }
@@ -139,6 +143,15 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
         alarmAdapter?.notifyDataSetChanged()
 
+    }
+
+    /**
+     * check if it is video
+     */
+    private fun isVideo(alarm: Alarm): Boolean {
+        return alarm.imgsPath != null && (alarm.imgsPath!!.endsWith("mp4") || alarm.imgsPath!!.endsWith(
+            "mov"
+        ))
     }
 
     private fun initAlarmsAdapter() {
@@ -171,19 +184,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                     if (type == 1) {
                         alarm.let { openLargePictureDialog(it) }
                     } else if (type == 2) {
-                        try {
-                            alarm.myBitmap?.let { shareImage(it, requireActivity()) }
-                        } catch (ex: java.lang.Exception) {
-                            ex.printStackTrace()
-                            //sendEmail("cause"+ex.cause.toString()+" ****message "+ex.message)
-                            showToast(activity, resources.getString(R.string.error))
-//                            Toast.makeText(
-//                                activity,
-//                                resources.getString(R.string.no_photo),
-//                                Toast.LENGTH_LONG
-//                            )
-//                                .show()
-                        }
+                        shareImageOrVideo(alarm)
                     }
                 }
             }
@@ -194,6 +195,24 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
         alarmAdapter?.notifyDataSetChanged()
 
+    }
+
+    /**
+     * share video or picture
+     */
+    private fun shareImageOrVideo(alarm: Alarm) {
+        if (isVideo(alarm)) {
+            listener?.onSaveForShareVideo(alarm)
+
+        } else {
+            try {
+                alarm.myBitmap?.let { shareImage(it, requireActivity()) }
+            } catch (ex: java.lang.Exception) {
+                ex.printStackTrace()
+                //sendEmail("cause"+ex.cause.toString()+" ****message "+ex.message)
+                showToast(activity, resources.getString(R.string.error))
+            }
+        }
     }
 
     private fun sendEmail(msg: String) {
@@ -539,7 +558,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 //            return
 //        }
 
-        val fr = LargePictureVideoDialogFragment()
+        val fr=LargePictureVideoDialogFragment(listener)
 
         //deliver selected camera to continue add data
         //val cameraStr = convertToGson(camera)

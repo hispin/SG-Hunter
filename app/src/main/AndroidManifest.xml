@@ -153,10 +153,11 @@
                     android:value="@integer/google_play_services_version" />
         </provider>
 
+      
         <receiver
-                android:name=".fragments.LargePictureVideoDialogFragment$CheckDownloadComplete"
-                android:enabled="true"
-                android:exported="true">
+            android:name=".activities.MyScreensActivity$CheckDownloadComplete"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
             </intent-filter>

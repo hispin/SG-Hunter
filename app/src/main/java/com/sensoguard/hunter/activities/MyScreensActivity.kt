@@ -3,6 +3,7 @@ package com.sensoguard.hunter.activities
 //import com.sensoguard.hunter.services.MediaService
 import android.Manifest
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -17,14 +18,17 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
+import android.widget.ProgressBar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.sensoguard.hunter.R
+import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.classes.NonSwipeAbleViewPager
 import com.sensoguard.hunter.fragments.AlarmLogFragment
@@ -43,6 +47,8 @@ import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
 import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.openDownloadedAttachment
+import com.sensoguard.hunter.global.saveVideoInForShare
 import com.sensoguard.hunter.global.setAppLanguage
 import com.sensoguard.hunter.global.setBooleanInPreference
 import com.sensoguard.hunter.global.setIntInPreference
@@ -64,10 +70,33 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private lateinit var viewPager: ViewPager
     private var currentItemTopMenu = 0
     private var vPager: NonSwipeAbleViewPager?=null
+    var videoFileId: Long?=null
     //private var togChangeStatus: ToggleButton? = null
+    var pbLoadPhoto: ProgressBar?=null
 
 
     val TAG = "MyScreensActivity"
+
+
+    // class to accept indication when saving video is completed
+    class CheckDownloadComplete : BroadcastReceiver() {
+
+        companion object Factory {
+
+            var isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
+            fun create(): CheckDownloadComplete=CheckDownloadComplete()
+        }
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent != null) {
+                val action=intent.action
+                if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    isComplete.value=true
+                }
+            }
+        }
+
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +122,22 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     }
 
+
+    /**
+     * set observers
+     */
+    private fun setListener() {
+        //set listener to download complete for sharing
+        CheckDownloadComplete.isComplete.observe(this) {
+            //Log.d("testDownload","accept complete")
+            if (it) {
+                pbLoadPhoto?.visibility=View.GONE
+                if (videoFileId != null) {
+                    openDownloadedAttachment(this, videoFileId!!)
+                }
+            }
+        }
+    }
 
     //store locally default values of configuration
     private fun setConfigurationDefault() {
@@ -140,10 +185,13 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private fun init() {
 
         vPager=findViewById(R.id.vPager)
+        pbLoadPhoto=findViewById(R.id.pbLoadPhoto)
 
         configureActionBar()
 
         configTabs()
+
+        setListener()
 
     }
 
@@ -382,6 +430,26 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         setAppLanguage(this, GeneralItemMenu.selectedItem)
         this.finish()
         this.startActivity(intent)
+    }
+
+
+    override fun onSaveForShareVideo(alarm: Alarm) {
+        pbLoadPhoto?.visibility=View.VISIBLE
+        alarm.imgsPath?.let { it1 ->
+            Thread {
+                //save video file for sharing
+                videoFileId=saveVideoInForShare(this, it1)
+            }.start()
+        }
+    }
+
+    override fun onSaveForShareVideo(imgPath: String) {
+        pbLoadPhoto?.visibility=View.VISIBLE
+        Thread {
+            //save video file for sharing
+            videoFileId=saveVideoInForShare(this, imgPath)
+        }.start()
+
     }
 }
 

@@ -1,10 +1,7 @@
 package com.sensoguard.hunter.fragments
 
+//import com.sensoguard.hunter.fragments.LargePictureVideoDialogFragment.CheckDownloadComplete.Factory.isComplete
 import android.app.Dialog
-import android.app.DownloadManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
@@ -18,30 +15,29 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.MutableLiveData
 import androidx.media3.ui.PlayerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.sensoguard.hunter.R
+import com.sensoguard.hunter.activities.MyScreensActivity.CheckDownloadComplete.Factory.isComplete
 import com.sensoguard.hunter.classes.TouchImageView
 import com.sensoguard.hunter.classes.VideoManager
-import com.sensoguard.hunter.fragments.LargePictureVideoDialogFragment.CheckDownloadComplete.Factory.isComplete
 import com.sensoguard.hunter.global.ACTION_PICTURE_KEY
 import com.sensoguard.hunter.global.ACTION_TYPE_KEY
 import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
 import com.sensoguard.hunter.global.IMAGE_PATH_KEY
 import com.sensoguard.hunter.global.IMAGE_TIME_KEY
 import com.sensoguard.hunter.global.SaveImageInGalleryTask
-import com.sensoguard.hunter.global.openDownloadedAttachment
-import com.sensoguard.hunter.global.saveVideoInForShare
 import com.sensoguard.hunter.global.saveVideoInGallery
 import com.sensoguard.hunter.global.shareImage
 import com.sensoguard.hunter.global.showToast
+import com.sensoguard.hunter.interfaces.OnFragmentListener
 
 
-class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback {
+class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : DialogFragment(),
+    VideoManager.Callback {
 
     private var timeImage: String? = null
     private var imgPath: String? = null
@@ -71,13 +67,7 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
 
         //set listener to download complete for sharing
         isComplete.observe(requireActivity()) {
-            //Log.d("testDownload","accept complete")
-            if (it && activity != null) {
-                if (videoFileId != null) {
-                    stopProgressBar()
-                    context?.let { openDownloadedAttachment(requireActivity(), videoFileId!!) }
-                }
-            }
+            stopProgressBar()
         }
 
 
@@ -182,15 +172,10 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
                     showToast(activity, resources.getString(R.string.error))
                 }
             } else if (actionType == ACTION_VIDEO_KEY) {
-                if (activity != null) {
-                    pbLoadPhoto?.visibility = View.VISIBLE
-                    imgPath?.let { it1 ->
-                        Thread {
-                            //save video file for sharing
-                            videoFileId = saveVideoInForShare(requireActivity(), it1)
-                        }.start()
 
-                    }
+                if (imgPath != null) {
+                    pbLoadPhoto?.visibility = View.VISIBLE
+                    listener1?.onSaveForShareVideo(imgPath!!)
                 }
             }
         }
@@ -276,24 +261,5 @@ class LargePictureVideoDialogFragment : DialogFragment(), VideoManager.Callback 
         pbLoadPhoto?.visibility = View.GONE
     }
 
-    // class to accept indication when saving video is completed
-    class CheckDownloadComplete : BroadcastReceiver() {
 
-        companion object Factory {
-
-            var isComplete: MutableLiveData<Boolean> = MutableLiveData(false)
-            fun create(): CheckDownloadComplete = CheckDownloadComplete()
-        }
-
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent != null) {
-                val action = intent.action
-                if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
-                    //Log.d("testDownload","complete")
-                    isComplete.value = true
-                }
-            }
-        }
-
-    }
 }
