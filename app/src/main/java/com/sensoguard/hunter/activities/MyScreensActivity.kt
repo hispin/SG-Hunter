@@ -451,6 +451,10 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         }.start()
 
     }
+
+    override fun onBack() {
+        onBackPressed()
+    }
 }
 
 //save the custom alarm file in alarms system

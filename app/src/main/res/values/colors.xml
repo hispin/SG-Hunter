@@ -42,4 +42,6 @@
     <color name="blue">#0000FF</color>
     <color name="gray14">#737272</color>
     <color name="red4">#b40909</color>
+    <color name="mdtp_transparent_black">#7f000000</color>
+    <color name="mx_White">#ffffff</color>
 </resources>

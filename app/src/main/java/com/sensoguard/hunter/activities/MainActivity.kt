@@ -12,8 +12,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.util.MonthDisplayHelper
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -30,6 +33,7 @@ import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
 import com.sensoguard.hunter.global.UserSession
+import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
 import com.sensoguard.hunter.global.getAppLanguage
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getTagsFromLocally
@@ -42,6 +46,7 @@ import com.sensoguard.hunter.global.setAppLanguage
 
 class MainActivity : LogInActivity() {
 
+    private var consDisableNotification: ConstraintLayout?=null
     private var dialog: AlertDialog? = null
     private val TAG = "MainActivity"
     private val CODE_REQUEST: Int = 1
@@ -52,6 +57,7 @@ class MainActivity : LogInActivity() {
     private var clickConsConfiguration: ConstraintLayout? = null
     private var clickAlarmLog: ConstraintLayout? = null
     private var tvShowVer: TextView? = null
+    private var togChangeBackgroundRestrict:ToggleButton?=null
 
 //    @Override
 //    protected override fun attachBaseContext(newBase:Context) {
@@ -67,6 +73,8 @@ class MainActivity : LogInActivity() {
         val verName = packageManager.getPackageInfo(packageName, 0).versionName
         val verTitle = "version:$verName"
         tvShowVer?.text = verTitle
+
+        configureNotificationStatus()
 
     }
 
@@ -85,6 +93,11 @@ class MainActivity : LogInActivity() {
 
         setContentView(R.layout.activity_main)
 
+        consDisableNotification=findViewById(R.id.consDisableNotification)
+        togChangeBackgroundRestrict=findViewById(R.id.togChangeBackgroundRestrict)
+        togChangeBackgroundRestrict?.setOnCheckedChangeListener { buttonView, isChecked ->
+            openAppSettings()
+        }
         //clearAllNotifications()
 
         //hide unwanted badge of app icon
@@ -102,13 +115,21 @@ class MainActivity : LogInActivity() {
             checkBackgroundNotifRestrict()
         }
 
+    }
 
-        //start repeated timeout to scan alarms from incoming emails
-//        val isLoadApp = intent.getBooleanExtra(IS_LOAD_APP, false)
-//        if (isLoadApp) {
-//            //startServiceRepeat()
-//            startJobServiceRepeat()
-//        }
+    /**
+     * if notification is disable then show warning and disable activities
+     */
+    private fun configureNotificationStatus() {
+        if(checkBackgroundNotifRestrict(this)){
+            consDisableNotification?.visibility=GONE
+            clickAlarmLog?.isEnabled=true
+            clickConsConfiguration?.isEnabled = true
+        }else{
+            consDisableNotification?.visibility=VISIBLE
+            clickAlarmLog?.isEnabled=false
+            clickConsConfiguration?.isEnabled = false
+        }
     }
 
 
@@ -170,7 +191,7 @@ class MainActivity : LogInActivity() {
             .setCancelable(false)
         builder.setPositiveButton(yes) { dialog, which ->
             dialog.dismiss()
-            openBatterySettings()
+            openAppSettings()
         }
 
 
@@ -183,8 +204,11 @@ class MainActivity : LogInActivity() {
         alert.show()
     }
 
-    //showing the settings of battery
-    private fun openBatterySettings() {
+
+    /**
+     * showing the settings of application
+     */
+    private fun openAppSettings() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)

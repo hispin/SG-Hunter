@@ -145,6 +145,8 @@
     <string name="save_file_failed">Failed to save file</string>
     <string name="verification_failed">The verification has been failed</string>
     <string name="share_title">Send video from SensoGuard</string>
+    <string name="transmain__abb_upgrade_host_disable_page_notice" translatable="false">Sorry, only the app admin can buy credits or subscribe</string>
+    <string name="notification_disabled">Please enable notification</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

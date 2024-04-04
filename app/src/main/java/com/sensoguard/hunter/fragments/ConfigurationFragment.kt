@@ -333,7 +333,12 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
                     resources.getString(com.sensoguard.hunter.R.string.no_selected_sound)
             }
         } else if (requestCode == CODE_REQUEST) {
-            togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict(requireActivity())
+
+            val status = checkBackgroundNotifRestrict(requireActivity())
+            togChangeBackgroundRestrict?.isChecked = status
+            if(!status){
+                listener?.onBack()
+            }
         }
     }
 

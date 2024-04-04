@@ -94,5 +94,9 @@
         <item name="android:inputType">textEmailAddress</item>
     </style>
 
+    <style name="profile_lbl1_black" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@android:color/background_dark</item>
+        <item name="android:textSize">@dimen/widget_text_size</item>
+    </style>
 
 </resources>

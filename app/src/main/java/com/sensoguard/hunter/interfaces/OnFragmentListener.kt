@@ -7,4 +7,6 @@ interface OnFragmentListener {
     fun onSaveForShareVideo(alarm: Alarm)
 
     fun onSaveForShareVideo(imgPath: String)
+
+    fun onBack()
 }

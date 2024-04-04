@@ -1,0 +1,111 @@
+<resources>
+
+
+    <dimen name="table_name_text_size">6sp</dimen>
+
+    <dimen name="text_view_regular_size">6sp</dimen>
+    <dimen name="padding_order_text">4dp</dimen>
+    <!-- ODEDA zero padding in palette -->
+
+
+    <dimen name="label_margin_end">6dp</dimen>
+
+
+    <!-- sw320dp-hdpi -->
+    <dimen name="activity_horizontal_margin">12dp</dimen>
+    <dimen name="big_indicator_text">18sp</dimen>
+    <dimen name="indicator_text">16sp</dimen>
+    <dimen name="widget_text_size">10sp</dimen>
+    <dimen name="indicator_text_small">10sp</dimen>
+    <dimen name="text_very_small">9sp</dimen>
+
+    <dimen name="margins_icon_top">20dp</dimen>
+    <dimen name="margins_icon_middle">6dp</dimen>
+    <dimen name="margins_light_theme">3dp</dimen>
+    <dimen name="stroke">1dp</dimen>
+    <dimen name="stroke_history">0.5dp</dimen>
+    <dimen name="divider">0.5dp</dimen>
+
+
+    <dimen name="icon_height_with_padding">30dp</dimen>
+    <dimen name="padding_super_small">4dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">9dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+    <dimen name="size_icon">100dp</dimen>
+    <dimen name="corner_nonclickable_item">2dp</dimen>
+
+
+    <dimen name="contact_picture_sticky_height">150dp</dimen>
+    <dimen name="player_full_height">120dp</dimen>
+    <dimen name="contact_sticky_total">190dp</dimen>
+
+    <dimen name="alert_width">250dp</dimen>
+    <dimen name="alert_height">38dp</dimen>
+    <dimen name="alert_button_height">34dp</dimen>
+
+    <dimen name="player_half_height">60dp</dimen>
+    <dimen name="button_onmiddle_size">75dp</dimen>
+    <dimen name="button_onright_size">85dp</dimen>
+    <dimen name="margins_icon_bottom_3">95dp</dimen>
+
+
+    <!-- custom tags! -->
+    <dimen name="label_title_size">14sp</dimen>
+    <dimen name="padding_label_view">10dp</dimen>
+    <dimen name="radius_tag_shape">5dp</dimen>
+    <dimen name="inside_tag_shape">1.3dp</dimen>
+    <dimen name="orange_trial_banner">1dp</dimen>
+
+
+    <dimen name="sub_cell_desc_title_text_size">18sp</dimen>
+    <dimen name="sub_cell_price_text_size">16sp</dimen>
+    <dimen name="sub_cell_side_padding_large_cell">24dp</dimen>
+    <dimen name="sub_cell_action_top_padding_large_cell">18dp</dimen>
+    <dimen name="sub_cell_action_bottom_padding_large_cell">18dp</dimen>
+    <dimen name="sub_cell_rotate_text_size">12sp</dimen>
+    <!-- Oded Changed-->
+    <dimen name="sub_cell_bolt_text_size_large_cell">14sp</dimen>
+    <dimen name="sub_cell_bolt_text_size_med_cell">12sp</dimen>
+    <dimen name="sub_cell_margin_divider_size">10dp</dimen>
+    <dimen name="sub_cell_slanted_layout_size">80dp</dimen>
+    <dimen name="sub_cell_slanted_layout_length_size">40dp</dimen>
+
+    <dimen name="table_name_padding_side_size">10dp</dimen>
+
+
+    <dimen name="free_trial_message_text_size">15sp</dimen>
+
+    <dimen name="dialog_sms_reload_action_button_text">15sp</dimen>
+
+
+    <dimen name="cell_table_name_margin_top_bottom">4dp</dimen>
+    <dimen name="cell_table_name_margin_left_right">2dp</dimen>
+
+    <dimen name="credit_bank">30dp</dimen>
+    <dimen name="tap_any_cell">8dp</dimen>
+
+    <!--OdedA check if need to add to all dimens files -->
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_normal">16dp</dimen>
+    <dimen name="margin_large">32dp</dimen>
+
+    <dimen name="tile_height">300dp</dimen>
+
+    <!--Frame Button -->
+    <dimen name="frame_button_radius">3dp</dimen>
+    <dimen name="frame_button_stroke">3dp</dimen>
+    <dimen name="frame_blue_auth_radius">16dp</dimen>
+
+    <dimen name="mx_button_radius">5dp</dimen>
+
+    <!--Selected Button -->
+    <dimen name="selected_button_stroke">4dp</dimen>
+    <dimen name="indicator_size">16dp</dimen>
+
+    <!--DELETE - JUST TEST -->
+    <dimen name="max_padding">64dp</dimen>
+    <dimen name="spinner_height">44dp</dimen>
+    <dimen name="splash_text_size">54sp</dimen>
+
+</resources>
