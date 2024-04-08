@@ -101,6 +101,7 @@
     <string name="select_all">Select all</string>
     <string name="select">Select</string>
     <string name="do_you_realy_want_delete_selected_alarm">Do you realy want to delete selected alarms?</string>
+    <string name="do_you_realy_want_clear_data">Do you realy want to clear data ?</string>
     <string name="no_selected_alarms">No selected alarm</string>
     <string name="selected_alarms">selected alarm</string>
     <string name="reset">reset</string>
@@ -147,6 +148,7 @@
     <string name="share_title">Send video from SensoGuard</string>
     <string name="transmain__abb_upgrade_host_disable_page_notice" translatable="false">Sorry, only the app admin can buy credits or subscribe</string>
     <string name="notification_disabled">Please enable notification</string>
+    <string name="clear_data">Clear Data</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

@@ -99,6 +99,7 @@
     <string name="select_all">בחר הכל</string>
     <string name="select">בחר</string>
     <string name="do_you_realy_want_delete_selected_alarm">אם אתה בטוח שאתה מעוניין למחוק התראות נבחרות?</string>
+    <string name="do_you_realy_want_clear_data">אם אתה בטוח שאתה מעוניין לנקות נתונים ?</string>
     <string name="no_selected_alarms">אין התראות שנבחרו</string>
     <string name="selected_alarms">התראות נבחרו</string>
     <string name="reset">איפוס</string>
@@ -144,6 +145,7 @@
     <string name="verification_failed">האימות נכשל</string>
     <string name="share_title">שליחת וידאו מסנסוגארד</string>
     <string name="notification_disabled">בבקשה הפעל התראה</string>
+    <string name="clear_data">נקה נתונים</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

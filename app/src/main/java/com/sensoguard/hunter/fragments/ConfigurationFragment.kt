@@ -1,8 +1,11 @@
 package com.sensoguard.hunter.fragments
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.RingtoneManager
@@ -13,6 +16,7 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ListPopupWindow
 import android.widget.ProgressBar
@@ -88,6 +92,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private var pbValidationEmail: ProgressBar? = null
 
     private var btnEditUser: AppCompatButton? = null
+    private var btnClearData:Button?=null
 
 
     override fun onAttach(context: Context) {
@@ -255,30 +260,61 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             (activity as MyScreensActivity).openLogInDialog()
         }
 
+        btnClearData= view?.findViewById(R.id.btnClearData)
+        btnClearData?.setOnClickListener {
+            showClearDtaDialog()
+        }
+
         //setMyEmailAccountFields()
 
         return view
     }
 
-//    private fun setMyEmailAccountFields() {
-//        val myEmailAccountStr = getStringInPreference(activity, EMAIL_ACCOUNT_KEY, null)
-//        myEmailAccountStr?.let {
-//            myEmailAccount = convertJsonToMyEmailAccount(myEmailAccountStr)
-//            if (myEmailAccount != null) {
-//                etMailAddress?.setText(myEmailAccount?.emailAddress)
-//                etMailServer?.setText(myEmailAccount?.emailServer)
-//                etMailServerPort?.setText(myEmailAccount?.emailPort)
-//                etPassword?.setText(myEmailAccount?.password)
-//                if (myEmailAccount?.isUseSSL != null && myEmailAccount?.isUseSSL!!) {
-//                    rgIsSSL?.check(R.id.rbYes)
-//                } else {
-//                    rgIsSSL?.check(R.id.rbNo)
-//                }
-//            }
-//
-//
-//        }
-//    }
+    /**
+     * clear data and cache
+     */
+    private fun clearAppData() {
+        try {/* clearing app data */
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                val service=(requireActivity().getSystemService(ACTIVITY_SERVICE) as ActivityManager?)
+                service?.clearApplicationUserData()
+            } else {
+                val packageName: String=requireActivity().packageName
+                val runtime=Runtime.getRuntime()
+                runtime.exec("pm clear $packageName")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+    /**
+     * show dialog before clear data
+     */
+    private fun showClearDtaDialog() {
+
+        if(activity==null) return
+
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle(requireActivity().resources.getString(R.string.clear_data))
+        val yes = requireContext().resources.getString(R.string.yes)
+        val no = requireContext().resources.getString(R.string.no)
+        builder.setMessage(requireContext().resources.getString(R.string.do_you_realy_want_delete_selected_alarm))
+            .setCancelable(false)
+        builder.setPositiveButton(yes) { dialog, _ ->
+            clearAppData()
+            dialog.dismiss()
+        }
+
+
+        // Display a negative button on alert dialog
+        builder.setNegativeButton(no) { dialog, which ->
+            dialog.dismiss()
+        }
+        val alert = builder.create()
+        alert.show()
+    }
 
     override fun onStart() {
         super.onStart()
