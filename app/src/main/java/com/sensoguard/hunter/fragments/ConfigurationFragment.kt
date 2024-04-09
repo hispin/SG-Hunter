@@ -115,7 +115,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             false
         )
 
-        togChangeAlarmVibrate = view.findViewById(com.sensoguard.hunter.R.id.togChangeAlarmVibrate)
+        togChangeAlarmVibrate = view.findViewById(R.id.togChangeAlarmVibrate)
         togChangeAlarmVibrate?.isChecked =
             getBooleanInPreference(activity, IS_VIBRATE_WHEN_ALARM_KEY, true)
         togChangeAlarmVibrate?.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -130,7 +130,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             setMapSatellite()
         }
 
-        etAlarmFlickerValue = view.findViewById(com.sensoguard.hunter.R.id.etAlarmFlickerValue)
+        etAlarmFlickerValue = view.findViewById(R.id.etAlarmFlickerValue)
         etAlarmFlickerValue?.setText(
             getLongInPreference(
                 activity,
@@ -139,7 +139,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             ).toString()
         )
 
-        btnSaveFlicker = view.findViewById(com.sensoguard.hunter.R.id.btnSaveFlicker)
+        btnSaveFlicker = view.findViewById(R.id.btnSaveFlicker)
         //update the time flickering
         btnSaveFlicker?.setOnClickListener{
             try {
