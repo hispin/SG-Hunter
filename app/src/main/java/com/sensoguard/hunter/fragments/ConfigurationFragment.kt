@@ -300,7 +300,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         builder.setTitle(requireActivity().resources.getString(R.string.clear_data))
         val yes = requireContext().resources.getString(R.string.yes)
         val no = requireContext().resources.getString(R.string.no)
-        builder.setMessage(requireContext().resources.getString(R.string.do_you_realy_want_delete_selected_alarm))
+        builder.setMessage(requireContext().resources.getString(R.string.do_you_realy_want_clear_data))
             .setCancelable(false)
         builder.setPositiveButton(yes) { dialog, _ ->
             clearAppData()
