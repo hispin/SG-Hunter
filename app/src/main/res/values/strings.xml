@@ -101,7 +101,7 @@
     <string name="select_all">Select all</string>
     <string name="select">Select</string>
     <string name="do_you_realy_want_delete_selected_alarm">Do you realy want to delete selected alarms?</string>
-    <string name="do_you_realy_want_clear_data">Do you realy want to clear data ?</string>
+    <string name="do_you_realy_want_clear_data">All of this application data will be deleted permanently. This includes all pictures, settings, and user information.</string>
     <string name="no_selected_alarms">No selected alarm</string>
     <string name="selected_alarms">selected alarm</string>
     <string name="reset">reset</string>

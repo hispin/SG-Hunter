@@ -99,7 +99,7 @@
     <string name="select_all">בחר הכל</string>
     <string name="select">בחר</string>
     <string name="do_you_realy_want_delete_selected_alarm">אם אתה בטוח שאתה מעוניין למחוק התראות נבחרות?</string>
-    <string name="do_you_realy_want_clear_data">אם אתה בטוח שאתה מעוניין לנקות נתונים ?</string>
+    <string name="do_you_realy_want_clear_data">כל נתוני האפליקציה יימחקו לצמיתות. לרבות כל התמונות, ההגדרות ופרטי המשתמש</string>
     <string name="no_selected_alarms">אין התראות שנבחרו</string>
     <string name="selected_alarms">התראות נבחרו</string>
     <string name="reset">איפוס</string>
