@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +49,7 @@ import com.sensoguard.hunter.services.RegistrationIntentService
 
 open class LogInActivity : AppCompatActivity() {
 
+    private var isLoginProcess: Boolean=false
     private var viewModel: LoginViewModel? = null
     private var dialog: AlertDialog? = null
 
@@ -64,16 +67,24 @@ open class LogInActivity : AppCompatActivity() {
         viewModel?.response?.observe(this) {
             when (it) {
                 AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
-                    ToastNotify(
-                        resources.getString(R.string.verification_successfully),
-                        this@LogInActivity
-                    )
-                    dialog?.dismiss()
-                    pbValidation?.visibility = View.INVISIBLE
+                    if(isLoginProcess) {
+                        ToastNotify(
+                            resources.getString(R.string.verification_successfully),
+                            this@LogInActivity
+                        )
+                        dialog?.dismiss()
+                        pbValidation?.visibility=View.INVISIBLE
+                        positiveButton?.isEnabled = true
+                        isLoginProcess=false
+                    }
                 }
 
                 AMAZONE_POST_LOGIN_RESULT_FAILED -> {
-                    showErrorMsg(resources.getString(R.string.verification_failed))
+                    if(isLoginProcess) {
+                        showErrorMsg(resources.getString(R.string.verification_failed))
+                        positiveButton?.isEnabled = true
+                        isLoginProcess=false
+                    }
                 }
             }
         }
@@ -142,8 +153,33 @@ open class LogInActivity : AppCompatActivity() {
 
         val userInput: EditText = promptsView
             .findViewById(R.id.editTextDialogUserInput) as EditText
+
+        /**
+         * cancel error message before text change
+         */
+        userInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                tvError?.visibility = View.INVISIBLE
+            }
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+            override fun afterTextChanged(editable: Editable) {
+            }
+        })
+
         val pwInput: EditText = promptsView
             .findViewById(R.id.editTextDialogPasswordInput) as EditText
+
+        /**
+         * cancel error message before text change
+         */
+        pwInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                tvError?.visibility = View.INVISIBLE
+            }
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
+            override fun afterTextChanged(editable: Editable) {
+            }
+        })
 
         var loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
         //select AMAZON or AZURE
@@ -195,6 +231,8 @@ open class LogInActivity : AppCompatActivity() {
                 tvError?.visibility = View.INVISIBLE
 
                 pbValidation?.visibility = View.VISIBLE
+
+                isLoginProcess = true
 
                 if (loginType.equals(AZURE)) {
 
