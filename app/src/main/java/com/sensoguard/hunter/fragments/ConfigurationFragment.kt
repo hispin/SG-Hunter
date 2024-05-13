@@ -275,14 +275,16 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
      */
     private fun clearAppData() {
         try {/* clearing app data */
-            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
-                val service=(requireActivity().getSystemService(ACTIVITY_SERVICE) as ActivityManager?)
-                service?.clearApplicationUserData()
-            } else {
-                val packageName: String=requireActivity().packageName
-                val runtime=Runtime.getRuntime()
-                runtime.exec("pm clear $packageName")
-            }
+            (requireActivity().getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData()
+
+//            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+//                val service=(requireActivity().getSystemService(ACTIVITY_SERVICE) as ActivityManager?)
+//                service?.clearApplicationUserData()
+//            } else {
+//                val packageName: String=requireActivity().packageName
+//                val runtime=Runtime.getRuntime()
+//                runtime.exec("pm clear $packageName")
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
