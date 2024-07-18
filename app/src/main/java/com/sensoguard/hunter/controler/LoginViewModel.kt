@@ -17,7 +17,7 @@ import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.setStringInPreference
-import com.sensoguard.hunter.global.storeUserAmazonToLocally
+import com.sensoguard.hunter.global.storeUserAmazonResultToLocally
 
 /**
  * amazon login
@@ -103,12 +103,19 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 if (it != null) {
 
                     val result: AuthResult = it
+
                     if (result.success == true) {
                         if (UserSession.instance.getUserAmazon() != null) {
+                            val email:String?=UserSession.instance.getUserAmazon()!!.email
+                            val pass=UserSession.instance.getUserAmazon()!!.password
+                            val fcm_token=UserSession.instance.getUserAmazon()!!.token_fcm
+                            UserSession.instance.setInstanceUserAmazonResult(
+                                email,pass,
+                                fcm_token,result.token,result.imagesBaseUrl)
                             getApplication<Application>().applicationContext
                                 .let { it1 ->
-                                    storeUserAmazonToLocally(
-                                        UserSession.instance.getUserAmazon()!!,
+                                    storeUserAmazonResultToLocally(
+                                        UserSession.instance.getUserAmazonResult()!!,
                                         it1, USER_INFO_AMAZON_KEY
                                     )
                                 }

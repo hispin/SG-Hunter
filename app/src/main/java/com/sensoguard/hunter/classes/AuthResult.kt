@@ -42,4 +42,9 @@ class AuthResult {
     @SerializedName("env")
     val env: String? = null
 
+    @SerializedName("imagesBaseUrl")
+    val imagesBaseUrl: String? = null
+
+
+
 }

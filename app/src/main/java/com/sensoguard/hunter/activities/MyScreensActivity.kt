@@ -33,6 +33,7 @@ import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.classes.NonSwipeAbleViewPager
 import com.sensoguard.hunter.fragments.AlarmLogFragment
 import com.sensoguard.hunter.fragments.ConfigurationFragment
+import com.sensoguard.hunter.fragments.WebFragment
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
 import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
@@ -237,6 +238,8 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_config_tab)
         tabs.getTabAt(1)?.icon =
             ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_alarm_log_tab)
+        tabs.getTabAt(2)?.icon =
+            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_alarm_log_tab)
         viewPager.currentItem = currentItemTopMenu
 
 
@@ -398,6 +401,14 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                         putInt("ARG_OBJECT", position + 1)
                     }
                 }
+                2 -> {
+                    fragment = WebFragment()
+                    fragment.arguments = Bundle().apply {
+                        // Our object is just an integer :-P
+                        putInt("ARG_OBJECT", position + 1)
+                    }
+                }
+
 
             }
             return fragment!!
@@ -412,6 +423,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                 //0 -> resources.getString(R.string.map_title)
                 0 -> resources.getString(R.string.config_title)
                 1 -> resources.getString(R.string.alarm_log_title)
+                2 -> resources.getString(R.string.web_page)
                 else -> "nothing"
             }
 

@@ -40,7 +40,7 @@ import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
 import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getTagsFromLocally
-import com.sensoguard.hunter.global.getUserAmazonFromLocally
+import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.removePreference
 import com.sensoguard.hunter.global.setStringInPreference
@@ -136,7 +136,7 @@ open class LogInActivity : AppCompatActivity() {
 
         //show user info from locally if exist
         fun showUserIfExist(userInfoKey: String, userInput: EditText, pwInput: EditText) {
-            val userInfo = getUserAmazonFromLocally(
+            val userInfo = getUserAmazonResultFromLocally(
                 this,
                 userInfoKey
             )

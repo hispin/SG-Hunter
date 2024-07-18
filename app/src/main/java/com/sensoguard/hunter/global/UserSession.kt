@@ -2,10 +2,12 @@ package com.sensoguard.hunter.global
 
 import com.sensoguard.hunter.classes.AlarmSensor
 import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAmazonResult
 import com.sensoguard.hunter.classes.UserInfoAzure
 
 class UserSession private constructor() {
 
+    private var userInfoAmazonResult: UserInfoAmazonResult?=null
     private var userInfoAzure: UserInfoAzure? = null
     private var userInfoAmazon: UserInfoAmazon? = null
 
@@ -30,6 +32,10 @@ class UserSession private constructor() {
         return userInfoAmazon
     }
 
+    fun getUserAmazonResult(): UserInfoAmazonResult? {
+        return userInfoAmazonResult
+    }
+
     fun getTags(): ArrayList<String>? {
         return tags
     }
@@ -49,12 +55,26 @@ class UserSession private constructor() {
         )
     }
 
+    fun setInstanceUserAmazonResult(name: String?, pw: String?, token_fcm: String?,token: String?,imagesBaseUrl:String?) {
+        userInfoAmazonResult = UserInfoAmazonResult(
+            name,
+            pw,
+            token_fcm,
+            token,
+            imagesBaseUrl
+        )
+    }
+
     fun setInstanceUserAzure(userInfo: UserInfoAzure) {
         this.userInfoAzure = userInfo
     }
 
     fun setInstanceUserAmazon(userInfo: UserInfoAmazon) {
         this.userInfoAmazon = userInfo
+    }
+
+    fun setInstanceUserAmazonResult(userInfo: UserInfoAmazonResult) {
+        this.userInfoAmazonResult = userInfo
     }
 
     fun setTags(tags: ArrayList<String>) {

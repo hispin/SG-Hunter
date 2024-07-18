@@ -146,6 +146,8 @@
     <string name="share_title">שליחת וידאו מסנסוגארד</string>
     <string name="notification_disabled">בבקשה הפעל התראה</string>
     <string name="clear_data">נקה נתונים</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="web_page">לאתר</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

@@ -87,7 +87,7 @@ const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 2
 
 const val CURRENT_LOCATION = "currentLocation"
 
-const val MAIN_MENU_NUM_ITEM = 2
+const val MAIN_MENU_NUM_ITEM = 3
 
 const val ALARM_CAR = "car"
 const val ALARM_INTRUDER = "intruder"

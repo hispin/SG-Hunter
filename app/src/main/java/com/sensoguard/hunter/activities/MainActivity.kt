@@ -37,7 +37,7 @@ import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
 import com.sensoguard.hunter.global.getAppLanguage
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getTagsFromLocally
-import com.sensoguard.hunter.global.getUserAmazonFromLocally
+import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.setAppLanguage
 
@@ -254,11 +254,11 @@ class MainActivity : LogInActivity() {
     //AMAZON : open log in dialog if there is no tags or user&password
     private fun isUserAmazonForLoginExist() {
         //check is has already tags
-        val userInfo = getUserAmazonFromLocally(this, USER_INFO_AMAZON_KEY)
+        val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
         if (userInfo == null) {
             openLogInDialog()
         } else {
-            UserSession.instance.setInstanceUserAmazon(userInfo)
+            UserSession.instance.setInstanceUserAmazonResult(userInfo)
             loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE)
         }
     }

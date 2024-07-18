@@ -11,6 +11,7 @@ import com.sensoguard.hunter.classes.Camera
 import com.sensoguard.hunter.classes.MyEmailAccount
 import com.sensoguard.hunter.classes.SystemSort
 import com.sensoguard.hunter.classes.UserInfoAmazon
+import com.sensoguard.hunter.classes.UserInfoAmazonResult
 import com.sensoguard.hunter.classes.UserInfoAzure
 import org.json.JSONArray
 import org.json.JSONException
@@ -117,6 +118,45 @@ fun convertJsonToUserInfoAmazon(inputJsonString: String): UserInfoAmazon? {
 
         }.type
         userInfo = Gson().fromJson(json.toString(), listType) as UserInfoAmazon
+    } catch (e: JsonIOException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    } catch (e: JsonSyntaxException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    }
+
+    return userInfo
+    //when jsonArr is null will return value of new ArrayList<>()
+}//convertJsonToUriList
+
+//convert json to UserInfo amazon
+fun convertJsonToUserInfoResultAmazon(inputJsonString: String): UserInfoAmazonResult? {
+
+    //if the json string is empty, then return empty array list
+    if (inputJsonString.isNullOrEmpty()) {
+        return null
+    }
+
+    var userInfo: UserInfoAmazonResult? = null
+    //mySensors?.add(Camera("ID","NAME"))
+
+    var json: JSONObject? = null
+    try {
+        json = JSONObject(inputJsonString)
+    } catch (e: JSONException) {
+        e.printStackTrace()
+        e.message?.let { Log.e("convertJsonToUriList", it) }
+    }
+
+    try {
+        val listType = object : TypeToken<UserInfoAmazonResult>() {
+
+        }.type
+        userInfo = Gson().fromJson(json.toString(), listType) as UserInfoAmazonResult
     } catch (e: JsonIOException) {
         e.printStackTrace()
         e.message?.let { Log.e("convertJsonToUriList", it) }
