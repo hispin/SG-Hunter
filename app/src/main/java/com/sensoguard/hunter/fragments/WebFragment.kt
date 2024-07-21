@@ -2,10 +2,10 @@ package com.sensoguard.hunter.fragments
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
@@ -35,54 +35,61 @@ class WebFragment : Fragment() {
 
         webAlarms = view.findViewById(R.id.webAlarms)
 
-        loadWebAlarm()
-
         return view
     }
 
+    override fun onStart() {
+        super.onStart()
+        loadWebAlarm()
+    }
+
     private fun loadWebAlarm() {
-        // Configure WebView
-
-
+        webAlarms?.webViewClient = WebViewClient()
+        webAlarms?.setWebChromeClient(WebChromeClient())
+        webAlarms?.isScrollbarFadingEnabled = true
+        webAlarms?.isHorizontalScrollBarEnabled = false
         webAlarms?.settings?.javaScriptEnabled = true
-
+        //enable jQuery&Localhost
+        webAlarms?.getSettings()?.domStorageEnabled=true
+        webAlarms?.settings?.userAgentString = "First Webview"
+        webAlarms?.settings?.loadWithOverviewMode = true
+        webAlarms?.settings?.useWideViewPort = true
 
         webAlarms?.webViewClient = object : WebViewClient() {
-
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-
                 super.onPageStarted(view, url, favicon)
+                loadLocalHost()
+            }
 
-                if(activity!=null) {
-                    // Inject values into localStorage
-                    val userInfo=
-                        getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
-
-//                    val js=
-//                        "localStorage.setItem(loggedIn, true); localStorage.setItem(\"token\", `Bearer ${userInfo?.token}`);localStorage.setItem(\"imagesBaseUrl\", ${userInfo?.imagesBaseUrl});"
-
-//                    val js=
-//                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", `Bearer ${userInfo?.token}`);localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
-
-
-//                    val js=
-//                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
-
-                    val js=
-                        "localStorage.setItem(\"loggedIn\", true); localStorage.setItem(\"token\", `Bearer ${userInfo?.token}`);localStorage.setItem(\"imagesBaseUrl\", ${userInfo?.imagesBaseUrl});"
-
-
-                    Log.d("sendErez",js.toString())
-
-                    webAlarms?.evaluateJavascript(js, null)
-                }
-
+            override fun onPageCommitVisible(view: WebView?, url: String?) {
+                super.onPageCommitVisible(view, url)
+            }
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                loadLocalHost()
             }
 
         }
-        // Load your web application URL
         webAlarms?.loadUrl("https://outwatchpwa.sensoguard.com")
+    }
 
+
+
+    /**
+     * load localhost
+     */
+    private fun loadLocalHost() {
+        if(activity!=null) {
+            // Inject values into localStorage
+            val userInfo=
+                getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
+
+                val js=
+                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
+
+                webAlarms?.evaluateJavascript(js, null)
+
+        }
     }
 
 
