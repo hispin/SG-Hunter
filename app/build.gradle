@@ -24,8 +24,8 @@ android {
         applicationId "com.sensoguard.hunter"
         minSdkVersion 26
         targetSdkVersion 34
-        versionCode 72
-        versionName "1.72"
+        versionCode 73
+        versionName "1.73"
         vectorDrawables.useSupportLibrary = true
     }
     packagingOptions {
