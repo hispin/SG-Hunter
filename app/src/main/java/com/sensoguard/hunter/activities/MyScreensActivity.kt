@@ -423,7 +423,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                 //0 -> resources.getString(R.string.map_title)
                 0 -> resources.getString(R.string.config_title)
                 1 -> resources.getString(R.string.alarm_log_title)
-                2 -> resources.getString(R.string.web_page)
+                2 -> resources.getString(R.string.all_alarms)
                 else -> "nothing"
             }
 

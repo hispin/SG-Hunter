@@ -14,15 +14,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.UserInfoAmazon
-import com.sensoguard.hunter.classes.UserInfoAzure
 import com.sensoguard.hunter.controler.LoginViewModel
-import com.sensoguard.hunter.global.AMAZON
 import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_FAILED
 import com.sensoguard.hunter.global.AMAZONE_POST_LOGIN_RESULT_SUCCESS
 import com.sensoguard.hunter.global.AMAZON_PRECESS_DIALOG_VALUE
@@ -31,19 +28,15 @@ import com.sensoguard.hunter.global.AZURA_POST_RESULT_NO_USER
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_OK
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_UNHUTHORIZED
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_USER_NO_ACTIVE
-import com.sensoguard.hunter.global.AZURE
-import com.sensoguard.hunter.global.LOGIN_TYPE_KEY
 import com.sensoguard.hunter.global.REGISTER_ID_KEY
 import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
 import com.sensoguard.hunter.global.UserSession
-import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getTagsFromLocally
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.removePreference
-import com.sensoguard.hunter.global.setStringInPreference
 import com.sensoguard.hunter.global.validIsEmpty
 import com.sensoguard.hunter.services.RegistrationIntentService
 
@@ -94,12 +87,6 @@ open class LogInActivity : AppCompatActivity() {
     private var pbValidation: ProgressBar? = null
 
 
-    fun sendPostHubs() {
-        // Start IntentService to register this application with FCM.
-        val intent = Intent(this, RegistrationIntentService::class.java)
-        intent.putExtra("actionType", "post")
-        startService(intent)
-    }
 
     //register token and tags to azura
     fun registerTokenAndTagToHubs() {
@@ -181,27 +168,9 @@ open class LogInActivity : AppCompatActivity() {
             }
         })
 
-        var loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
-        //select AMAZON or AZURE
-        val rgLoginType: RadioGroup? = promptsView.findViewById(R.id.rgLoginType)
-        rgLoginType?.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == R.id.rbV1) {
-                loginType = AZURE
-                setStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
-                showUserIfExist(USER_INFO_AZURE_KEY, userInput, pwInput)
-            } else if (checkedId == R.id.rbV2) {
-                loginType = AMAZON
-                setStringInPreference(this, LOGIN_TYPE_KEY, AMAZON)
-                showUserIfExist(USER_INFO_AMAZON_KEY, userInput, pwInput)
-            }
-        }
-        if (loginType.equals(AZURE)) {
-            rgLoginType?.check(R.id.rbV1)
-            showUserIfExist(USER_INFO_AZURE_KEY, userInput, pwInput)
-        } else if (loginType.equals(AMAZON)) {
-            rgLoginType?.check(R.id.rbV2)
-            showUserIfExist(USER_INFO_AMAZON_KEY, userInput, pwInput)
-        }
+
+        showUserIfExist(USER_INFO_AMAZON_KEY, userInput, pwInput)
+
 
 
         val userName = UserSession.instance.getUserAzure()?.name
@@ -234,27 +203,15 @@ open class LogInActivity : AppCompatActivity() {
 
                 isLoginProcess = true
 
-                if (loginType.equals(AZURE)) {
-
-                    UserSession.instance.setInstanceUserAzure(
-                        UserInfoAzure(
-                            userInput.text.toString(),
-                            pwInput.text.toString()
-                        )
+                UserSession.instance.setInstanceUserAmazon(
+                    UserInfoAmazon(
+                        userInput.text.toString(),
+                        pwInput.text.toString(),
+                        null
                     )
-                    //send post
-                    sendPostHubs()
-                } else if (loginType.equals(AMAZON)) {
-                    UserSession.instance.setInstanceUserAmazon(
-                        UserInfoAmazon(
-                            userInput.text.toString(),
-                            pwInput.text.toString(),
-                            null
-                        )
-                    )
-                    //send post
-                    loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE)
-                }
+                )
+                //send post
+                loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE)
             }
         })
         val negativeButton: Button = promptsView.findViewById(R.id.btnCancel) as Button

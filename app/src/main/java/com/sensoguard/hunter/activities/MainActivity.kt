@@ -56,6 +56,7 @@ class MainActivity : LogInActivity() {
     //private var clickConsMap: ConstraintLayout? = null
     private var clickConsConfiguration: ConstraintLayout? = null
     private var clickAlarmLog: ConstraintLayout? = null
+    private var clickConsAllAlarms: ConstraintLayout? = null
     private var tvShowVer: TextView? = null
     private var togChangeBackgroundRestrict:ToggleButton?=null
 
@@ -125,10 +126,12 @@ class MainActivity : LogInActivity() {
             consDisableNotification?.visibility=GONE
             clickAlarmLog?.isEnabled=true
             clickConsConfiguration?.isEnabled = true
+            clickConsAllAlarms?.isEnabled = true
         }else{
             consDisableNotification?.visibility=VISIBLE
             clickAlarmLog?.isEnabled=false
             clickConsConfiguration?.isEnabled = false
+            clickConsAllAlarms?.isEnabled = false
         }
     }
 
@@ -297,6 +300,14 @@ class MainActivity : LogInActivity() {
 
     }
 
+    private fun setOnClickAllAlarms() {
+        clickConsAllAlarms?.setOnClickListener {
+            val inn = Intent(this, MyScreensActivity::class.java)
+            inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 2)
+            inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(inn)
+        }
+    }
 
     private fun setOnClickConfigTable() {
         clickConsConfiguration?.setOnClickListener {
@@ -319,12 +330,15 @@ class MainActivity : LogInActivity() {
     private fun initViews(status: Boolean) {
         clickConsConfiguration = findViewById(R.id.clickConsConfiguration)
         clickConsConfiguration?.isEnabled = status
-        clickAlarmLog = findViewById(R.id.clickAlarmLog)
+        clickAlarmLog = findViewById(R.id.clickVerifiedAlarmLog)
         clickAlarmLog?.isEnabled = status
+        clickConsAllAlarms = findViewById(R.id.clickConsAllAlarms)
+        clickConsAllAlarms?.isEnabled = status
         tvShowVer = findViewById(R.id.tvShowVer)
         if (status) {
             setOnClickConfigTable()
             setOnClickAlarmLogTable()
+            setOnClickAllAlarms()
         }
     }
 

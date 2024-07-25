@@ -83,7 +83,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
 
         Intent intent = new Intent(ctx, MyScreensActivity.class);
-        intent.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 2);
+        intent.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         String title = Objects.requireNonNull(myIntent.getExtras()).getString("title");

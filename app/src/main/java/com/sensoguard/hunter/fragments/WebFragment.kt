@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.fragments
 
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
@@ -22,6 +24,7 @@ import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 class WebFragment : Fragment() {
 
     private var webAlarms: WebView?=null
+    private var ivClose:ImageView?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,11 +37,39 @@ class WebFragment : Fragment() {
         var view = inflater.inflate(R.layout.fragment_web, container, false)
 
         webAlarms = view.findViewById(R.id.webAlarms)
+        ivClose = view.findViewById(R.id.ivClose)
+
+        ivClose?.setOnClickListener {
+            if (webAlarms?.canGoBack() == true) {
+                webAlarms?.goBack()
+            }
+        }
 
         return view
     }
 
+    private fun disableOrientation() {
+        if (activity == null) {
+            return
+        }
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    override fun onStop() {
+        disableOrientation()
+        super.onStop()
+    }
+
+    private fun enableOrientation() {
+        if (activity == null) {
+            return
+        }
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+    }
+
+
     override fun onStart() {
+        enableOrientation()
         super.onStart()
         loadWebAlarm()
     }

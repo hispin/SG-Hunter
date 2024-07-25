@@ -26,7 +26,7 @@
     <string name="camera_title">מערכות ומצלמות</string>
     <string name="map_title">מפה</string>
     <string name="config_title">הגדרות כללי</string>
-    <string name="alarm_log_title">אירועים</string>
+    <string name="alarm_log_title">אירועים מאומתים</string>
     <string name="not_located">לא הוגדר</string>
     <string name="located">מוגדר</string>
     <string name="date_title">תאריך</string>
@@ -148,6 +148,7 @@
     <string name="clear_data">נקה נתונים</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="web_page">לאתר</string>
+    <string name="all_alarms">כל האירועים</string>
 
     <string-array name="camera_model">
         <item>MG-983G-30M</item>

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
@@ -320,6 +321,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
     override fun onStart() {
         super.onStart()
+        disableOrientation()
         setFilter()
         //set the current language (or selected language or language of device)
         val generalItemMenu = LanguageManager.getCurrentLang(GeneralItemMenu.selectedItem)
@@ -333,6 +335,13 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         } else if (alarmDisplay != null && (alarmDisplay == "grid")) {
             rgAlarmDisplay?.check(R.id.rbGridView)
         }
+    }
+
+    private fun disableOrientation() {
+        if (activity == null) {
+            return
+        }
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     //get selected notification sound from locally

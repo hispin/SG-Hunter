@@ -5,6 +5,7 @@ package com.sensoguard.hunter.fragments
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.*
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -370,8 +371,8 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
     }
 
     override fun onStart() {
+        disableOrientation()
         super.onStart()
-
         setFilter()
 
         activity?.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
@@ -379,6 +380,13 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                 appStateChangeListener
             )
 
+    }
+
+    private fun disableOrientation() {
+        if (activity == null) {
+            return
+        }
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
 
     override fun onStop() {
