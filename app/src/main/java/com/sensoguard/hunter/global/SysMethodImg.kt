@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.ActivityNotFoundException
 import android.content.ContentResolver
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
@@ -14,14 +13,14 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.DrawableCompat
 import com.sensoguard.hunter.classes.ImageStorageManager
+import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.OutputStream
+import java.io.FileOutputStream
 
 
 //convert bitmap to bitmap discriptor
@@ -89,29 +88,81 @@ fun shareVideo(imgPath: String, context: Context) {
 
 }
 
-//save the picture in locally gallery
-fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String): Boolean {
-    var saved: Boolean = false
-    val resolver = context.contentResolver
-    val contentValues = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
-        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/PerracoLabs")
-        }
-    }
+/////////////////////
 
-    var stream: OutputStream? = null
-    val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+/**
+ * convert bitmap to file
+ */
+fun saveImageInGallery(bitmap: Bitmap, fileNameToSave: String): Boolean? { // File name like "image.png"
+    //create a file to write bitmap data
+    var file: File? = null
+    return try {
+        file = File(
+            Environment.getExternalStorageDirectory()
+                .toString() + "/" + Environment.DIRECTORY_DOWNLOADS + File.separator + fileNameToSave
+        )
+        file.createNewFile()
 
-    uri?.let {
-        stream = resolver.openOutputStream(uri)
-        if (stream != null) {
-            saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream!!)
-        }
+        //Convert bitmap to byte array
+        val bos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos) // YOU can also save it in JPEG
+        val bitmapdata = bos.toByteArray()
+
+        //write the bytes in file
+        val fos = FileOutputStream(file)
+        fos.write(bitmapdata)
+        fos.flush()
+        fos.close()
+        true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false // it will return null
     }
-    return saved
 }
+
+
+/////////////////////
+
+
+//save the picture in locally gallery
+//fun saveImageInGallery(finalBitmap: Bitmap, context: Context, imageName: String): Boolean {
+//    var tempDir=Environment.DIRECTORY_DOWNLOADS
+//    tempDir=File(tempDir + "/.temp/")
+//    tempDir.mkdir()
+//    val tempFile=File.createTempFile(imageName, ".jpg", tempDir)
+//    val bytes=ByteArrayOutputStream()
+//    finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+//    val bitmapData=bytes.toByteArray()
+//
+//
+//    //write the bytes in file
+//    val fos=FileOutputStream(tempFile)
+//    fos.write(bitmapData)
+//    fos.flush()
+//    fos.close()
+//    return Uri.fromFile(tempFile)
+//
+////    var saved: Boolean = false
+////    val resolver = context.contentResolver
+////    val contentValues = ContentValues().apply {
+////        put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
+////        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+////        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+////            put(MediaStore.MediaColumns.RELATIVE_PATH, "DCIM/PerracoLabs")
+////        }
+////    }
+////
+////    var stream: OutputStream? = null
+////    val uri = resolver.insert(Environment.DIRECTORY_DOWNLOADS, contentValues)
+////
+////    uri?.let {
+////        stream = resolver.openOutputStream(uri)
+////        if (stream != null) {
+////            saved = finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream!!)
+////        }
+////    }
+////    return saved
+//}
 
 /**
  * save video
@@ -256,7 +307,8 @@ class SaveImageInGalleryTask(val finalBitmap: Bitmap, val context: Context, val 
 
 
     override fun doInBackground(vararg params: Void?): Boolean? {
-        return saveImageInGallery(finalBitmap, context, imageName)
+        //return saveImageInGallery(finalBitmap, context, imageName)
+        return saveImageInGallery(finalBitmap, imageName)
     }
 
     override fun onPostExecute(result: Boolean?) {

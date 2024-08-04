@@ -186,7 +186,7 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
                 val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
                 Thread {
                     val res = timeImage?.let { it1 ->
-                        SaveImageInGalleryTask(bitmap, requireContext(), it1).execute()
+                        SaveImageInGalleryTask(bitmap, requireContext(), "$it1.jpg").execute()
 
                     }
                     //Log.d("test_save", res.toString())
