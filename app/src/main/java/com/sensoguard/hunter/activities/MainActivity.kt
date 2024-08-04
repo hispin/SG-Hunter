@@ -172,13 +172,7 @@ class MainActivity : LogInActivity() {
                 initViews(true)
                 //check if the device has google service
                 if (checkPlayServices()) {
-                    //do login AZURE or AMAZON
-                    val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
-                    if (loginType.equals(AZURE)) {
-                        isUserAzureForLoginExist()
-                    } else if (loginType.equals(AMAZON)) {
-                        isUserAmazonForLoginExist()
-                    }
+                    isUserAmazonForLoginExist()
                 }
             }
         }

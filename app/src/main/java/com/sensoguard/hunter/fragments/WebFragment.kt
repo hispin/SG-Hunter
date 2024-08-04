@@ -3,6 +3,7 @@ package com.sensoguard.hunter.fragments
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,7 @@ import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 class WebFragment : Fragment() {
 
     private var webAlarms: WebView?=null
-    private var ivClose:ImageView?=null
+    private var ivBack:ImageView?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,9 +38,9 @@ class WebFragment : Fragment() {
         var view = inflater.inflate(R.layout.fragment_web, container, false)
 
         webAlarms = view.findViewById(R.id.webAlarms)
-        ivClose = view.findViewById(R.id.ivClose)
+        ivBack = view.findViewById(R.id.ivBack)
 
-        ivClose?.setOnClickListener {
+        ivBack?.setOnClickListener {
             if (webAlarms?.canGoBack() == true) {
                 webAlarms?.goBack()
             }
@@ -80,6 +81,12 @@ class WebFragment : Fragment() {
         webAlarms?.isScrollbarFadingEnabled = true
         webAlarms?.isHorizontalScrollBarEnabled = false
         webAlarms?.settings?.javaScriptEnabled = true
+
+        //prevent softkey
+        webAlarms?.setFocusableInTouchMode(false)
+        webAlarms?.isFocusable=false
+        /////////////////
+
         //enable jQuery&Localhost
         webAlarms?.getSettings()?.domStorageEnabled=true
         webAlarms?.settings?.userAgentString = "First Webview"
@@ -97,11 +104,21 @@ class WebFragment : Fragment() {
             }
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                if (url != null) {
+                    if (url == "https://outwatchpwa.sensoguard.com/"){
+                        ivBack?.visibility=View.GONE
+                    }else{
+                        ivBack?.visibility=View.VISIBLE
+                    }
+                    Log.d("testUrl",url)
+                }
                 loadLocalHost()
             }
-
         }
         webAlarms?.loadUrl("https://outwatchpwa.sensoguard.com")
+        //enable zoom on image
+        webAlarms?.getSettings()?.setSupportZoom(true)
+        webAlarms?.getSettings()?.builtInZoomControls=true
     }
 
 

@@ -170,6 +170,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/ivAlarmLog"
                     app:layout_constraintVertical_bias="0.355" />
 
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -184,15 +186,14 @@
                 android:layoutDirection="ltr"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_default="percent"
                 app:layout_constraintHeight_percent="0.250"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clickVerifiedAlarmLog"
-                app:layout_constraintVertical_bias="0.04"
+                app:layout_constraintVertical_bias="0.79"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.433"
-
 
                 >
 
@@ -220,64 +221,30 @@
                     app:layout_constraintTop_toBottomOf="@+id/ivConfiguration"
                     app:layout_constraintVertical_bias="0.535" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/consDisableNotification"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/frame_button_layout"
-                android:backgroundTint="@color/mdtp_transparent_black"
-                android:visibility="visible">
-
-                <TextView
-                    android:id="@+id/host_disable_notice"
-                    style="@style/profile_lbl1_black"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/notification_disabled"
-                    android:textAllCaps="true"
-                    android:textColor="@color/mx_White"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ToggleButton
-                    android:id="@+id/togChangeBackgroundRestrict"
-                    android:layout_width="44dp"
-                    android:layout_height="25dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/transparent"
-                    android:button="@drawable/toggle_selector_active"
-                    android:text="ToggleButton"
-                    android:textOff=""
-                    android:textOn=""
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/host_disable_notice" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!--ic_map_main-->
+
+
+        <!--all alarms-->
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/clickConsAllAlarms"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:background="@drawable/selector_main_menu"
                         android:layoutDirection="ltr"
                         android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHeight_default="percent"
                         app:layout_constraintHeight_percent="0.250"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/clickConsConfiguration"
-                        app:layout_constraintVertical_bias="0.10"
+                        app:layout_constraintTop_toBottomOf="@+id/clickVerifiedAlarmLog"
+                        app:layout_constraintVertical_bias="0.04"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.433">
+                        app:layout_constraintWidth_percent="0.433"
+        >
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/ivAllAlarms"
@@ -304,6 +271,44 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/ivAllAlarms"
                             app:layout_constraintVertical_bias="0.511" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/consDisableNotification"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/frame_button_layout"
+                        android:backgroundTint="@color/mdtp_transparent_black"
+                        android:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/host_disable_notice"
+                            style="@style/profile_lbl1_black"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/notification_disabled"
+                            android:textAllCaps="true"
+                            android:textColor="@color/mx_White"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ToggleButton
+                            android:id="@+id/togChangeBackgroundRestrict"
+                            android:layout_width="44dp"
+                            android:layout_height="25dp"
+                            android:layout_marginTop="16dp"
+                            android:background="@color/transparent"
+                            android:button="@drawable/toggle_selector_active"
+                            android:text="ToggleButton"
+                            android:textOff=""
+                            android:textOn=""
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/host_disable_notice" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

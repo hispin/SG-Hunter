@@ -12,10 +12,12 @@
         android:layout_height="match_parent" />
 
     <ImageView
-        android:id="@+id/ivClose"
+        android:id="@+id/ivBack"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/desc"
         android:src="@drawable/btn_back"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
