@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SG-Hunter</string>
+    <string name="app_name">OutWatch</string>
     <string name="empty_field_error">נא למלא את השדה</string>
     <string name="rename">שנה שם</string>
     <string name="csv">csv</string>

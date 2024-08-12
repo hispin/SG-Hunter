@@ -239,7 +239,7 @@ class MainActivity : LogInActivity() {
         val tags = getTagsFromLocally(this)
         val userInfo = getUserAzureFromLocally(this, USER_INFO_AZURE_KEY)
         if (tags == null || userInfo == null) {
-            openLogInDialog()
+            openLogInDialog(false)
             //sendPostHubs()
         } else {
             UserSession.instance.setTags(tags)
@@ -253,10 +253,10 @@ class MainActivity : LogInActivity() {
         //check is has already tags
         val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
         if (userInfo == null) {
-            openLogInDialog()
+            openLogInDialog(false)
         } else {
             UserSession.instance.setInstanceUserAmazonResult(userInfo)
-            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE)
+            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE,false)
         }
     }
 

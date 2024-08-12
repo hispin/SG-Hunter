@@ -28,6 +28,7 @@ import com.sensoguard.hunter.global.AZURA_POST_RESULT_NO_USER
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_OK
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_UNHUTHORIZED
 import com.sensoguard.hunter.global.AZURA_POST_RESULT_USER_NO_ACTIVE
+import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
 import com.sensoguard.hunter.global.REGISTER_ID_KEY
 import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
@@ -45,6 +46,7 @@ open class LogInActivity : AppCompatActivity() {
     private var isLoginProcess: Boolean=false
     private var viewModel: LoginViewModel? = null
     private var dialog: AlertDialog? = null
+    private var isAllAlarmsProcess:Boolean?=false
 
     override fun onStart() {
         super.onStart()
@@ -69,6 +71,9 @@ open class LogInActivity : AppCompatActivity() {
                         pbValidation?.visibility=View.INVISIBLE
                         positiveButton?.isEnabled = true
                         isLoginProcess=false
+                    }
+                    if(isAllAlarmsProcess == true){
+                        loadWebAllAlarm()
                     }
                 }
 
@@ -109,18 +114,18 @@ open class LogInActivity : AppCompatActivity() {
     /**
      * start login amazon worker
      */
-    fun loginAmazonFromDialog(processType: String) {
-        viewModel?.requestLoginAmazon(processType)
-
-
+    fun loginAmazonFromDialog(processType: String,isAllAlarmsProcess:Boolean) {
+        this.isAllAlarmsProcess=isAllAlarmsProcess
+        viewModel?.requestLoginAmazon(processType,isAllAlarmsProcess)
     }
 
 
     var positiveButton: Button? = null
 
     //open dialog for log in
-    fun openLogInDialog() {
+    fun openLogInDialog(isAllAlarmsProcess:Boolean) {
 
+        this.isAllAlarmsProcess=isAllAlarmsProcess
         //show user info from locally if exist
         fun showUserIfExist(userInfoKey: String, userInput: EditText, pwInput: EditText) {
             val userInfo = getUserAmazonResultFromLocally(
@@ -211,7 +216,7 @@ open class LogInActivity : AppCompatActivity() {
                     )
                 )
                 //send post
-                loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE)
+                loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE,isAllAlarmsProcess)
             }
         })
         val negativeButton: Button = promptsView.findViewById(R.id.btnCancel) as Button
@@ -289,6 +294,9 @@ open class LogInActivity : AppCompatActivity() {
                     )
                     dialog?.dismiss()
                     pbValidation?.visibility = View.INVISIBLE
+                    if(isAllAlarmsProcess == true){
+                        loadWebAllAlarm()
+                    }
                 }
 
                 arg1.action == AMAZONE_POST_LOGIN_RESULT_FAILED -> {
@@ -297,6 +305,13 @@ open class LogInActivity : AppCompatActivity() {
             }
             positiveButton?.isEnabled = true
         }
+    }
+
+    /**
+     * load web all alarms
+     */
+    private fun loadWebAllAlarm() {
+        sendBroadcast(Intent(LOGIN_COMPLETE_KEY))
     }
 
 

@@ -258,7 +258,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 //        }
         btnEditUser = view?.findViewById(R.id.btnEditUser)
         btnEditUser?.setOnClickListener {
-            (activity as MyScreensActivity).openLogInDialog()
+            (activity as MyScreensActivity).openLogInDialog(false)
         }
 
         btnClearData= view?.findViewById(R.id.btnClearData)

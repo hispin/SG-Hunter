@@ -1,7 +1,12 @@
 package com.sensoguard.hunter.fragments
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,8 +16,11 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
+import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.sensoguard.hunter.R
+import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 
@@ -26,6 +34,7 @@ class WebFragment : Fragment() {
 
     private var webAlarms: WebView?=null
     private var ivBack:ImageView?=null
+    private var pbLoadWeb:ProgressBar?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +48,8 @@ class WebFragment : Fragment() {
 
         webAlarms = view.findViewById(R.id.webAlarms)
         ivBack = view.findViewById(R.id.ivBack)
+        pbLoadWeb= view.findViewById(R.id.pbLoadWeb)
+        pbLoadWeb?.visibility=View.VISIBLE
 
         ivBack?.setOnClickListener {
             if (webAlarms?.canGoBack() == true) {
@@ -72,8 +83,14 @@ class WebFragment : Fragment() {
     override fun onStart() {
         enableOrientation()
         super.onStart()
-        loadWebAlarm()
+        setFilter()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.unregisterReceiver(receiver)
+    }
+
 
     private fun loadWebAlarm() {
         webAlarms?.webViewClient = WebViewClient()
@@ -103,6 +120,7 @@ class WebFragment : Fragment() {
                 super.onPageCommitVisible(view, url)
             }
             override fun onPageFinished(view: WebView?, url: String?) {
+                pbLoadWeb?.visibility=View.GONE
                 super.onPageFinished(view, url)
                 if (url != null) {
                     if (url == "https://outwatchpwa.sensoguard.com/"){
@@ -137,6 +155,24 @@ class WebFragment : Fragment() {
 
                 webAlarms?.evaluateJavascript(js, null)
 
+        }
+    }
+
+    private fun setFilter() {
+        val filter = IntentFilter(LOGIN_COMPLETE_KEY)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity?.registerReceiver(receiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
+        } else {
+            activity?.registerReceiver(receiver, filter)
+        }
+    }
+
+    private val receiver = object : BroadcastReceiver() {
+        override fun onReceive(arg0: Context, inn: Intent) {
+            //accept currentAlarm
+            if (inn.action == LOGIN_COMPLETE_KEY) {
+                //Log.d("testAllAlarms", "accept alarm")
+                loadWebAlarm()            }
         }
     }
 

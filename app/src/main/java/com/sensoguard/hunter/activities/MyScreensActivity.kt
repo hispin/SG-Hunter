@@ -36,6 +36,7 @@ import com.sensoguard.hunter.fragments.ConfigurationFragment
 import com.sensoguard.hunter.fragments.WebFragment
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
+import com.sensoguard.hunter.global.AMAZON_PRECESS_WITH_USER_VALUE
 import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
 import com.sensoguard.hunter.global.IS_MYSCREENACTIVITY_FOREGROUND
 import com.sensoguard.hunter.global.MAIN_MENU_NUM_ITEM
@@ -45,9 +46,12 @@ import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
 import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
+import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
+import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
 import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.openDownloadedAttachment
 import com.sensoguard.hunter.global.saveVideoInForShare
 import com.sensoguard.hunter.global.setAppLanguage
@@ -373,20 +377,6 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             var fragment: Fragment? = null
             //set event of click ic_on top menu
             when (position) {
-//                0 -> {
-//                    fragment = SensorsFragment()
-//                    fragment.arguments = Bundle().apply {
-//                        // Our object is just an integer :-P
-//                        putInt("ARG_OBJECT", position + 1)
-//                    }
-//                }
-//                0 -> {
-//                    fragment = MapSensorsFragment()
-//                    fragment.arguments = Bundle().apply {
-//                        // Our object is just an integer :-P
-//                        putInt("ARG_OBJECT", position + 1)
-//                    }
-//                }
                 0 -> {
                     fragment = ConfigurationFragment()
                     fragment.arguments = Bundle().apply {
@@ -402,6 +392,8 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                     }
                 }
                 2 -> {
+                    //make automatic login before open web all alarms
+                    isUserAmazonForLoginExist()
                     fragment = WebFragment()
                     fragment.arguments = Bundle().apply {
                         // Our object is just an integer :-P
@@ -467,6 +459,17 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     override fun onBack() {
         onBackPressed()
     }
+    //AMAZON : open log in dialog if there is no tags or user&password
+    private fun isUserAmazonForLoginExist() {
+        //check is has already tags
+        val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
+        if (userInfo == null) {
+            openLogInDialog(true)
+        } else {
+            UserSession.instance.setInstanceUserAmazonResult(userInfo)
+            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE,true)
+        }
+    }
 }
 
 //save the custom alarm file in alarms system
@@ -523,6 +526,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             }
 
         }
+
 
     }
 

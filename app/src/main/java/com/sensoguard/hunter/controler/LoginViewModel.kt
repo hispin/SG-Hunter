@@ -32,7 +32,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         response = MutableLiveData(AMAZONE_POST_LOGIN_RESULT_FAILED)
     }
 
-    fun requestLoginAmazon(amazonProcessType: String) {
+    fun requestLoginAmazon(amazonProcessType: String, isAllAlarmsProcess: Boolean) {
         //get Input Data back using "inputData" variable
 
         FirebaseMessaging.getInstance().token
@@ -45,7 +45,21 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         ""
                     )
 
-                    if (amazonProcessType.equals(AMAZON_PRECESS_DIALOG_VALUE)) {
+                    if(isAllAlarmsProcess) {
+                        Log.d("testToken", FCM_token + "")
+                        // if the process come from dialog then send request immediately
+                        //send request
+                        setStringInPreference(
+                            getApplication<Application>().applicationContext,
+                            TOKEN_AMAZON_KEY_PREF,
+                            FCM_token
+                        )
+                        requestLoginAmazon(
+                            UserSession.instance.getUserAmazonResult()?.email,
+                            UserSession.instance.getUserAmazonResult()?.password,
+                            FCM_token
+                        )
+                    }else if (amazonProcessType.equals(AMAZON_PRECESS_DIALOG_VALUE) ) {
                         Log.d("testToken", FCM_token + "")
                         // if the process come from dialog then send request immediately
                         //send request
