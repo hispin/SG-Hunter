@@ -111,19 +111,12 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
         setContentView(R.layout.activity_my_screens)
 
-        init()
-
         //store locally default values of configuration
         setConfigurationDefault()
 
         currentItemTopMenu = intent.getIntExtra(CURRENT_ITEM_TOP_MENU_KEY, 0)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setLocationPermission()
-        } else {
-            init()
-        }
-
+        setLocationPermission()
 
     }
 
@@ -378,6 +371,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             //set event of click ic_on top menu
             when (position) {
                 0 -> {
+                    Log.d("testTabs", "ConfigurationFragment")
                     fragment = ConfigurationFragment()
                     fragment.arguments = Bundle().apply {
                         // Our object is just an integer :-P
@@ -392,6 +386,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                     }
                 }
                 2 -> {
+                    Log.d("testTabs", "WebFragment")
                     //make automatic login before open web all alarms
                     isUserAmazonForLoginExist()
                     fragment = WebFragment()

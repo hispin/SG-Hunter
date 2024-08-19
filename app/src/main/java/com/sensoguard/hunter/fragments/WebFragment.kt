@@ -159,11 +159,15 @@ class WebFragment : Fragment() {
     }
 
     private fun setFilter() {
-        val filter = IntentFilter(LOGIN_COMPLETE_KEY)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity?.registerReceiver(receiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
-        } else {
-            activity?.registerReceiver(receiver, filter)
+        val filter=IntentFilter(LOGIN_COMPLETE_KEY)
+        if (activity != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Log.d("testAllAlarms", "registerReceiver")
+                    requireActivity().registerReceiver(
+                        receiver, filter, AppCompatActivity.RECEIVER_EXPORTED)
+            } else {
+                activity?.registerReceiver(receiver, filter)
+            }
         }
     }
 
@@ -171,8 +175,9 @@ class WebFragment : Fragment() {
         override fun onReceive(arg0: Context, inn: Intent) {
             //accept currentAlarm
             if (inn.action == LOGIN_COMPLETE_KEY) {
-                //Log.d("testAllAlarms", "accept alarm")
-                loadWebAlarm()            }
+                Log.d("testAllAlarms", "accept login complete")
+                loadWebAlarm()
+            }
         }
     }
 
