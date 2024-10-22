@@ -125,7 +125,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                             val fcm_token=UserSession.instance.getUserAmazon()!!.token_fcm
                             UserSession.instance.setInstanceUserAmazonResult(
                                 email,pass,
-                                fcm_token,result.token,result.imagesBaseUrl)
+                                fcm_token,result.token,result.imagesBaseUrl,result.role)
                             getApplication<Application>().applicationContext
                                 .let { it1 ->
                                     storeUserAmazonResultToLocally(

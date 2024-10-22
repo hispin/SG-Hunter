@@ -110,6 +110,16 @@ class WebFragment : Fragment() {
         webAlarms?.settings?.loadWithOverviewMode = true
         webAlarms?.settings?.useWideViewPort = true
 
+        /////////
+        webAlarms?.settings?.javaScriptCanOpenWindowsAutomatically = true  // Important for popups
+        webAlarms?.settings?.setSupportMultipleWindows(true)
+        webAlarms?.settings?.setGeolocationEnabled(true)
+        webAlarms?.settings?.allowFileAccess = true
+        //enable debug
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true)
+        }
+        //////////
         webAlarms?.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
@@ -150,8 +160,12 @@ class WebFragment : Fragment() {
             val userInfo=
                 getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
 
-                val js=
-                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
+            val js=
+                "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"true\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
+
+
+//            val js=
+//                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
 
                 webAlarms?.evaluateJavascript(js, null)
 
