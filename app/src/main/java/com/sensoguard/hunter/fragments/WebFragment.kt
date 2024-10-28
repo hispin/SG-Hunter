@@ -1,10 +1,13 @@
 package com.sensoguard.hunter.fragments
 
+import android.Manifest
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
@@ -12,13 +15,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.google.android.gms.location.LocationServices
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
@@ -32,7 +38,7 @@ import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
  */
 class WebFragment : Fragment() {
 
-    private var webAlarms: WebView?=null
+     var webAlarms: WebView?=null
     private var ivBack:ImageView?=null
     private var pbLoadWeb:ProgressBar?=null
 
@@ -115,11 +121,18 @@ class WebFragment : Fragment() {
         webAlarms?.settings?.setSupportMultipleWindows(true)
         webAlarms?.settings?.setGeolocationEnabled(true)
         webAlarms?.settings?.allowFileAccess = true
+        webAlarms?.clearCache(true)
         //enable debug
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true)
         }
-        //////////
+        if(activity!=null) {
+            // Add the interface to WebView
+            webAlarms?.addJavascriptInterface(
+                WebAppInterface(requireActivity(), webAlarms!!),
+                "AndroidInterface"
+            )
+        }
         webAlarms?.webViewClient = object : WebViewClient() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
@@ -160,14 +173,13 @@ class WebFragment : Fragment() {
             val userInfo=
                 getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
 
-            val js=
-                "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"true\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
+            val js="localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"true\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
 
 
 //            val js=
 //                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
 
-                webAlarms?.evaluateJavascript(js, null)
+            webAlarms?.evaluateJavascript(js, null)
 
         }
     }
@@ -195,5 +207,44 @@ class WebFragment : Fragment() {
         }
     }
 
+    /**
+     * class for using in javascript
+     */
+    class WebAppInterface(private val activity: Activity,private val webAlarms:WebView) {
+
+        //this function is called by javascript
+        @JavascriptInterface
+        fun getLocation(callback: String) {
+            // Get location using Android's LocationManager or FusedLocationProvider
+            activity.runOnUiThread {
+                var fusedLocationProviderClient=
+                    LocationServices.getFusedLocationProviderClient(activity)
+                if (ActivityCompat.checkSelfPermission(
+                        activity,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        activity,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return@runOnUiThread
+                }
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        // Call back to JavaScript with the location
+                        val js = "$callback({coords: {latitude: ${location.latitude}, longitude: ${location.longitude}}})"
+                        webAlarms.evaluateJavascript(js, null)
+                    }
+                }
+            }
+        }
+    }
 
 }
