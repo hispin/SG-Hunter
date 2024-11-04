@@ -118,7 +118,7 @@ class WebFragment : Fragment() {
 
         /////////
         webAlarms?.settings?.javaScriptCanOpenWindowsAutomatically = true  // Important for popups
-        webAlarms?.settings?.setSupportMultipleWindows(true)
+//        webAlarms?.settings?.setSupportMultipleWindows(true)
         webAlarms?.settings?.setGeolocationEnabled(true)
         webAlarms?.settings?.allowFileAccess = true
         webAlarms?.clearCache(true)
