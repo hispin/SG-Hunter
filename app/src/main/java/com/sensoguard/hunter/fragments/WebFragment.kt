@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
+import com.sensoguard.hunter.global.PWA_URL
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 
@@ -146,7 +147,7 @@ class WebFragment : Fragment() {
                 pbLoadWeb?.visibility=View.GONE
                 super.onPageFinished(view, url)
                 if (url != null) {
-                    if (url == "https://outwatchpwa.sensoguard.com/"){
+                    if (url == "$PWA_URL/"){//"https://outwatchpwa.sensoguard.com/"){
                         ivBack?.visibility=View.GONE
                     }else{
                         ivBack?.visibility=View.VISIBLE
@@ -156,7 +157,7 @@ class WebFragment : Fragment() {
                 loadLocalHost()
             }
         }
-        webAlarms?.loadUrl("https://outwatchpwa.sensoguard.com")
+        webAlarms?.loadUrl(PWA_URL)
         //enable zoom on image
         webAlarms?.getSettings()?.setSupportZoom(true)
         webAlarms?.getSettings()?.builtInZoomControls=true

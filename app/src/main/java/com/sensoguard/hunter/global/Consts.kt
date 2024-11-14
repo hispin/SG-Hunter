@@ -125,4 +125,6 @@ const val LAST_DATE_ALARM = "lastDateAlarm"
 
 const val HOUR_OFFSET = 3
 
+const val PWA_URL = "https://outwatch.sensoguard.com/pwa"//"https://outwatchpwa.sensoguard.com")
+
 
