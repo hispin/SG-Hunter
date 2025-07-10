@@ -524,7 +524,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
 
     //open fragment dialog to sort the list of alarm log
-    private fun openSortByType(type: Int, requestCode: Int) {
+    private fun openSortByType(type: Int, requestCode: String) {
 
         val fr = SystemSortDialogFragment()
 
@@ -533,60 +533,85 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         val bdl = Bundle()
         bdl.putInt(SORT_TYPE_KEY, type)
         fr.arguments = bdl
-        fr.setTargetFragment(this, requestCode)
-        val fm = activity?.supportFragmentManager
-        val fragmentTransaction = fm?.beginTransaction()
-        fragmentTransaction?.add(R.id.flSortBySystemCamera, fr)
-        fragmentTransaction?.commit()
-    }
-
-    //open fragment dialog to see a large picture or video
-    private fun openLargePictureVideoByType(
-        type: Int,
-        imgPath: String?,
-        timeInMillis: Long?,
-        requestCode: Int
-    ) {
+        //fr.setTargetFragment(this, requestCode)
+        val fm = parentFragmentManager
 
 
-        if (imgPath == null) {
-            Toast.makeText(activity, resources.getString(R.string.no_photo), Toast.LENGTH_LONG)
-                .show()
-            return
+        // In the parent fragment
+        parentFragmentManager.setFragmentResultListener(
+            requestCode,
+            viewLifecycleOwner
+        ) { key, bundle ->
+            val resultCode = bundle.getInt(RESULT_CODE)
+
+            setUIAfterSorting()
+
+            if (requestCode == SORT_BY_SYSTEM_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    val mySysSortStr = bundle.getString(CAMERA_KEY)//intent?.extras?.getString(CAMERA_KEY, null)
+                    mySysSortStr?.let { mySortedCameras = convertJsonToSystemSortList(mySysSortStr) }
+                    if (mySortedCameras != null) {
+                        typeOfSorted = CAMERA_SORTED
+                        refreshAlarmsFromPref()
+                    }
+                }
+            } else if (requestCode == SORT_PICK_DATE_TIME_REQUEST_CODE) {
+                if (resultCode == Activity.RESULT_OK) {
+                    //get the start date and end date for sorting
+                    try {
+                        fromCalendar = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            bundle.getSerializable(FROM_CALENDAR, Calendar::class.java)
+                        } else {
+                            bundle.getSerializable(FROM_CALENDAR) as Calendar
+                        }
+                        fromCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
+                        toCalendar = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            bundle.getSerializable(TO_CALENDAR, Calendar::class.java)
+                        } else {
+                            bundle.getSerializable(TO_CALENDAR) as Calendar
+                        }
+                        toCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
+                        //toCalendar?.timeZone=TimeZone.getTimeZone("GMT+3")
+                        if (fromCalendar != null && toCalendar != null) {
+                            typeOfSorted = DATE_SORTED
+                            refreshAlarmsFromPref()
+                        }
+                        val fromDateStr = activity?.let { it1 ->
+                            getStringFromCalendar(
+                                fromCalendar!!,
+                                "dd/MM/yy kk:mm:ss",
+                                it1
+                            )
+                        }
+                        val toDateStr = activity?.let { it1 ->
+                            getStringFromCalendar(
+                                toCalendar!!,
+                                "dd/MM/yy kk:mm:ss",
+                                it1
+                            )
+                        }
+                        //Log.d("testCalendar", fromDateStr)
+                        //Log.d("testCalendar", toDateStr)
+                        //Log.d("testCalendar", getOffsetHour().toString())
+                    } catch (ex: Exception) {
+                        Toast.makeText(activity, resources.getString(R.string.error), Toast.LENGTH_LONG)
+                            .show()
+                    }
+                }
+            }
+            // Handle the result
         }
 
-        //val imgFile = File(imgPath)
-
-        //from internal storage
-        //val imgFile = File(context?.filesDir, path)
-
-//        if (!imgFile.exists()) {
-//            Toast.makeText(activity, resources.getString(R.string.no_photo), Toast.LENGTH_LONG)
-//                .show()
-//            return
-//        }
-
-        val fr=LargePictureVideoDialogFragment(listener)
-
-        //deliver selected camera to continue add data
-        //val cameraStr = convertToGson(camera)
-        val bdl = Bundle()
-        bdl.putInt(ACTION_TYPE_KEY, type)
-        bdl.putString(IMAGE_PATH_KEY, imgPath)
-        bdl.putString(IMAGE_TIME_KEY, timeInMillis.toString())
-        fr.arguments = bdl
-        fr.setTargetFragment(this, requestCode)
-        val fm = activity?.supportFragmentManager
-        fm?.let { fr.show(it, "LargePictureVideoDialogFragment") }
-//        val fragmentTransaction = fm?.beginTransaction()
-//        fragmentTransaction?.add(R.id.flSortBySystemCamera, fr)
-//        fragmentTransaction?.commit()
+        val fragmentTransaction =fm.beginTransaction()
+        fragmentTransaction.add(R.id.flSortBySystemCamera, fr)
+        fragmentTransaction.commit()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        //response from camera extra settings
 
-
+    /**
+     * set UI after sorting
+     */
+    private fun setUIAfterSorting() {
         btnFilterSystem?.isEnabled = true
         btnFilterDateTime?.isEnabled = true
 
@@ -617,53 +642,118 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
             )
         }?.let { it2 -> (btnFilterDateTime as Button).setTextColor(it2) }
 
-        if (requestCode == SORT_BY_SYSTEM_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val mySysSortStr = intent?.extras?.getString(CAMERA_KEY, null)
-                mySysSortStr?.let { mySortedCameras = convertJsonToSystemSortList(mySysSortStr) }
-                if (mySortedCameras != null) {
-                    typeOfSorted = CAMERA_SORTED
-                    refreshAlarmsFromPref()
-                }
-            }
-        } else if (requestCode == SORT_PICK_DATE_TIME_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                //get the start date and end date for sorting
-                try {
-                    fromCalendar =
-                        intent?.getSerializableExtra("fromCalendar") as Calendar
-                    fromCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
-                    toCalendar = intent.getSerializableExtra("toCalendar") as Calendar
-                    toCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
-                    //toCalendar?.timeZone=TimeZone.getTimeZone("GMT+3")
-                    if (fromCalendar != null && toCalendar != null) {
-                        typeOfSorted = DATE_SORTED
-                        refreshAlarmsFromPref()
-                    }
-                    val fromDateStr = activity?.let { it1 ->
-                        getStringFromCalendar(
-                            fromCalendar!!,
-                            "dd/MM/yy kk:mm:ss",
-                            it1
-                        )
-                    }
-                    val toDateStr = activity?.let { it1 ->
-                        getStringFromCalendar(
-                            toCalendar!!,
-                            "dd/MM/yy kk:mm:ss",
-                            it1
-                        )
-                    }
-                    //Log.d("testCalendar", fromDateStr)
-                    //Log.d("testCalendar", toDateStr)
-                    //Log.d("testCalendar", getOffsetHour().toString())
-                } catch (ex: Exception) {
-                    Toast.makeText(activity, resources.getString(R.string.error), Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
-        }
     }
+
+    //open fragment dialog to see a large picture or video
+    private fun openLargePictureVideoByType(
+        type: Int,
+        imgPath: String?,
+        timeInMillis: Long?,
+        requestCode: Int
+    ) {
+
+
+        if (imgPath == null) {
+            Toast.makeText(activity, resources.getString(R.string.no_photo), Toast.LENGTH_LONG)
+                .show()
+            return
+        }
+
+        val fr=LargePictureVideoDialogFragment(listener)
+
+        //deliver selected camera to continue add data
+        //val cameraStr = convertToGson(camera)
+        val bdl = Bundle()
+        bdl.putInt(ACTION_TYPE_KEY, type)
+        bdl.putString(IMAGE_PATH_KEY, imgPath)
+        bdl.putString(IMAGE_TIME_KEY, timeInMillis.toString())
+        fr.arguments = bdl
+        fr.setTargetFragment(this, requestCode)
+        val fm = activity?.supportFragmentManager
+        fm?.let { fr.show(it, "LargePictureVideoDialogFragment") }
+    }
+
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+//        //response from camera extra settings
+//
+//
+//        btnFilterSystem?.isEnabled = true
+//        btnFilterDateTime?.isEnabled = true
+//
+//        //change the color of the button
+//        this@AlarmLogFragment.context?.let { it1 ->
+//            ContextCompat.getColor(
+//                it1, R.color.gray11
+//            )
+//        }?.let { it2 -> btnFilterSystem?.setBackgroundColor(it2) }
+//
+//
+//        this@AlarmLogFragment.context?.let { it1 ->
+//            ContextCompat.getColor(
+//                it1, R.color.black
+//            )
+//        }?.let { it2 -> (btnFilterSystem as Button).setTextColor(it2) }
+//
+//        //change the color of the button
+//        this@AlarmLogFragment.context?.let { it1 ->
+//            ContextCompat.getColor(
+//                it1, R.color.gray11
+//            )
+//        }?.let { it2 -> btnFilterDateTime?.setBackgroundColor(it2) }
+//
+//        this@AlarmLogFragment.context?.let { it1 ->
+//            ContextCompat.getColor(
+//                it1, R.color.black
+//            )
+//        }?.let { it2 -> (btnFilterDateTime as Button).setTextColor(it2) }
+//
+//        if (requestCode == SORT_BY_SYSTEM_REQUEST_CODE) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                val mySysSortStr = intent?.extras?.getString(CAMERA_KEY, null)
+//                mySysSortStr?.let { mySortedCameras = convertJsonToSystemSortList(mySysSortStr) }
+//                if (mySortedCameras != null) {
+//                    typeOfSorted = CAMERA_SORTED
+//                    refreshAlarmsFromPref()
+//                }
+//            }
+//        } else if (requestCode == SORT_PICK_DATE_TIME_REQUEST_CODE) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                //get the start date and end date for sorting
+//                try {
+//                    fromCalendar =
+//                        intent?.getSerializableExtra("fromCalendar") as Calendar
+//                    fromCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
+//                    toCalendar = intent.getSerializableExtra("toCalendar") as Calendar
+//                    toCalendar?.add(Calendar.HOUR, HOUR_OFFSET)//to sort UTC
+//                    //toCalendar?.timeZone=TimeZone.getTimeZone("GMT+3")
+//                    if (fromCalendar != null && toCalendar != null) {
+//                        typeOfSorted = DATE_SORTED
+//                        refreshAlarmsFromPref()
+//                    }
+//                    val fromDateStr = activity?.let { it1 ->
+//                        getStringFromCalendar(
+//                            fromCalendar!!,
+//                            "dd/MM/yy kk:mm:ss",
+//                            it1
+//                        )
+//                    }
+//                    val toDateStr = activity?.let { it1 ->
+//                        getStringFromCalendar(
+//                            toCalendar!!,
+//                            "dd/MM/yy kk:mm:ss",
+//                            it1
+//                        )
+//                    }
+//                    //Log.d("testCalendar", fromDateStr)
+//                    //Log.d("testCalendar", toDateStr)
+//                    //Log.d("testCalendar", getOffsetHour().toString())
+//                } catch (ex: Exception) {
+//                    Toast.makeText(activity, resources.getString(R.string.error), Toast.LENGTH_LONG)
+//                        .show()
+//                }
+//            }
+//        }
+//    }
 
 //    fun getOffsetHour(): Float {
 //        val calendar: Calendar = GregorianCalendar()

@@ -2,7 +2,6 @@ package com.sensoguard.hunter.fragments
 
 import android.app.Activity
 import android.app.TimePickerDialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -24,10 +23,20 @@ import com.sensoguard.hunter.R
 import com.sensoguard.hunter.adapters.SystemSortDialogAdapter
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.SystemSort
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.CAMERA_KEY
+import com.sensoguard.hunter.global.FROM_CALENDAR
+import com.sensoguard.hunter.global.REQUEST_KEY
+import com.sensoguard.hunter.global.RESULT_CODE
+import com.sensoguard.hunter.global.SORT_BY_DATETIME_KEY
+import com.sensoguard.hunter.global.SORT_BY_SYSTEM_KEY
+import com.sensoguard.hunter.global.SORT_TYPE_KEY
+import com.sensoguard.hunter.global.TO_CALENDAR
+import com.sensoguard.hunter.global.convertSystemSortToGson
+import com.sensoguard.hunter.global.getStringFromCalendar
+import com.sensoguard.hunter.global.populateAlarmsFromLocally
 import com.squareup.timessquare.CalendarPickerView
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Calendar
+import java.util.Date
 
 
 class SystemSortDialogFragment : DialogFragment(),
@@ -208,36 +217,39 @@ class SystemSortDialogFragment : DialogFragment(),
 
     private fun sendResult(isOk: Boolean) {
         if (!isOk) {
-            val intent = Intent()
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, intent)
+            val result = Bundle().apply { putInt("resultCode", Activity.RESULT_CANCELED) }
+            parentFragmentManager.setFragmentResult("requestKey", result)
             dismiss()
             return
         }
 
 
-        if (targetFragment == null) {
+        if (parentFragmentManager == null) {
             return
         }
 
         if (sortType == SORT_BY_SYSTEM_KEY) {
-            val intent = Intent()
+
+            val result =Bundle()
+            result.putInt(RESULT_CODE, Activity.RESULT_OK)
             val SystemSortStr = myAlarmsNameSorted?.let { convertSystemSortToGson(it) }
             SystemSortStr?.let {
-                val bdl = Bundle()
-                bdl.putString(CAMERA_KEY, SystemSortStr)
-                intent.putExtras(bdl)
+                result.putString(CAMERA_KEY, SystemSortStr)
             }
-            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+            parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
             dismiss()
-        } else if (sortType == SORT_BY_DATETIME_KEY) {
+        }
+        else if (sortType == SORT_BY_DATETIME_KEY) {
 
             if (fromCalendar != null && fromCalendar!!.before(toCalendar)) {
-                val intent = Intent()
-                intent.putExtra("fromCalendar", fromCalendar)
-                intent.putExtra("toCalendar", toCalendar)
-                targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+
+                val result =Bundle()
+                result.putInt(RESULT_CODE, Activity.RESULT_OK)
+                result.putSerializable(FROM_CALENDAR, fromCalendar)
+                result.putSerializable(TO_CALENDAR, fromCalendar)
+                parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
                 dismiss()
-            } else {
+           } else {
                 Toast.makeText(
                     activity,
                     resources.getString(R.string.date_older),
@@ -245,8 +257,6 @@ class SystemSortDialogFragment : DialogFragment(),
                 ).show()
             }
         }
-
-
     }
 
     override fun onStart() {

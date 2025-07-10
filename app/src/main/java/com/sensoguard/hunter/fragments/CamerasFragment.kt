@@ -423,7 +423,21 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         val bdl = Bundle()
         bdl.putString(CAMERA_KEY, cameraStr)
         fr.arguments = bdl
-        fr.setTargetFragment(this, TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE)
+
+        //set listener to TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE
+        parentFragmentManager.setFragmentResultListener(
+            TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE,
+            viewLifecycleOwner
+        ) { key, bundle ->
+            val resultCode = bundle.getInt(RESULT_CODE)
+            if (resultCode == Activity.RESULT_OK) {
+                val cameraStr=bundle.getString(CAMERA_KEY)
+                cameraStr?.let { selectedCamera = convertJsonToSensor(cameraStr) }
+                selectedCamera?.let { saveCamera(it) }
+                Log.d("", "")
+            }
+        }
+
         val fm = activity?.supportFragmentManager
         val fragmentTransaction = fm?.beginTransaction()
         fragmentTransaction?.add(R.id.flExtra, fr)
@@ -449,15 +463,5 @@ class SensorsFragment : Fragment(), OnAdapterListener {
                     putString(ARG_PARAM2, param2)
                 }
             }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        //response from camera extra settings
-        if (resultCode == Activity.RESULT_OK && requestCode == TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE) {
-            val cameraStr = intent?.extras?.getString(CAMERA_KEY, null)
-            cameraStr?.let { selectedCamera = convertJsonToSensor(cameraStr) }
-            selectedCamera?.let { saveCamera(it) }
-            Log.d("", "")
-        }
     }
 }

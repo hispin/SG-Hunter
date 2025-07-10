@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.content.BroadcastReceiver
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -21,6 +22,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
@@ -36,14 +41,15 @@ import com.sensoguard.hunter.global.CAMERA_KEY
 import com.sensoguard.hunter.global.ERROR_RESULT_VALIDATION_EMAIL_ACTION
 import com.sensoguard.hunter.global.ERROR_VALIDATION_EMAIL_MSG_KEY
 import com.sensoguard.hunter.global.LAST_DATE_ALARM
+import com.sensoguard.hunter.global.REQUEST_KEY
+import com.sensoguard.hunter.global.RESULT_CODE
 import com.sensoguard.hunter.global.RESULT_VALIDATION_EMAIL_ACTION
-import com.sensoguard.hunter.global.TAKE_PICTURE_REQUEST_CODE
 import com.sensoguard.hunter.global.VALIDATION_EMAIL_RESULT
 import com.sensoguard.hunter.global.convertJsonToSensor
 import com.sensoguard.hunter.global.convertToGson
 import com.sensoguard.hunter.global.getScreenWidth
 import com.sensoguard.hunter.global.removePreference
-import java.util.*
+import java.util.Calendar
 
 
 class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener {
@@ -121,7 +127,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
         ibTakePic = view?.findViewById(R.id.ibTakePic)
         ibTakePic?.setOnClickListener {
             val myIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(myIntent, TAKE_PICTURE_REQUEST_CODE)
+            pickCamera()
         }
 
         ibShowPicture = view?.findViewById(R.id.ibShowPicture)
@@ -267,28 +273,51 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
     }
 
     private fun sendResult() {
-        if (targetFragment == null) {
+        if (parentFragmentManager == null) {
             return
         }
-        val intent = Intent()
+        val result =Bundle()
+        result.putInt(RESULT_CODE, Activity.RESULT_OK)
         val cameraStr = myCamera?.let { convertToGson(it) }
         cameraStr?.let {
-            val bdl = Bundle()
-            bdl.putString(CAMERA_KEY, cameraStr)
-            intent.putExtras(bdl)
+            result.putString(CAMERA_KEY, cameraStr)
+            //intent.putExtras(bdl)
         }
-        targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_OK, intent)
+        parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
         dismiss()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (requestCode == TAKE_PICTURE_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) run {
-                bitmap = intent!!.extras!!.get("data") as Bitmap
-                ibShowPicture?.setImageBitmap(bitmap)
-            }
-        }
 
+
+    var uri: Uri?=null
+
+    /**
+     * define listener
+     */
+    var startCamera: ActivityResultLauncher<Intent> =
+        registerForActivityResult<Intent, ActivityResult>(
+            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+                    if (result?.resultCode == Activity.RESULT_OK) run {
+                        ibShowPicture?.setImageURI(uri)
+                    }
+
+                }
+            })
+
+    /**
+     * take a picture
+     */
+    fun pickCamera() {
+        val values=ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "New Picture")
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From Camera")
+        uri=requireContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
+        )
+        val cameraIntent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+        startCamera.launch(cameraIntent)
     }
 
 

@@ -17,6 +17,10 @@ import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.ToggleButton
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -210,28 +214,49 @@ class MainActivity : LogInActivity() {
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)
         )
-        startActivityForResult(intent, CODE_REQUEST)
+        _openBatterySettings.launch(intent)
     }
+
+    /**
+     * define listener for open battery settings
+     */
+    var _openBatterySettings: ActivityResultLauncher<Intent> =
+        registerForActivityResult<Intent, ActivityResult>(
+            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+                    if (result?.resultCode == CODE_REQUEST) {
+                        initViews(true)
+                        //do login AZURE or AMAZON
+                        val loginType = getStringInPreference(this@MainActivity, LOGIN_TYPE_KEY, AZURE)
+                        if (loginType.equals(AZURE)) {
+                            isUserAzureForLoginExist()
+                        } else if (loginType.equals(AMAZON)) {
+                            isUserAmazonForLoginExist()
+                        }
+                    }
+                }
+            })
+
 
 
     //after showing the settings of battery
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CODE_REQUEST) {
-            initViews(true)
-            //do login AZURE or AMAZON
-            val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
-            if (loginType.equals(AZURE)) {
-                isUserAzureForLoginExist()
-            } else if (loginType.equals(AMAZON)) {
-                isUserAmazonForLoginExist()
-            }
-        }
-    }
+//    override fun onActivityResult(
+//        requestCode: Int,
+//        resultCode: Int,
+//        data: Intent?
+//    ) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == CODE_REQUEST) {
+//            initViews(true)
+//            //do login AZURE or AMAZON
+//            val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
+//            if (loginType.equals(AZURE)) {
+//                isUserAzureForLoginExist()
+//            } else if (loginType.equals(AMAZON)) {
+//                isUserAmazonForLoginExist()
+//            }
+//        }
+//    }
 
     //AZURE: open log in dialog if there is no tags or user&password
     private fun isUserAzureForLoginExist() {

@@ -96,10 +96,16 @@ const val ALARM_SENSOR_OFF = "sensor off"
 const val ALARM_LOW_BATTERY = "low battery"
 const val ALARM_OTHER = "other"
 
-const val TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE = 1
+const val TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE = "targetCameraExtra"
 const val TAKE_PICTURE_REQUEST_CODE = 2
-const val SORT_BY_SYSTEM_REQUEST_CODE = 3
-const val SORT_PICK_DATE_TIME_REQUEST_CODE = 4
+const val SORT_BY_SYSTEM_REQUEST_CODE = "sortBySystem"
+const val SORT_PICK_DATE_TIME_REQUEST_CODE = "sortPickDateTime"
+const val RESULT_CODE = "resultCode"
+const val FROM_CALENDAR = "fromCalendar"
+const val TO_CALENDAR = "toCalendar"
+const val REQUEST_KEY = "requestKey"
+
+
 
 const val CHANNEL_NAME = "newAlarmDetected"
 const val CHANNEL_ID = "1.0"

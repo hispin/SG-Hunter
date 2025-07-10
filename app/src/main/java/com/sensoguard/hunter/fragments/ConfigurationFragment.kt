@@ -1,6 +1,5 @@
 package com.sensoguard.hunter.fragments
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -25,6 +24,10 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
@@ -363,31 +366,60 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm")
         intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, null as Uri?)
-        this.startActivityForResult(intent, 5)
+        pickAlarm.launch(intent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == 5) {
-            val uri = intent!!.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
 
-            if (uri != null) {
-                val ringtone = RingtoneManager.getRingtone(activity, uri)
-                val title = ringtone.getTitle(activity)
-                txtAlarmSoundValue?.text = title
-                setStringInPreference(activity, SELECTED_NOTIFICATION_SOUND_KEY, uri.toString())
-            } else {
-                txtAlarmSoundValue?.text =
-                    resources.getString(com.sensoguard.hunter.R.string.no_selected_sound)
-            }
-        } else if (requestCode == CODE_REQUEST) {
+    /**
+     * define listener for pick alarm
+     */
+    var pickAlarm: ActivityResultLauncher<Intent> =
+        registerForActivityResult<Intent, ActivityResult>(
+            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+                    val uri: Uri?=if (Build.VERSION.SDK_INT >= 33) {
+                        result?.data?.getParcelableExtra(
+                            RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java
+                        )
+                    } else {
+                        result?.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
+                    }
 
-            val status = checkBackgroundNotifRestrict(requireActivity())
-            togChangeBackgroundRestrict?.isChecked = status
-            if(!status){
-                listener?.onBack()
-            }
-        }
-    }
+                    if (uri != null) {
+                        val ringtone = RingtoneManager.getRingtone(activity, uri)
+                        val title = ringtone.getTitle(activity)
+                        txtAlarmSoundValue?.text = title
+                        setStringInPreference(activity, SELECTED_NOTIFICATION_SOUND_KEY, uri.toString())
+                    } else {
+                        txtAlarmSoundValue?.text =
+                            resources.getString(com.sensoguard.hunter.R.string.no_selected_sound)
+                    }
+
+                }
+
+            })
+
+
+
+
+    /**
+     * define listener for open battery settings
+     */
+    var _openBatterySettings: ActivityResultLauncher<Intent> =
+        registerForActivityResult<Intent, ActivityResult>(
+            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+                      if (result?.resultCode == CODE_REQUEST) {
+                        val status = checkBackgroundNotifRestrict(requireActivity())
+                        togChangeBackgroundRestrict?.isChecked = status
+                        if(!status){
+                            listener?.onBack()
+                        }
+                     }
+                }
+            })
+
+
 
     private fun setMapSatellite() {
         //ibNormalMode?.isEnabled = true
@@ -408,119 +440,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         return sensors?.size
     }
 
-
-    //add sensors according to the number that get from user
-//    private fun addSensors(){
-//
-//        var numSensorsRequest:Int?=null
-//
-//        val sensors= activity?.let { getSensorsFromLocally(it) }
-//
-//        //check if id is already exist
-//        fun isIdExist(sensorsArr: ArrayList<Camera>, id: String): Boolean {
-//            for(item in sensorsArr){
-//                if(item.getId() == id){
-//                    return true
-//                }
-//            }
-//            return false
-//        }
-//
-//        //ask before delete extra sensors
-//        fun askBeforeDeleteExtraSensor() {
-//            val dialog= AlertDialog.Builder(activity)
-//                //set message, title, and icon
-//                .setTitle(activity?.resources?.getString(com.sensoguard.hunter.R.string.remove_extra_sensors))
-//                .setMessage(
-//                    activity?.resources?.getString(
-//                        com.sensoguard.hunter.R.string.content_delete_extra_sensor
-//                    )
-//                ).setIcon(
-//                    android.R.drawable.ic_menu_delete
-//
-//                )
-//
-//                .setPositiveButton(activity?.resources?.getString(com.sensoguard.hunter.R.string.yes)) { dialog, _ ->
-//
-//                    //remove extra sensors
-//                    if(numSensorsRequest!=null) {
-//                        val items=sensors?.listIterator()
-//                        while (items != null && items.hasNext()) {
-//                            val item = items.next()
-//
-//                            val id=item.getId()
-//                            try {
-//                                if (id.toInt() > numSensorsRequest!!) {
-//                                    items.remove()
-//                                }
-//                            }catch(ex:NumberFormatException){
-//                                //do nothing
-//                            }
-//                        }
-//                        Toast.makeText(
-//                            activity,
-//                            resources.getString(com.sensoguard.hunter.R.string.sensors_save_successfully),
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//
-//                    sensors?.let { sen -> storeSensorsToLocally(sen, activity!!) }
-//                    dialog.dismiss()
-//                }
-//
-//
-//                .setNegativeButton(activity?.resources?.getString(com.sensoguard.hunter.R.string.no)) {
-//                        dialog, _ -> dialog.dismiss() }.create()
-//            dialog.show()
-//
-//        }
-//
-//
-////        try{
-////            numSensorsRequest=etSensorValue?.text.toString().toInt()
-////        }catch (ex: NumberFormatException){
-////            Toast.makeText(this.context, "exception ${ex.message}", Toast.LENGTH_LONG).show()
-////            return
-////        }
-//
-////        if(numSensorsRequest!=null
-////            && numSensorsRequest >254){
-////            Toast.makeText(
-////                this.context,
-////                resources.getString(com.sensoguard.hunter.R.string.invalid_mum_sensors),
-////                Toast.LENGTH_LONG
-////            ).show()
-////            return
-////        }
-//
-//        //remove last date and enable scan last date
-//        removePreference(activity, LAST_DATE_ALARM)
-//
-////        if(numSensorsRequest!=null) {
-////            //add numSensors sensors
-////            for (sensorId in 1 until numSensorsRequest + 1) {
-////                //add it just if not exist
-////                if (sensors?.let { it1 -> !isIdExist(it1, sensorId.toString()) }!!) {
-////                    sensors.add(Camera(sensorId.toString()))
-////                }
-////            }
-////        }
-//
-//        //check if the request of sensors number is smaller then the number of exist
-//        if(sensors?.size!=null
-//            && numSensorsRequest!=null
-//            && numSensorsRequest < sensors.size){
-//            askBeforeDeleteExtraSensor()
-//        }else if(activity!=null) {
-//            sensors?.let { sen -> storeSensorsToLocally(sen, activity!!) }
-//            Toast.makeText(
-//                activity,
-//                resources.getString(com.sensoguard.hunter.R.string.sensors_save_successfully),
-//                Toast.LENGTH_SHORT
-//            ).show()
-//        }
-//
-//    }
 
     private fun showPopupList(anchorView: View) {
         if (LanguageManager.languagesItems != null && LanguageManager.languagesItems.size > 0) {
@@ -575,12 +494,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private fun showCurrentLanguage(generalItemMenu: GeneralItemMenu?) {
         if (generalItemMenu != null) {
             languageValue?.text = generalItemMenu.title
-//            ibLangSelect.setImageDrawable(
-//                ContextCompat.getDrawable(
-//                    getMyActivity(),
-//                    generalItemMenu.iconLarge
-//                )
-//            )
         }
     }
 
@@ -662,12 +575,15 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     }
 
 
+    /**
+     * open battery settings
+     */
     private fun openBatterySettings() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", activity?.packageName, null)
         )
-        startActivityForResult(intent, CODE_REQUEST)
+        _openBatterySettings.launch(intent)
     }
 
 

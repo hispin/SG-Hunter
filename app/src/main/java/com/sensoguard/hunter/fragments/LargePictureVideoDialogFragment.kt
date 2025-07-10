@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,11 +31,13 @@ import com.sensoguard.hunter.global.ACTION_TYPE_KEY
 import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
 import com.sensoguard.hunter.global.IMAGE_PATH_KEY
 import com.sensoguard.hunter.global.IMAGE_TIME_KEY
-import com.sensoguard.hunter.global.SaveImageInGalleryTask
+import com.sensoguard.hunter.global.saveImageInGallery
 import com.sensoguard.hunter.global.saveVideoInGallery
 import com.sensoguard.hunter.global.shareImage
 import com.sensoguard.hunter.global.showToast
 import com.sensoguard.hunter.interfaces.OnFragmentListener
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : DialogFragment(),
@@ -184,13 +188,38 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
         ibSaveLargeImgShare?.setOnClickListener {
             if (actionType == ACTION_PICTURE_KEY) {
                 val bitmap = (ivMyCaptureImage?.drawable as BitmapDrawable).bitmap
-                Thread {
-                    val res = timeImage?.let { it1 ->
-                        SaveImageInGalleryTask(bitmap, requireContext(), "$it1.jpg").execute()
+
+                //save image in gallery
+                val executor: ExecutorService=Executors.newSingleThreadExecutor()
+                val handler=Handler(Looper.getMainLooper())
+
+                executor.execute {
+                    //Background work here
+                    val result:Boolean? = timeImage?.let { it1 ->
+                        saveImageInGallery(bitmap,"$it1.jpg")
+                    }
+
+
+                    handler.post {
+                        if (result != null && result) {
+                            context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_success)
+                                ?.let { it1 ->
+                                    showToast(
+                                        context, it1
+                                    )
+                                }
+                        } else {
+                            context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_failed)
+                                ?.let { it1 ->
+                                    showToast(
+                                        context, it1
+                                    )
+                                }
+                        }
 
                     }
-                    //Log.d("test_save", res.toString())
-                }.start()
+                }
+
             } else if (actionType == ACTION_VIDEO_KEY) {
                 Thread {
                     imgPath?.let { it1 ->

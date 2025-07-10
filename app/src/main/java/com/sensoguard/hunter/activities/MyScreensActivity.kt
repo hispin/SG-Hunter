@@ -2,7 +2,6 @@ package com.sensoguard.hunter.activities
 
 //import com.sensoguard.hunter.services.MediaService
 import android.Manifest
-import android.app.Activity
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,15 +9,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.widget.ProgressBar
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -60,10 +58,6 @@ import com.sensoguard.hunter.global.setIntInPreference
 import com.sensoguard.hunter.global.setLongInPreference
 import com.sensoguard.hunter.global.setStringInPreference
 import com.sensoguard.hunter.interfaces.OnFragmentListener
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.lang.ref.WeakReference
 
 
 class MyScreensActivity : LogInActivity(), OnFragmentListener {
@@ -117,6 +111,15 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         currentItemTopMenu = intent.getIntExtra(CURRENT_ITEM_TOP_MENU_KEY, 0)
 
         setLocationPermission()
+
+        //create the back button
+        onBackPressedDispatcher.addCallback( this /* lifecycle owner */, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                //start activity for loading new language if it has been changed
+                startActivity( Intent(this@MyScreensActivity,MainActivity::class.java))
+            }
+        })
+
 
     }
 
@@ -418,11 +421,6 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        //start activity for loading new language if it has been changed
-        startActivity(Intent(this,MainActivity::class.java))
-    }
 
     //set the language of the app (calling  from activity)
     override fun updateLanguage() {
@@ -467,63 +465,9 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     }
 }
 
-//save the custom alarm file in alarms system
-    class SaveCustomAlarmSoundAsync() : AsyncTask<Void, Void, Void>() {
-
-        val LOG_TAG: String= "saveCustomAlarm"
-
-        // Weak references will still allow the Activity to be garbage-collected
-        private var weakActivity: WeakReference<Activity>?=null
-
-        constructor(myActivity: Activity) : this() {
-            weakActivity = WeakReference(myActivity)
-        }
 
 
-        override fun doInBackground(vararg params: Void?): Void? {
-            saveCustomAlarmSound()
-            return null
-        }
 
-        private fun saveCustomAlarmSound() {
-            Environment.DIRECTORY_ALARMS
-
-            // Get the directory for the app's private files directory.
-            val dirTarget = File(
-                weakActivity?.get()?.getExternalFilesDir(
-                    Environment.DIRECTORY_ALARMS
-                ), "alarm_sound.mp3"
-            )
-
-            if (!dirTarget.mkdirs()) {
-                Log.e(LOG_TAG, "Directory not created")
-            } else {
-
-                val fileTarget = File(dirTarget.path + File.separator + "alarm_sound.mp3")
-                val inputFileAlarm = weakActivity?.get()?.resources?.openRawResource(R.raw.alarm_sound)
-
-                val byteArray = inputFileAlarm?.readBytes()
-
-
-                try {
-                    if(byteArray!=null) {
-                        val fileOutput = FileOutputStream(fileTarget.absolutePath)
-                        fileOutput.write(byteArray)
-                        fileOutput.close()
-                    }
-                    //display file saved message
-                    Log.e("Exception", "File saved successfully")
-
-                } catch (e: IOException) {
-                    Log.e("Exception", "File write failed: $e")
-                }
-
-            }
-
-        }
-
-
-    }
 
 
 

@@ -10,7 +10,6 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Environment
 import android.util.Log
@@ -302,27 +301,3 @@ private fun openDownloadedAttachment1(
     }
 }
 
-class SaveImageInGalleryTask(val finalBitmap: Bitmap, val context: Context, val imageName: String) :
-    AsyncTask<Void, Void, Boolean>() {
-
-
-    override fun doInBackground(vararg params: Void?): Boolean? {
-        //return saveImageInGallery(finalBitmap, context, imageName)
-        return saveImageInGallery(finalBitmap, imageName)
-    }
-
-    override fun onPostExecute(result: Boolean?) {
-        super.onPostExecute(result)
-        if (result != null && result) {
-            showToast(
-                context,
-                context.resources.getString(com.sensoguard.hunter.R.string.save_file_success)
-            )
-        } else {
-            showToast(
-                context,
-                context.resources.getString(com.sensoguard.hunter.R.string.save_file_failed)
-            )
-        }
-    }
-}
