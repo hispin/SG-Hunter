@@ -34,7 +34,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     fun requestLoginAmazon(amazonProcessType: String, isAllAlarmsProcess: Boolean) {
         //get Input Data back using "inputData" variable
-
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task: Task<String> ->
                 if (task.isSuccessful && task.result != null) {

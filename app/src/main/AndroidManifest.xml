@@ -75,19 +75,29 @@
                 android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"
             android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <action android:name="android.intent.action.VIEW" />
+<!--        <intent-filter>-->
+<!--            <action android:name="android.intent.action.MAIN" />-->
+<!--            <action android:name="android.intent.action.VIEW" />-->
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+<!--            <category android:name="android.intent.category.LAUNCHER" />-->
+<!--        </intent-filter>-->
         </activity>
 
         <activity
                 android:name=".activities.MyScreensActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
+                android:exported="true"
                 android:screenOrientation="portrait"
-                android:windowSoftInputMode="adjustPan" /> <!-- prevent hiding the field by softkey -->
+                android:windowSoftInputMode="adjustPan" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+        </activity>
+        <!-- prevent hiding the field by softkey -->
         <uses-library
                 android:name="string"
                 android:required="false" />

@@ -36,6 +36,10 @@ fun showToast(context: Context?, msg: String) {
  * check if the app has battery restriction of accepting notifications in background
  */
 fun checkBackgroundNotifRestrict(context: Context) = when {
-    NotificationManagerCompat.from(context).areNotificationsEnabled() -> true
-    else -> false
+    NotificationManagerCompat.from(context).areNotificationsEnabled() -> {
+        true
+    }
+    else -> {
+        false
+    }
 }

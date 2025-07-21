@@ -27,12 +27,9 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.GeneralItemMenu
 import com.sensoguard.hunter.classes.LanguageManager
-import com.sensoguard.hunter.global.AMAZON
 import com.sensoguard.hunter.global.AMAZON_PRECESS_WITH_USER_VALUE
-import com.sensoguard.hunter.global.AZURE
 import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
 import com.sensoguard.hunter.global.CURRENT_LANG_KEY_PREF
-import com.sensoguard.hunter.global.LOGIN_TYPE_KEY
 import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
@@ -87,7 +84,6 @@ class MainActivity : LogInActivity() {
 
         //var year=Calendar.getInstance().get(Calendar.YEAR)
         //JodaTimeAndroid.init(this)
-
         var d: MonthDisplayHelper
 
         super.onCreate(savedInstanceState)
@@ -119,7 +115,6 @@ class MainActivity : LogInActivity() {
             //check if the app is restricted and cannot accept notification in background
             checkBackgroundNotifRestrict()
         }
-
     }
 
     /**
@@ -227,12 +222,12 @@ class MainActivity : LogInActivity() {
                     if (result?.resultCode == CODE_REQUEST) {
                         initViews(true)
                         //do login AZURE or AMAZON
-                        val loginType = getStringInPreference(this@MainActivity, LOGIN_TYPE_KEY, AZURE)
-                        if (loginType.equals(AZURE)) {
-                            isUserAzureForLoginExist()
-                        } else if (loginType.equals(AMAZON)) {
-                            isUserAmazonForLoginExist()
-                        }
+                        //val loginType = getStringInPreference(this@MainActivity, LOGIN_TYPE_KEY, AZURE)
+//                        if (loginType.equals(AZURE)) {
+//                            isUserAzureForLoginExist()
+//                        } else if (loginType.equals(AMAZON)) {
+                        isUserAmazonForLoginExist()
+//                        }
                     }
                 }
             })
@@ -273,15 +268,19 @@ class MainActivity : LogInActivity() {
         }
     }
 
+
+
     //AMAZON : open log in dialog if there is no tags or user&password
-    private fun isUserAmazonForLoginExist() {
+    private fun  isUserAmazonForLoginExist(): Boolean {
         //check is has already tags
         val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
         if (userInfo == null) {
             openLogInDialog(false)
+            return false
         } else {
             UserSession.instance.setInstanceUserAmazonResult(userInfo)
-            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE,false)
+            automaticLoginAmazon(AMAZON_PRECESS_WITH_USER_VALUE,false)
+            return true
         }
     }
 
@@ -337,7 +336,7 @@ class MainActivity : LogInActivity() {
         }
     }
 
-    private fun setOnClickAlarmLogTable() {
+    fun setOnClickAlarmLogTable() {
         clickAlarmLog?.setOnClickListener {
             val inn = Intent(this, MyScreensActivity::class.java)
             inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1)

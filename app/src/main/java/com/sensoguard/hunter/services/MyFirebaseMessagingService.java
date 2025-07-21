@@ -62,6 +62,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         boolean enabledAlarms = checkBackgroundNotifRestrict(this);
         if (myIntent != null && enabledAlarms) {
 
+            createChannelAndHandleNotifications(getApplicationContext());
+
             //parse extra intent to alarm and add it to locally
             AlarmParsing.getInstance().parsePushToAlarm(myIntent).addAlarmToHistory(this);
 
@@ -72,7 +74,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             //start media
             startWorkerMedia();
 
-            createChannelAndHandleNotifications(getApplicationContext());
             sendNotification(myIntent);
         }
     }
@@ -141,11 +142,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     }
 
-    //start service media
-//    private void startServiceMedia() {
-//        Intent serviceIntent = new Intent(this, MediaService.class);
-//        ContextCompat.startForegroundService(this, serviceIntent);
-//    }
 
     /**
      * start media worker

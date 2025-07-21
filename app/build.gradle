@@ -20,12 +20,12 @@ repositories {
 
 android {
     defaultConfig {
-        compileSdk 35
+        compileSdk 36
         applicationId "com.sensoguard.hunter"
         minSdkVersion 26
-        targetSdkVersion 35
-        versionCode 82
-        versionName "1.82"
+        targetSdkVersion 36
+        versionCode 84
+        versionName "1.84"
         vectorDrawables.useSupportLibrary = true
     }
     packagingOptions {
@@ -113,23 +113,23 @@ dependencies {
     implementation 'com.google.android.things:androidthings:1.0'
     implementation 'com.google.android.gms:play-services-maps:19.2.0'
     implementation 'com.github.kai-morich:usb-serial-for-android:1.7.0'
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'com.google.android.material:material:1.12.0'
-    implementation 'com.opencsv:opencsv:3.9'
+    implementation 'com.opencsv:opencsv:5.11.2'
     implementation 'com.github.felHR85:UsbSerial:6.0.6'
 
     //Support language
     implementation 'com.github.delight-im:Android-Languages:v1.0.1'
     implementation files('libs/javax.mail.jar')
     //test attached
-    implementation 'com.sun.mail:android-activation:1.6.4'
+    implementation 'com.sun.mail:android-activation:1.6.7'
     //implementation 'ru.egslava:MaskedEditText:1.0.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup:android-times-square:1.6.5@aar'
+    implementation 'com.squareup:android-times-square:1.7.11@aar'
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
 
     implementation files('libs/jsoup-1.12.1.jar')
@@ -143,21 +143,21 @@ dependencies {
     implementation 'com.google.firebase:firebase-crashlytics:19.4.4'
 
 
-    implementation 'com.google.code.gson:gson:2.11.0'
+    implementation 'com.google.code.gson:gson:2.13.1'
 
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.15.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-    implementation 'com.github.bumptech.glide:annotations:4.15.1'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.github.bumptech.glide:annotations:4.16.0'
 
     //retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
-    implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
 
     //azura
-    implementation 'com.microsoft.azure:notification-hubs-android-sdk:0.6@aar'
+    implementation 'com.microsoft.azure:notification-hubs-android-sdk:2.0.0@aar'
 
     implementation 'androidx.fragment:fragment-ktx:1.8.8'
 

@@ -114,9 +114,28 @@ open class LogInActivity : AppCompatActivity() {
     /**
      * start login amazon worker
      */
-    fun loginAmazonFromDialog(processType: String,isAllAlarmsProcess:Boolean) {
+    fun loginAmazon(processType: String, isAllAlarmsProcess:Boolean) {
         this.isAllAlarmsProcess=isAllAlarmsProcess
-        viewModel?.requestLoginAmazon(processType,isAllAlarmsProcess)
+        viewModel?.requestLoginAmazon(processType, isAllAlarmsProcess)
+    }
+
+    /**
+     * start automatic login amazon worker
+     */
+    fun automaticLoginAmazon(processType: String,isAllAlarmsProcess:Boolean) {
+        this.isAllAlarmsProcess=isAllAlarmsProcess
+        if(viewModel==null) {
+            viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+//            viewModel?.automaticLoginSuccess?.observe(this){
+//                if(it){
+//                    val inn = Intent(this, MyScreensActivity::class.java)
+//                    inn.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1)
+//                    inn.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    startActivity(inn)
+//                }
+//            }
+            viewModel?.requestLoginAmazon(processType, isAllAlarmsProcess)
+        }
     }
 
 
@@ -216,7 +235,7 @@ open class LogInActivity : AppCompatActivity() {
                     )
                 )
                 //send post
-                loginAmazonFromDialog(AMAZON_PRECESS_DIALOG_VALUE,isAllAlarmsProcess)
+                loginAmazon(AMAZON_PRECESS_DIALOG_VALUE,isAllAlarmsProcess)
             }
         })
         val negativeButton: Button = promptsView.findViewById(R.id.btnCancel) as Button

@@ -2,6 +2,8 @@ package com.sensoguard.hunter.activities
 
 //import com.sensoguard.hunter.services.MediaService
 import android.Manifest
+import android.app.ActivityManager
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,12 +13,21 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
 import android.view.View.OnTouchListener
+import android.view.View.VISIBLE
 import android.widget.ProgressBar
+import android.widget.ToggleButton
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +35,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.tabs.TabLayout
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.Alarm
@@ -35,7 +48,6 @@ import com.sensoguard.hunter.fragments.WebFragment
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
 import com.sensoguard.hunter.global.AMAZON_PRECESS_WITH_USER_VALUE
-import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
 import com.sensoguard.hunter.global.IS_MYSCREENACTIVITY_FOREGROUND
 import com.sensoguard.hunter.global.MAIN_MENU_NUM_ITEM
 import com.sensoguard.hunter.global.MAP_SHOW_SATELLITE_VALUE
@@ -43,9 +55,11 @@ import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
 import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.UserSession
+import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
 import com.sensoguard.hunter.global.getStringInPreference
@@ -67,14 +81,30 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     // representing an object in the collection.
     private lateinit var collectionPagerAdapter: CollectionPagerAdapter
     private lateinit var viewPager: ViewPager
-    private var currentItemTopMenu = 0
+    private var currentItemTopMenu = 1
     private var vPager: NonSwipeAbleViewPager?=null
     var videoFileId: Long?=null
     //private var togChangeStatus: ToggleButton? = null
     var pbLoadPhoto: ProgressBar?=null
+    private var consDisableNotification: ConstraintLayout?=null
+    private var togChangeBackgroundRestrict: ToggleButton?=null
 
+    private val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
 
     val TAG = "MyScreensActivity"
+
+
+    /**
+     * define listener for open battery settings
+     */
+    var _openBatterySettings: ActivityResultLauncher<Intent> =
+        registerForActivityResult<Intent, ActivityResult>(
+            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                override fun onActivityResult(result: ActivityResult?) {
+                    //check if the battery notification is enabled
+                    configureNotificationStatus()
+                }
+            })
 
 
     // class to accept indication when saving video is completed
@@ -105,12 +135,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
         setContentView(R.layout.activity_my_screens)
 
-        //store locally default values of configuration
-        setConfigurationDefault()
-
-        currentItemTopMenu = intent.getIntExtra(CURRENT_ITEM_TOP_MENU_KEY, 0)
-
-        setLocationPermission()
+        initCheckingEnabledNotification()
 
         //create the back button
         onBackPressedDispatcher.addCallback( this /* lifecycle owner */, object : OnBackPressedCallback(true) {
@@ -120,8 +145,24 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             }
         })
 
-
+        //check if the google play is installed in the device
+        if (checkPlayServices()) {
+            //check if the app is restricted and cannot accept notification in background
+            checkBackgroundNotifRestrict()
+        }
     }
+
+    /**
+     * init checking enabled notification
+     */
+    private fun initCheckingEnabledNotification() {
+        consDisableNotification=findViewById(R.id.consDisableNotification)
+        togChangeBackgroundRestrict=findViewById(R.id.togChangeBackgroundRestrict)
+        togChangeBackgroundRestrict?.setOnCheckedChangeListener { buttonView, isChecked ->
+            openAppSettings()
+        }
+    }
+
 
 
     /**
@@ -248,6 +289,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     override fun onStart() {
         super.onStart()
+        configureNotificationStatus()
         setFilter()
     }
 
@@ -338,28 +380,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     }
 
 
-//    private fun setExternalPermission() {
-//        /*
-//     * Request location permission, so that we can get the location of the
-//     * device. The result of the permission request is handled by a callback,
-//     * onRequestPermissionsResult.
-//     */
-//        if (ContextCompat.checkSelfPermission(
-//                this.applicationContext,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ) == PackageManager.PERMISSION_GRANTED
-//        ) {
-//            init()
-//        } else {
-//            ActivityCompat.requestPermissions(
-//                this,
-//                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-//            )
-//        }
-//    }
-
-
-    // Since this is an object collection, use a FragmentStatePagerAdapter,
+// Since this is an object collection, use a FragmentStatePagerAdapter,
 // and NOT a FragmentPagerAdapter.
     inner class CollectionPagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(
         fm,
@@ -450,9 +471,16 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     }
 
     override fun onBack() {
-        onBackPressed()
+        refresh()
     }
-    //AMAZON : open log in dialog if there is no tags or user&password
+
+    private fun refresh() {
+        configureNotificationStatus()
+    }
+
+    /**
+     * check is has already log in user
+     */
     private fun isUserAmazonForLoginExist() {
         //check is has already tags
         val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
@@ -460,8 +488,98 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             openLogInDialog(true)
         } else {
             UserSession.instance.setInstanceUserAmazonResult(userInfo)
-            loginAmazonFromDialog(AMAZON_PRECESS_WITH_USER_VALUE,true)
+            loginAmazon(AMAZON_PRECESS_WITH_USER_VALUE,true)
         }
+    }
+
+
+    /**
+     * showing the settings of application
+     */
+    private fun openAppSettings() {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", packageName, null)
+        )
+        _openBatterySettings.launch(intent)
+    }
+
+    /**
+     * if notification is disable then show warning and disable activities
+     */
+    private fun configureNotificationStatus() {
+        if(checkBackgroundNotifRestrict(this)){
+            consDisableNotification?.visibility=GONE
+            //store locally default values of configuration
+            setConfigurationDefault()
+            setLocationPermission()
+        }else{
+            consDisableNotification?.visibility=VISIBLE
+        }
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog box that enables  users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private fun checkPlayServices(): Boolean {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode = apiAvailability.isGooglePlayServicesAvailable(this)
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)?.show()
+            } else {
+                Log.i(TAG, "This device is not supported by Google Play Services.")
+                ToastNotify("This device is not supported by Google Play Services.", this)
+                //initViews(false)
+            }
+            return false
+        }
+        return true
+    }
+
+    //check if the app has battery restriction of accepting notifications in background
+    private fun checkBackgroundNotifRestrict() {
+
+        //check if the system restrict accepting notifications in background
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val msg = activityManager.isBackgroundRestricted
+            if (msg) {
+                // "restricted"
+                showBeforeDialog()
+            } else {
+                // "not restricted"
+                //check if the device has google service
+                if (checkPlayServices()) {
+                    //check is has already log in user
+                    isUserAmazonForLoginExist()
+                }
+            }
+        }
+    }
+    //show dialog to cancel the notifications in background battery restriction
+    private fun showBeforeDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(resources.getString(R.string.not_allow_background_activity))
+        val yes = resources.getString(R.string.yes)
+        val no = resources.getString(R.string.no)
+        builder.setMessage(resources.getString(R.string.do_you_want_to_open_setting_battery))
+            .setCancelable(false)
+        builder.setPositiveButton(yes) { dialog, which ->
+            dialog.dismiss()
+            openAppSettings()
+        }
+
+
+        // Display a negative button on alert dialog
+        builder.setNegativeButton(no) { dialog, which ->
+            dialog.dismiss()
+            //initViews(true)
+        }
+        val alert = builder.create()
+        alert.show()
     }
 }
 

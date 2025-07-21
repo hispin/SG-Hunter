@@ -295,19 +295,19 @@ class AlarmAdapter(
                         override fun onLoadFailed(
                             e: GlideException?,
                             model: Any?,
-                            target: Target<Drawable>?,
+                            target: Target<Drawable>,
                             isFirstResource: Boolean
                         ): Boolean {
-                            tvImageLoadError?.visibility = View.VISIBLE
+                              tvImageLoadError?.visibility = View.VISIBLE
+                              return false
 
-                            return false
                         }
 
                         override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
+                            resource: Drawable,
+                            model: Any,
                             target: Target<Drawable>?,
-                            dataSource: DataSource?,
+                            dataSource: DataSource,
                             isFirstResource: Boolean
                         ): Boolean {
                             //if the the image is video then show the video icon
@@ -322,7 +322,6 @@ class AlarmAdapter(
                             tvImageLoadError?.visibility = View.GONE
 
                             return false
-
                         }
 
 
