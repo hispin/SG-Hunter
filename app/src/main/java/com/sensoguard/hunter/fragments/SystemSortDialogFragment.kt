@@ -25,10 +25,11 @@ import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.SystemSort
 import com.sensoguard.hunter.global.CAMERA_KEY
 import com.sensoguard.hunter.global.FROM_CALENDAR
-import com.sensoguard.hunter.global.REQUEST_KEY
 import com.sensoguard.hunter.global.RESULT_CODE
 import com.sensoguard.hunter.global.SORT_BY_DATETIME_KEY
 import com.sensoguard.hunter.global.SORT_BY_SYSTEM_KEY
+import com.sensoguard.hunter.global.SORT_BY_SYSTEM_REQUEST_CODE
+import com.sensoguard.hunter.global.SORT_PICK_DATE_TIME_REQUEST_CODE
 import com.sensoguard.hunter.global.SORT_TYPE_KEY
 import com.sensoguard.hunter.global.TO_CALENDAR
 import com.sensoguard.hunter.global.convertSystemSortToGson
@@ -218,7 +219,11 @@ class SystemSortDialogFragment : DialogFragment(),
     private fun sendResult(isOk: Boolean) {
         if (!isOk) {
             val result = Bundle().apply { putInt("resultCode", Activity.RESULT_CANCELED) }
-            parentFragmentManager.setFragmentResult("requestKey", result)
+            if (sortType == SORT_BY_SYSTEM_KEY) {
+                parentFragmentManager.setFragmentResult(SORT_BY_SYSTEM_REQUEST_CODE, result)
+            }else{
+                parentFragmentManager.setFragmentResult(SORT_PICK_DATE_TIME_REQUEST_CODE, result)
+            }
             dismiss()
             return
         }
@@ -236,7 +241,7 @@ class SystemSortDialogFragment : DialogFragment(),
             SystemSortStr?.let {
                 result.putString(CAMERA_KEY, SystemSortStr)
             }
-            parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
+            parentFragmentManager.setFragmentResult(SORT_BY_SYSTEM_REQUEST_CODE, result)
             dismiss()
         }
         else if (sortType == SORT_BY_DATETIME_KEY) {
@@ -246,8 +251,8 @@ class SystemSortDialogFragment : DialogFragment(),
                 val result =Bundle()
                 result.putInt(RESULT_CODE, Activity.RESULT_OK)
                 result.putSerializable(FROM_CALENDAR, fromCalendar)
-                result.putSerializable(TO_CALENDAR, fromCalendar)
-                parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
+                result.putSerializable(TO_CALENDAR, toCalendar)
+                parentFragmentManager.setFragmentResult(SORT_PICK_DATE_TIME_REQUEST_CODE, result)
                 dismiss()
            } else {
                 Toast.makeText(

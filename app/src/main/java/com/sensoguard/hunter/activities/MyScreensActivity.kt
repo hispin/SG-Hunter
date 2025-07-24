@@ -22,7 +22,6 @@ import android.view.View.OnTouchListener
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.ToggleButton
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -41,6 +40,7 @@ import com.google.android.material.tabs.TabLayout
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.GeneralItemMenu
+import com.sensoguard.hunter.classes.LanguageManager
 import com.sensoguard.hunter.classes.NonSwipeAbleViewPager
 import com.sensoguard.hunter.fragments.AlarmLogFragment
 import com.sensoguard.hunter.fragments.ConfigurationFragment
@@ -48,7 +48,9 @@ import com.sensoguard.hunter.fragments.WebFragment
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
 import com.sensoguard.hunter.global.AMAZON_PRECESS_WITH_USER_VALUE
+import com.sensoguard.hunter.global.CURRENT_LANG_KEY_PREF
 import com.sensoguard.hunter.global.IS_MYSCREENACTIVITY_FOREGROUND
+import com.sensoguard.hunter.global.IS_SETTINGS_NOTIFICATION_LAUNCHER
 import com.sensoguard.hunter.global.MAIN_MENU_NUM_ITEM
 import com.sensoguard.hunter.global.MAP_SHOW_SATELLITE_VALUE
 import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
@@ -60,6 +62,7 @@ import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
+import com.sensoguard.hunter.global.getAppLanguage
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
 import com.sensoguard.hunter.global.getStringInPreference
@@ -94,17 +97,6 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     val TAG = "MyScreensActivity"
 
 
-    /**
-     * define listener for open battery settings
-     */
-    var _openBatterySettings: ActivityResultLauncher<Intent> =
-        registerForActivityResult<Intent, ActivityResult>(
-            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                override fun onActivityResult(result: ActivityResult?) {
-                    //check if the battery notification is enabled
-                    configureNotificationStatus()
-                }
-            })
 
 
     // class to accept indication when saving video is completed
@@ -127,28 +119,66 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     }
 
+    private lateinit var _openBatterySettings: ActivityResultLauncher<Intent>
+
+    private var isSettingsNotificationLauncher:Boolean?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
 
         super.onCreate(savedInstanceState)
 
+        configurationLanguage()
+
         setContentView(R.layout.activity_my_screens)
+
+        /**
+         * define listener for open battery settings
+         */
+        _openBatterySettings =
+            registerForActivityResult<Intent, ActivityResult>(
+                StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
+                    override fun onActivityResult(result: ActivityResult?) {
+                        //check if the battery notification is enabled
+                        configureNotificationStatus()
+                    }
+                })
+
+        //if the app is restart because change enabled notification from settings
+        isSettingsNotificationLauncher = intent.getBooleanExtra(IS_SETTINGS_NOTIFICATION_LAUNCHER,false)
+        if(isSettingsNotificationLauncher == true){
+            openNotificationSettings()
+        }
+
 
         initCheckingEnabledNotification()
 
-        //create the back button
-        onBackPressedDispatcher.addCallback( this /* lifecycle owner */, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                //start activity for loading new language if it has been changed
-                startActivity( Intent(this@MyScreensActivity,MainActivity::class.java))
-            }
-        })
+            //create the back button
+//        onBackPressedDispatcher.addCallback( this /* lifecycle owner */, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//
+//            }
+//        })
 
-        //check if the google play is installed in the device
+            //check if the google play is installed in the device
         if (checkPlayServices()) {
             //check if the app is restricted and cannot accept notification in background
             checkBackgroundNotifRestrict()
+        }
+    }
+
+    private fun configurationLanguage() {
+        LanguageManager.setLanguageList()
+        val currentLanguage = getStringInPreference(this, CURRENT_LANG_KEY_PREF, "-1")
+        if (currentLanguage != "-1") {
+            GeneralItemMenu.selectedItem = currentLanguage
+            setAppLanguage(this, GeneralItemMenu.selectedItem)
+        } else {
+            val deviceLang = getAppLanguage()
+            if (LanguageManager.isExistLang(deviceLang)) {
+                GeneralItemMenu.selectedItem = deviceLang
+                setAppLanguage(this, GeneralItemMenu.selectedItem)
+            }
         }
     }
 
@@ -159,7 +189,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         consDisableNotification=findViewById(R.id.consDisableNotification)
         togChangeBackgroundRestrict=findViewById(R.id.togChangeBackgroundRestrict)
         togChangeBackgroundRestrict?.setOnCheckedChangeListener { buttonView, isChecked ->
-            openAppSettings()
+            openNotificationSettings()
         }
     }
 
@@ -289,7 +319,11 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     override fun onStart() {
         super.onStart()
-        configureNotificationStatus()
+        if(isSettingsNotificationLauncher==false) {
+            configureNotificationStatus()
+        }else{
+            isSettingsNotificationLauncher=false
+        }
         setFilter()
     }
 
@@ -496,7 +530,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     /**
      * showing the settings of application
      */
-    private fun openAppSettings() {
+    private fun openNotificationSettings() {
         val intent = Intent(
             Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
             Uri.fromParts("package", packageName, null)
@@ -569,7 +603,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             .setCancelable(false)
         builder.setPositiveButton(yes) { dialog, which ->
             dialog.dismiss()
-            openAppSettings()
+            openNotificationSettings()
         }
 
 

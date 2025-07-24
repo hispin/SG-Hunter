@@ -105,10 +105,11 @@ class WebFragment : Fragment() {
         webAlarms?.isScrollbarFadingEnabled = true
         webAlarms?.isHorizontalScrollBarEnabled = false
         webAlarms?.settings?.javaScriptEnabled = true
+        //webAlarms?.settings?.javaScriptCanOpenWindowsAutomatically=true
 
         //prevent softkey
-        webAlarms?.setFocusableInTouchMode(false)
-        webAlarms?.isFocusable=false
+        webAlarms?.setFocusableInTouchMode(true)
+        webAlarms?.isFocusable=true
         /////////////////
 
         //enable jQuery&Localhost
@@ -174,7 +175,7 @@ class WebFragment : Fragment() {
             val userInfo=
                 getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
 
-            val js="localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"true\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
+            val js="localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"כש\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
 
 
 //            val js=

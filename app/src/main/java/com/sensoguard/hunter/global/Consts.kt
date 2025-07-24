@@ -133,4 +133,6 @@ const val HOUR_OFFSET = 3
 
 const val PWA_URL = "https://outwatch.sensoguard.com/pwa"//"https://outwatchpwa.sensoguard.com")
 
+const val  IS_SETTINGS_NOTIFICATION_LAUNCHER  ="isSettingsNotificationLauncher"
+
 

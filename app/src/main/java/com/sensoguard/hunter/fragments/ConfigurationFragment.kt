@@ -12,7 +12,6 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +46,7 @@ import com.sensoguard.hunter.global.ERROR_RESULT_VALIDATION_EMAIL_ACTION
 import com.sensoguard.hunter.global.ERROR_VALIDATION_EMAIL_MSG_KEY
 import com.sensoguard.hunter.global.IS_EMAIL_CONFIG_PREF_KEY
 import com.sensoguard.hunter.global.IS_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.IS_SETTINGS_NOTIFICATION_LAUNCHER
 import com.sensoguard.hunter.global.IS_VIBRATE_WHEN_ALARM_KEY
 import com.sensoguard.hunter.global.LAST_DATE_ALARM
 import com.sensoguard.hunter.global.MAP_SHOW_NORMAL_VALUE
@@ -106,6 +106,11 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         } else {
             throw RuntimeException("$context must implement OnAdapterListener")
         }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -180,8 +185,10 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         togChangeBackgroundRestrict = view.findViewById(R.id.togChangeBackgroundRestrict)
         togChangeBackgroundRestrict?.isChecked = checkBackgroundNotifRestrict(requireActivity())
         togChangeBackgroundRestrict?.setOnCheckedChangeListener { buttonView, isChecked ->
-            openBatterySettings()
+            restartFirstActivity()
         }
+
+
 
         btnDefault = view.findViewById(com.sensoguard.hunter.R.id.btnDefault)
         btnDefault?.setOnClickListener {
@@ -273,6 +280,19 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
         return view
     }
+
+
+    /**
+     * restart first activity and open settings notification automatically
+     */
+    private fun restartFirstActivity() {
+        val i: Intent=requireActivity().packageManager.getLaunchIntentForPackage(requireActivity().packageName)!!
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.putExtra(IS_SETTINGS_NOTIFICATION_LAUNCHER,true)
+        startActivity(i)
+    }
+
+
 
     /**
      * clear data and cache
@@ -402,22 +422,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
 
 
-    /**
-     * define listener for open battery settings
-     */
-    var _openBatterySettings: ActivityResultLauncher<Intent> =
-        registerForActivityResult<Intent, ActivityResult>(
-            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                override fun onActivityResult(result: ActivityResult?) {
-                      if (result?.resultCode == CODE_REQUEST) {
-                        val status = checkBackgroundNotifRestrict(requireActivity())
-                        togChangeBackgroundRestrict?.isChecked = status
-                        if(!status){
-                            listener?.onBack()
-                        }
-                     }
-                }
-            })
+
 
 
 
@@ -572,18 +577,6 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
             }
         }
 
-    }
-
-
-    /**
-     * open battery settings
-     */
-    private fun openBatterySettings() {
-        val intent = Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", activity?.packageName, null)
-        )
-        _openBatterySettings.launch(intent)
     }
 
 
