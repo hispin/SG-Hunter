@@ -238,10 +238,6 @@ open class LogInActivity : AppCompatActivity() {
                 loginAmazon(AMAZON_PRECESS_DIALOG_VALUE,isAllAlarmsProcess)
             }
         })
-        val negativeButton: Button = promptsView.findViewById(R.id.btnCancel) as Button
-        negativeButton.setOnClickListener(View.OnClickListener {
-            dialog?.dismiss()
-        })
     }
 
 

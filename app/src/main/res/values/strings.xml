@@ -76,6 +76,7 @@
     <string name="camera_type_title">Camera Model:</string>
     <string name="mail_address_title">Email Address:</string>
     <string name="password_title">Password:</string>
+    <string name="password">Password</string>
     <string name="incoming_email_server_title">Incoming Email server:</string>
     <string name="incoming_email_server_port_title">Incoming Email Port:</string>
     <string name="use_ssl_title">Using SSL:</string>
@@ -116,6 +117,7 @@
     <string name="missing_phone_number">Missing phone number</string>
     <string name="emails_title">Add emails</string>
     <string name="send_command">Send command</string>
+    <string name="email">Email</string>
     <string name="email1">Email 1</string>
     <string name="email2">Email 2</string>
     <string name="email3">Email 3</string>

@@ -73,6 +73,7 @@
     <string name="tel_num_title">מס’ טלפון:</string>
     <string name="camera_type_title">דגם מצלמה:</string>
     <string name="mail_address_title">כתובת אימייל:</string>
+    <string name="password">סיסמה</string>
     <string name="password_title">סיסמה:</string>
     <string name="incoming_email_server_title">שרת אימייל נכנס:</string>
     <string name="incoming_email_server_port_title">פורט אימייל נכנס:</string>
@@ -114,6 +115,7 @@
     <string name="missing_phone_number">חסר מספר טלפון</string>
     <string name="emails_title">הוסף אימיילים</string>
     <string name="send_command">שלח פקודה</string>
+    <string name="email">אימייל</string>
     <string name="email1">אימייל 1</string>
     <string name="email2">אימייל 2</string>
     <string name="email3">אימייל 3</string>
