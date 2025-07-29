@@ -98,6 +98,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private var btnEditUser: AppCompatButton? = null
     private var btnClearData:Button?=null
 
+    private var tvShowVer:TextView?=null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -275,6 +276,12 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         btnClearData?.setOnClickListener {
             showClearDtaDialog()
         }
+
+        tvShowVer= view?.findViewById(R.id.tvShowVer)
+        val verName = requireActivity().packageManager.getPackageInfo(requireActivity().packageName, 0).versionName
+        val verTitle = "version:$verName"
+        tvShowVer?.text = verTitle
+
 
         //setMyEmailAccountFields()
 

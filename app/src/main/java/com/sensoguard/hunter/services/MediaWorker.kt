@@ -1,16 +1,29 @@
 package com.sensoguard.hunter.services
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
+import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
+import com.sensoguard.hunter.global.IS_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.getBooleanInPreference
+import com.sensoguard.hunter.global.getLongInPreference
+import com.sensoguard.hunter.global.getStringInPreference
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
+
 
 class MediaWorker (val context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -29,34 +42,30 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
     //execute vibrate
     private fun playVibrate() {
 
-        val isVibrateWhenAlarm =
-            getBooleanInPreference(context, IS_VIBRATE_WHEN_ALARM_KEY, true)
-        if (isVibrateWhenAlarm) {
-            // Get instance of Vibrator from current Context
-            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val vibratorManager =
-                    context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                vibratorManager.defaultVibrator
-            } else {
-                @Suppress("DEPRECATION")
-                context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-            }
+        val VIBRO_TIME=2000L
 
-            // Vibrate for 200 milliseconds
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        1000,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
-                )
-            } else {
-                vibrator.vibrate(1000)
+        var vibrator:Vibrator?=null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
+            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibrator = vibratorManager.defaultVibrator
 
-            }
-            Thread.sleep(1000)
+        }else{
+            vibrator=context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
 
+        if (vibrator.hasVibrator()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val audioAttributes: AudioAttributes=
+                    AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM).build()
+                val ve=VibrationEffect.createOneShot(
+                    VIBRO_TIME, VibrationEffect.DEFAULT_AMPLITUDE
+                )
+                vibrator.vibrate(ve, audioAttributes)
+            } else {
+                vibrator.vibrate(VIBRO_TIME)
+            }
+        }
     }
     private var rington: Ringtone? = null
 

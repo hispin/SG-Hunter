@@ -32,14 +32,11 @@ import com.sensoguard.hunter.global.CURRENT_ITEM_TOP_MENU_KEY
 import com.sensoguard.hunter.global.CURRENT_LANG_KEY_PREF
 import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
-import com.sensoguard.hunter.global.USER_INFO_AZURE_KEY
 import com.sensoguard.hunter.global.UserSession
 import com.sensoguard.hunter.global.checkBackgroundNotifRestrict
 import com.sensoguard.hunter.global.getAppLanguage
 import com.sensoguard.hunter.global.getStringInPreference
-import com.sensoguard.hunter.global.getTagsFromLocally
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
-import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.setAppLanguage
 
 //import net.danlew.android.joda.JodaTimeAndroid
@@ -233,40 +230,6 @@ class MainActivity : LogInActivity() {
             })
 
 
-
-    //after showing the settings of battery
-//    override fun onActivityResult(
-//        requestCode: Int,
-//        resultCode: Int,
-//        data: Intent?
-//    ) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == CODE_REQUEST) {
-//            initViews(true)
-//            //do login AZURE or AMAZON
-//            val loginType = getStringInPreference(this, LOGIN_TYPE_KEY, AZURE)
-//            if (loginType.equals(AZURE)) {
-//                isUserAzureForLoginExist()
-//            } else if (loginType.equals(AMAZON)) {
-//                isUserAmazonForLoginExist()
-//            }
-//        }
-//    }
-
-    //AZURE: open log in dialog if there is no tags or user&password
-    private fun isUserAzureForLoginExist() {
-        //check is has already tags
-        val tags = getTagsFromLocally(this)
-        val userInfo = getUserAzureFromLocally(this, USER_INFO_AZURE_KEY)
-        if (tags == null || userInfo == null) {
-            openLogInDialog(false)
-            //sendPostHubs()
-        } else {
-            UserSession.instance.setTags(tags)
-            UserSession.instance.setInstanceUserAzure(userInfo)
-            registerTokenAndTagToHubs()
-        }
-    }
 
 
 

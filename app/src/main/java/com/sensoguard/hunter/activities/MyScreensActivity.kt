@@ -308,9 +308,9 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         tabs.getTabAt(0)?.icon =
             ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_config_tab)
         tabs.getTabAt(1)?.icon =
-            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_alarm_log_tab)
+            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_verified_alarms_tab)
         tabs.getTabAt(2)?.icon =
-            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_alarm_log_tab)
+            ContextCompat.getDrawable(this@MyScreensActivity, R.drawable.selected_all_alarms_tab)
         viewPager.currentItem = currentItemTopMenu
 
 
