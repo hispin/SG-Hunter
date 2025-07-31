@@ -68,13 +68,7 @@ class AlarmAdapter(
         private var ivShare: AppCompatImageView? = null
         private var ivIconVideo: AppCompatImageView? = null
         private var pbLoadPhoto: ProgressBar? = null
-        private var ivBatteryLevel: AppCompatImageView? = null
-        private var ivWifiLevel: AppCompatImageView? = null
         private var tvImageLoadError: TextView? = null
-//        private var tvAccept: TextView? = null
-//        private var tvZuraSent: TextView? = null
-//        private var tvfDate: TextView? = null
-//        private var tvsDate: TextView? = null
 
 
         init {
@@ -148,77 +142,7 @@ class AlarmAdapter(
                 pbLoadPhoto?.visibility = View.GONE
             }
 
-            ivBatteryLevel = _itemView.findViewById(R.id.ivBatteryLevel)
-            ivWifiLevel = _itemView.findViewById(R.id.ivWifiLevel)
             tvImageLoadError = _itemView.findViewById(R.id.tvImageLoadError)
-//            tvAccept=_itemView.findViewById(R.id.tvAccept)
-//            tvZuraSent=_itemView.findViewById(R.id.tvZuraSent)
-//            tvfDate=_itemView.findViewById(R.id.tvfDate)
-//            tvsDate = _itemView.findViewById(R.id.tvsDate)
-
-            val batteryLevel = myAlarm.batteryVal
-            if (batteryLevel != null) {
-
-                if (batteryLevel >= 0 && batteryLevel < 25) {
-                    if (isGrid) {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_1_grid)
-                    } else {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_1_list)
-                    }
-                } else if (batteryLevel >= 25 && batteryLevel < 50) {
-                    if (isGrid) {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_2_grid)
-                    } else {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_2_list)
-                    }
-                } else if (batteryLevel >= 50 && batteryLevel < 75) {
-
-                    if (isGrid) {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_3_grid)
-                    } else {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_3_list)
-                    }
-
-                } else if (batteryLevel in 75.0..100.0) {
-                    if (isGrid) {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_4_grid)
-                    } else {
-                        ivBatteryLevel?.setImageResource(R.drawable.battery_level_4_list)
-                    }
-                }
-            }
-
-            val wifiLevel = myAlarm.wifiVal
-            if (wifiLevel != null) {
-
-                if (wifiLevel >= 0 && wifiLevel < 25) {
-                    if (isGrid) {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_1_grid)
-                    } else {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_1_list)
-                    }
-                } else if (wifiLevel >= 25 && wifiLevel < 50) {
-                    if (isGrid) {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_2_grid)
-                    } else {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_2_list)
-                    }
-                } else if (wifiLevel >= 50 && wifiLevel < 75) {
-
-                    if (isGrid) {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_3_grid)
-                    } else {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_3_list)
-                    }
-
-                } else if (wifiLevel in 75.0..100.0) {
-                    if (isGrid) {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_4_grid)
-                    } else {
-                        ivWifiLevel?.setImageResource(R.drawable.wifi_level_4_list)
-                    }
-                }
-            }
 
             if (!isGrid) {
                 tvDate?.text = myAlarm.timeInMillis?.let {

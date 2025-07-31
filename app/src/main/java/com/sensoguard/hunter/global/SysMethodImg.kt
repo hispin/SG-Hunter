@@ -164,6 +164,34 @@ fun saveImageInGallery(bitmap: Bitmap, fileNameToSave: String): Boolean? { // Fi
 //}
 
 /**
+ * save url of picture
+ */
+fun savePictureUrlInGallery(context: Context, url: String): Boolean {
+    try {
+        val request = DownloadManager.Request(Uri.parse(url))
+        request.setTitle("download")
+        request.setDescription("your file is downloading ...")
+        request.allowScanningByMediaScanner()
+
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        val videoFileName = "photo_" + System.currentTimeMillis() + ".png"
+
+        request.setDestinationInExternalPublicDir(
+            Environment.DIRECTORY_DOWNLOADS,
+            videoFileName
+        )
+
+        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
+        val result = manager!!.enqueue(request)
+        Log.d("testSavePic", "result:" + result)
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return false
+    }
+    return true
+}
+/**
  * save video
  */
 fun saveVideoInGallery(context: Context, videoUrl: String): Boolean {

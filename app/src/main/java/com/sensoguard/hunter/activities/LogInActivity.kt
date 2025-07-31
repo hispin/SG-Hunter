@@ -8,11 +8,13 @@ import android.content.IntentFilter
 import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +49,7 @@ open class LogInActivity : AppCompatActivity() {
     private var viewModel: LoginViewModel? = null
     private var dialog: AlertDialog? = null
     private var isAllAlarmsProcess:Boolean?=false
+    private var ivClose:ImageView?=null
 
     override fun onStart() {
         super.onStart()
@@ -140,7 +143,7 @@ open class LogInActivity : AppCompatActivity() {
 
 
     var positiveButton: Button? = null
-
+    var isPasswordShow = false
     //open dialog for log in
     fun openLogInDialog(isAllAlarmsProcess:Boolean) {
 
@@ -162,6 +165,11 @@ open class LogInActivity : AppCompatActivity() {
         val li: LayoutInflater = LayoutInflater.from(this)
         val promptsView: View = li.inflate(R.layout.user_password_dialog, null)
 
+        ivClose = promptsView
+            .findViewById(R.id.ivClose)
+        ivClose?.setOnClickListener {
+            dialog?.dismiss()
+        }
         val userInput: EditText = promptsView
             .findViewById(R.id.editTextDialogUserInput) as EditText
 
@@ -179,6 +187,22 @@ open class LogInActivity : AppCompatActivity() {
 
         val pwInput: EditText = promptsView
             .findViewById(R.id.editTextDialogPasswordInput) as EditText
+
+        val ivToggleHidePassword: ImageView = promptsView
+            .findViewById(R.id.ivToggleHidePassword)
+
+        ivToggleHidePassword.setOnClickListener {
+            if(isPasswordShow){
+                isPasswordShow=false
+                ivToggleHidePassword.setImageResource(R.drawable.ic_view_password)
+                pwInput.transformationMethod=PasswordTransformationMethod()
+            }else{
+                isPasswordShow=true
+                ivToggleHidePassword.setImageResource(R.drawable.ic_hide_password)
+                pwInput.transformationMethod=null
+            }
+        }
+
 
         /**
          * cancel error message before text change

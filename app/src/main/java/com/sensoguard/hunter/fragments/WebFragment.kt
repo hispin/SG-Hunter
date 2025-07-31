@@ -11,6 +11,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +32,10 @@ import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
 import com.sensoguard.hunter.global.PWA_URL
 import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
+import com.sensoguard.hunter.global.savePictureUrlInGallery
+import com.sensoguard.hunter.global.showToast
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 /**
@@ -41,7 +47,9 @@ class WebFragment : Fragment() {
 
      var webAlarms: WebView?=null
     private var ivBack:ImageView?=null
+    private var ivSaveImg:ImageView?=null
     private var pbLoadWeb:ProgressBar?=null
+    var currentUrl:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +63,48 @@ class WebFragment : Fragment() {
 
         webAlarms = view.findViewById(R.id.webAlarms)
         ivBack = view.findViewById(R.id.ivBack)
+        ivSaveImg = view.findViewById(R.id.ivSaveImg)
         pbLoadWeb= view.findViewById(R.id.pbLoadWeb)
         pbLoadWeb?.visibility=View.VISIBLE
 
         ivBack?.setOnClickListener {
             if (webAlarms?.canGoBack() == true) {
                 webAlarms?.goBack()
+            }
+        }
+
+        ivSaveImg?.setOnClickListener {
+            //save image in gallery
+            val executor: ExecutorService=Executors.newSingleThreadExecutor()
+            val handler=Handler(Looper.getMainLooper())
+
+            executor.execute {
+
+                  if(currentUrl!=null) {
+                      val result:Boolean?=savePictureUrlInGallery(requireActivity(), currentUrl!!)
+
+
+                      handler.post {
+                          if (result != null && result) {
+                              context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_success)
+                                  ?.let { it1 ->
+                                      showToast(
+                                          context, it1
+                                      )
+                                  }
+                          } else {
+                              context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_failed)
+                                  ?.let { it1 ->
+                                      showToast(
+                                          context, it1
+                                      )
+                                  }
+                          }
+
+                      }
+                  }
+
+
             }
         }
 
@@ -150,8 +194,11 @@ class WebFragment : Fragment() {
                 if (url != null) {
                     if (url == "$PWA_URL/"){//"https://outwatchpwa.sensoguard.com/"){
                         ivBack?.visibility=View.GONE
+                        ivSaveImg?.visibility=View.GONE
                     }else{
                         ivBack?.visibility=View.VISIBLE
+                        ivSaveImg?.visibility=View.VISIBLE
+                        currentUrl=url
                     }
                     Log.d("testUrl",url)
                 }
