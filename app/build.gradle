@@ -24,8 +24,8 @@ android {
         applicationId "com.sensoguard.hunter"
         minSdkVersion 26
         targetSdkVersion 36
-        versionCode 87
-        versionName "1.87"
+        versionCode 89
+        versionName "1.89"
         vectorDrawables.useSupportLibrary = true
     }
     packagingOptions {
@@ -90,9 +90,9 @@ configurations {
 
 dependencies {
 
-    implementation 'androidx.media3:media3-exoplayer:1.7.1'
-    implementation 'androidx.media3:media3-ui:1.7.1'
-    implementation 'androidx.media3:media3-exoplayer-dash:1.7.1'
+    implementation 'androidx.media3:media3-exoplayer:1.9.2'
+    implementation 'androidx.media3:media3-ui:1.9.2'
+    implementation 'androidx.media3:media3-exoplayer-dash:1.9.2'
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -107,48 +107,49 @@ dependencies {
 
     //implementation 'com.android.support:support-v4:34.0.0'
 
-    implementation 'androidx.work:work-runtime-ktx:2.10.2'
+    implementation 'androidx.work:work-runtime-ktx:2.11.1'
 
     testImplementation 'junit:junit:4.13.2'
     implementation 'com.google.android.things:androidthings:1.0'
-    implementation 'com.google.android.gms:play-services-maps:19.2.0'
+    implementation 'com.google.android.gms:play-services-maps:20.0.0'
     implementation 'com.github.kai-morich:usb-serial-for-android:1.7.0'
-    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'com.opencsv:opencsv:5.11.2'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'com.opencsv:opencsv:5.12.0'
     implementation 'com.github.felHR85:UsbSerial:6.0.6'
 
     //Support language
     implementation 'com.github.delight-im:Android-Languages:v1.0.1'
     implementation files('libs/javax.mail.jar')
     //test attached
-    implementation 'com.sun.mail:android-activation:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.8'
     //implementation 'ru.egslava:MaskedEditText:1.0.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.squareup:android-times-square:1.7.11@aar'
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
+    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
 
 
     implementation files('libs/jsoup-1.12.1.jar')
 
     //firebase
     implementation 'com.google.firebase:firebase-core:21.1.1'
-    implementation 'com.google.firebase:firebase-messaging:24.1.2'
-    implementation 'com.google.firebase:firebase-analytics:22.5.0'
-    implementation 'com.google.firebase:firebase-messaging-directboot:24.1.2'
-    implementation 'com.google.firebase:firebase-auth:23.2.1'
+    implementation 'com.google.firebase:firebase-messaging:25.0.1'
+    implementation 'com.google.firebase:firebase-analytics:23.0.0'
+    implementation 'com.google.firebase:firebase-messaging-directboot:25.0.1'
+    implementation 'com.google.firebase:firebase-auth:24.0.1'
     implementation 'com.google.firebase:firebase-crashlytics:19.4.4'
 
+    implementation 'javax.inject:javax.inject:1'
 
-    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
 
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    implementation 'com.github.bumptech.glide:annotations:4.16.0'
+    implementation 'com.github.bumptech.glide:glide:5.0.5'
+    annotationProcessor 'com.github.bumptech.glide:compiler:5.0.5'
+    implementation 'com.github.bumptech.glide:annotations:5.0.5'
 
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
@@ -159,7 +160,7 @@ dependencies {
     //azura
     implementation 'com.microsoft.azure:notification-hubs-android-sdk:2.0.0@aar'
 
-    implementation 'androidx.fragment:fragment-ktx:1.8.8'
+    implementation 'androidx.fragment:fragment-ktx:1.8.9'
 
 }
 repositories {

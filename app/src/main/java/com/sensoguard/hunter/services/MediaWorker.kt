@@ -16,6 +16,7 @@ import androidx.work.WorkerParameters
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_KEY
 import com.sensoguard.hunter.global.IS_NOTIFICATION_SOUND_KEY
+import com.sensoguard.hunter.global.IS_VIBRATE_WHEN_ALARM_KEY
 import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
 import com.sensoguard.hunter.global.getBooleanInPreference
 import com.sensoguard.hunter.global.getLongInPreference
@@ -40,7 +41,12 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
     }
 
     //execute vibrate
-    private fun playVibrate() {
+    private fun playVibrate(): Boolean {
+        val isNotificationVibration =
+            getBooleanInPreference(context, IS_VIBRATE_WHEN_ALARM_KEY, true)
+        if (!isNotificationVibration) {
+            return false
+        }
 
         val VIBRO_TIME=2000L
 
@@ -66,6 +72,7 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
                 vibrator.vibrate(VIBRO_TIME)
             }
         }
+        return true
     }
     private var rington: Ringtone? = null
 
