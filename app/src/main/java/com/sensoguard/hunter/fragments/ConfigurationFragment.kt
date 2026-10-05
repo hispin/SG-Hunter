@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.fragments
 
+import androidx.core.content.ContextCompat
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -7,6 +8,7 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import androidx.core.content.IntentCompat
 import android.content.pm.ActivityInfo
 import android.media.RingtoneManager
 import android.net.Uri
@@ -404,12 +406,10 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         registerForActivityResult<Intent, ActivityResult>(
             StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
                 override fun onActivityResult(result: ActivityResult?) {
-                    val uri: Uri?=if (Build.VERSION.SDK_INT >= 33) {
-                        result?.data?.getParcelableExtra(
-                            RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java
+                    val uri: Uri? = result?.data?.let {
+                        IntentCompat.getParcelableExtra(
+                            it, RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java
                         )
-                    } else {
-                        result?.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                     }
 
                     if (uri != null) {
@@ -531,10 +531,8 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private fun setFilter() {
         val filter = IntentFilter(RESULT_VALIDATION_EMAIL_ACTION)
         filter.addAction(ERROR_RESULT_VALIDATION_EMAIL_ACTION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity?.registerReceiver(receiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
-        } else {
-            activity?.registerReceiver(receiver, filter)
+        activity?.let {
+            ContextCompat.registerReceiver(it, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
     }
 

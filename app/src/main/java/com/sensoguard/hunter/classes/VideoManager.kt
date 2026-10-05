@@ -2,6 +2,8 @@ package com.sensoguard.hunter.classes
 
 import android.app.Activity
 import android.net.Uri
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -80,6 +82,7 @@ class VideoManager(val callback: Callback) {
     /**
      * initialize video
      */
+    @OptIn(UnstableApi::class)
     fun initializePlayer(ivMyVideo: PlayerView?, activity: Activity, imgPath: String) {
         val trackSelector = DefaultTrackSelector(activity).apply {
             setParameters(buildUponParameters().setMaxVideoSizeSd())

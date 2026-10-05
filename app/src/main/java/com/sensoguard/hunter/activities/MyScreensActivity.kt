@@ -28,7 +28,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -55,8 +54,6 @@ import com.sensoguard.hunter.global.IS_SETTINGS_NOTIFICATION_LAUNCHER
 import com.sensoguard.hunter.global.MAIN_MENU_NUM_ITEM
 import com.sensoguard.hunter.global.MAP_SHOW_SATELLITE_VALUE
 import com.sensoguard.hunter.global.MAP_SHOW_VIEW_TYPE_KEY
-import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-import com.sensoguard.hunter.global.PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
 import com.sensoguard.hunter.global.SELECTED_NOTIFICATION_SOUND_KEY
 import com.sensoguard.hunter.global.ToastNotify
 import com.sensoguard.hunter.global.USB_CONNECTION_FAILED
@@ -254,11 +251,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private fun setFilter() {
         val filter = IntentFilter(USB_CONNECTION_FAILED)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(usbReceiver, filter)
-        }
+        ContextCompat.registerReceiver(this, usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
 
@@ -358,31 +351,34 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         ) {
             setExternalPermission()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
-            )
+            _requestLocationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
-                setExternalPermission()
-            }
-            PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE -> {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    init()
-                }
+    private val _requestLocationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            setExternalPermission()
+        }
+
+    private val _requestStoragePermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+            if (result[storagePermissions().first()] == true) {
+                init()
             }
         }
 
+    private fun storagePermissions() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+        )
     }
 
     private fun setExternalPermission() {
@@ -392,32 +388,16 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
      * onRequestPermissionsResult.
      */
 
-        val PERMISSIONS = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arrayOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO
-            )
-        } else {
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            )
-        }
+        val permissions = storagePermissions()
 
         if (ContextCompat.checkSelfPermission(
                 this.applicationContext,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                permissions.first()
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             init()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                PERMISSIONS,
-                PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-            )
+            _requestStoragePermissions.launch(permissions)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.fragments
 
+import androidx.core.content.ContextCompat
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.DatePickerDialog.OnDateSetListener
@@ -330,10 +331,8 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
     private fun setFilter() {
         val filter = IntentFilter(RESULT_VALIDATION_EMAIL_ACTION)
         filter.addAction(ERROR_RESULT_VALIDATION_EMAIL_ACTION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity?.registerReceiver(reciever, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
-        } else {
-            activity?.registerReceiver(reciever, filter)
+        activity?.let {
+            ContextCompat.registerReceiver(it, reciever, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
     }
 

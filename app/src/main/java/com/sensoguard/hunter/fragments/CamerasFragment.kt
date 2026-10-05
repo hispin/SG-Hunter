@@ -42,7 +42,6 @@ import com.sensoguard.hunter.interfaces.OnAdapterListener
 
 
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -60,7 +59,6 @@ class SensorsFragment : Fragment(), OnAdapterListener {
 
 
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     //private var listener: OnAdapterListener? = null
@@ -380,17 +378,14 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         activity?.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)?.unregisterOnSharedPreferenceChangeListener(appStateChangeListener)
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
         //listener?.onFragmentInteraction(uri)
     }
 
     private fun setFilter() {
         val filter = IntentFilter("handle.read.data")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity?.registerReceiver(usbReceiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
-        } else {
-            activity?.registerReceiver(usbReceiver, filter)
+        activity?.let {
+            ContextCompat.registerReceiver(it, usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
     }
 
@@ -454,7 +449,6 @@ class SensorsFragment : Fragment(), OnAdapterListener {
          * @param param2 Parameter 2.
          * @return A new instance of fragment SensorsFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             SensorsFragment().apply {

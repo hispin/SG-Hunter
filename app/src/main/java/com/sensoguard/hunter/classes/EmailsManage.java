@@ -210,6 +210,8 @@ public class EmailsManage {
                     }
 
                     Intent inn = new Intent(DETECT_ALARM_KEY);
+
+                    inn.setPackage(context.getPackageName());
                     context.sendBroadcast(inn);
 
 
@@ -220,6 +222,7 @@ public class EmailsManage {
                     //do not wait to save photo ,to make the process of showing alarm more faster
                     myAlarm.updateAlarm(attachments.get(0), context);
                     inn = new Intent(ADD_ATTACHED_PHOTOS_KEY);
+                    inn.setPackage(context.getPackageName());
                     context.sendBroadcast(inn);
                 }
                 //update the newest email date
@@ -1194,6 +1197,7 @@ public class EmailsManage {
     //send error to extra settings screen
     private void sendErrorMsg(String message, Context context) {
         Intent inn = new Intent(ERROR_RESULT_VALIDATION_EMAIL_ACTION);
+        inn.setPackage(context.getPackageName());
         inn.putExtra(ERROR_VALIDATION_EMAIL_MSG_KEY, message);
         context.sendBroadcast(inn);
     }

@@ -1,5 +1,6 @@
 package com.sensoguard.hunter.activities
 
+import androidx.core.content.ContextCompat
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -41,7 +42,7 @@ import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.getUserAzureFromLocally
 import com.sensoguard.hunter.global.removePreference
 import com.sensoguard.hunter.global.validIsEmpty
-import com.sensoguard.hunter.services.RegistrationIntentService
+import com.sensoguard.hunter.services.HubRegistrationWorker
 
 open class LogInActivity : AppCompatActivity() {
 
@@ -107,10 +108,8 @@ open class LogInActivity : AppCompatActivity() {
             UserSession.instance.setTags(tags)
             UserSession.instance.setInstanceUserAzure(userInfo)
 
-            // Start IntentService to register this application with FCM.
-            val intent = Intent(this, RegistrationIntentService::class.java)
-            intent.putExtra("actionType", "register")
-            startService(intent)
+            // register this application with the notification hub
+            HubRegistrationWorker.enqueue(this, tags)
         }
     }
 
@@ -284,11 +283,7 @@ open class LogInActivity : AppCompatActivity() {
         filter.addAction(AMAZONE_POST_LOGIN_RESULT_SUCCESS)
         filter.addAction(AMAZONE_POST_LOGIN_RESULT_FAILED)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(usbReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(usbReceiver, filter)
-        }
+        ContextCompat.registerReceiver(this, usbReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     //define class broadcast

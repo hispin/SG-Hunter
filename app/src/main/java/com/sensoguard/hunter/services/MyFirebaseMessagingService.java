@@ -68,6 +68,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             AlarmParsing.getInstance().parsePushToAlarm(myIntent).addAlarmToHistory(this);
 
             Intent inn = new Intent(DETECT_ALARM_KEY);
+            inn.setPackage(getPackageName());
             //myIntent.setAction(DETECT_ALARM_KEY);
             sendBroadcast(inn);
 

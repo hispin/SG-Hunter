@@ -46,13 +46,13 @@ fun checkUserGetTags(context: Context, user: String, pw: String): JsonArray? {
                     }
 
                 }
-                context.sendBroadcast(Intent(result.asString))
+                context.sendBroadcast(Intent(result.asString).setPackage(context.packageName))
 
                 Log.d("retrofit", "accept user id")
                 // it = newly added user parsed as response
                 // it?.id = newly added user ID
             } else {
-                context.sendBroadcast(Intent(AZURA_POST_RESULT_ERROR_NO_DATA))
+                context.sendBroadcast(Intent(AZURA_POST_RESULT_ERROR_NO_DATA).setPackage(context.packageName))
                 //Timber.d("Error registering new user")
             }
 

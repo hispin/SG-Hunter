@@ -33,7 +33,6 @@ import com.sensoguard.hunter.interfaces.OnFragmentListener
 import java.util.*
 
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -54,7 +53,6 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
     override fun saveNameSensor(detector: Camera) = Unit
 
     private var typeOfSorted: Int = NO_SORTED
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var myAlarms: ArrayList<Alarm>? = null
@@ -341,10 +339,8 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
     private fun setFilter() {
         val filter = IntentFilter(DETECT_ALARM_KEY)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            activity?.registerReceiver(receiver, filter, AppCompatActivity.RECEIVER_NOT_EXPORTED)
-        } else {
-            activity?.registerReceiver(receiver, filter)
+        activity?.let {
+            ContextCompat.registerReceiver(it, receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
     }
 
@@ -464,7 +460,6 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HistoryWarningFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             AlarmLogFragment().apply {
