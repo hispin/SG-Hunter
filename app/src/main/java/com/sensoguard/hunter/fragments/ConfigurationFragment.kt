@@ -1,6 +1,6 @@
 package com.sensoguard.hunter.fragments
 
-import androidx.core.content.ContextCompat
+// inspection fix: removed unused import(s)
 import android.app.ActivityManager
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -8,31 +8,28 @@ import android.content.Context
 import android.content.Context.ACTIVITY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.core.content.IntentCompat
 import android.content.pm.ActivityInfo
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ListPopupWindow
 import android.widget.ProgressBar
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.ToggleButton
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.activities.MyScreensActivity
@@ -62,7 +59,6 @@ import com.sensoguard.hunter.global.getBooleanInPreference
 import com.sensoguard.hunter.global.getIntInPreference
 import com.sensoguard.hunter.global.getLongInPreference
 import com.sensoguard.hunter.global.getScreenWidth
-import com.sensoguard.hunter.global.getSensorsFromLocally
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.removePreference
 import com.sensoguard.hunter.global.setBooleanInPreference
@@ -77,7 +73,7 @@ import com.sensoguard.hunter.interfaces.OnFragmentListener
 open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
 
-    private val CODE_REQUEST: Int = 1
+    // inspection fix: removed unused CODE_REQUEST
     private var myEmailAccount: MyEmailAccount? = null
     private var listPopupWindow: ListPopupWindow? = null
     private var generalItemMenuAdapter: GeneralItemMenuAdapter? = null
@@ -112,9 +108,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    // inspection fix: removed onCreate override that only called super
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -143,6 +137,8 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         }
 
         etAlarmFlickerValue = view.findViewById(R.id.etAlarmFlickerValue)
+        // lint: plain digits on purpose - the value is parsed back as a number
+        //noinspection SetTextI18n
         etAlarmFlickerValue?.setText(
             getLongInPreference(
                 activity,
@@ -159,7 +155,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
                 setLongInPreference(activity, ALARM_FLICKERING_DURATION_KEY, timeFlicker)
                 Toast.makeText(
                     activity,
-                    resources.getString(com.sensoguard.hunter.R.string.time_flickering_save_successfully),
+                    resources.getString(R.string.time_flickering_save_successfully), // inspection fix: redundant qualifier removed
                     Toast.LENGTH_SHORT
                 ).show()
             } catch (ex: NumberFormatException) {
@@ -167,11 +163,11 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
         }
 
-        constAlarmSound = view.findViewById(com.sensoguard.hunter.R.id.constAlarmSound)
+        constAlarmSound = view.findViewById(R.id.constAlarmSound) // inspection fix: redundant qualifier removed
         constAlarmSound?.setOnClickListener {
             openSoundsMenu()
         }
-        txtAlarmSoundValue = view.findViewById(com.sensoguard.hunter.R.id.txtAlarmSoundValue)
+        txtAlarmSoundValue = view.findViewById(R.id.txtAlarmSoundValue) // inspection fix: redundant qualifier removed
 
         var title = getSelectedNotificationSound()
         txtAlarmSoundValue?.text = title
@@ -193,11 +189,11 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
 
 
 
-        btnDefault = view.findViewById(com.sensoguard.hunter.R.id.btnDefault)
+        btnDefault = view.findViewById(R.id.btnDefault) // inspection fix: redundant qualifier removed
         btnDefault?.setOnClickListener {
             //return the alarm to default sound
             val packageName = "android.resource://${activity?.packageName}/raw/alarm_sound"
-            val uri = Uri.parse(packageName)
+            val uri = packageName.toUri() // lint fix: KTX toUri
             setStringInPreference(activity, SELECTED_NOTIFICATION_SOUND_KEY, uri.toString())
             title = getSelectedNotificationSound()
             txtAlarmSoundValue?.text = title
@@ -380,7 +376,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
     private fun getSelectedNotificationSound(): String? {
         val selectedSound =getStringInPreference(activity,SELECTED_NOTIFICATION_SOUND_KEY,"-1")
         if(!selectedSound.equals("-1")) {
-            val uri=Uri.parse(selectedSound)
+            val uri=selectedSound?.toUri() // lint fix: KTX toUri (null-safe)
             uri?.let {
                 val ringtone = RingtoneManager.getRingtone(activity, uri)
                 return ringtone.getTitle(activity)
@@ -403,10 +399,8 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
      * define listener for pick alarm
      */
     var pickAlarm: ActivityResultLauncher<Intent> =
-        registerForActivityResult<Intent, ActivityResult>(
-            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                override fun onActivityResult(result: ActivityResult?) {
-                    val uri: Uri? = result?.data?.let {
+        registerForActivityResult(StartActivityForResult()) { result -> // inspection fix: lambda instead of object literal
+                    val uri: Uri? = result.data?.let {
                         IntentCompat.getParcelableExtra(
                             it, RingtoneManager.EXTRA_RINGTONE_PICKED_URI, Uri::class.java
                         )
@@ -419,12 +413,10 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
                         setStringInPreference(activity, SELECTED_NOTIFICATION_SOUND_KEY, uri.toString())
                     } else {
                         txtAlarmSoundValue?.text =
-                            resources.getString(com.sensoguard.hunter.R.string.no_selected_sound)
+                            resources.getString(R.string.no_selected_sound) // inspection fix: redundant qualifier removed
                     }
 
                 }
-
-            })
 
 
 
@@ -446,24 +438,20 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         setIntInPreference(activity, MAP_SHOW_VIEW_TYPE_KEY, MAP_SHOW_NORMAL_VALUE)
     }
 
-    //get the current size of sensors
-    private fun getCurrentNumSensorsFromLocally(): Int? {
-        val sensors = activity?.let { getSensorsFromLocally(it) }
-        return sensors?.size
-    }
+    // inspection fix: removed unused function
 
 
     private fun showPopupList(anchorView: View) {
-        if (LanguageManager.languagesItems != null && LanguageManager.languagesItems.size > 0) {
+        if (LanguageManager.languagesItems != null && LanguageManager.languagesItems.isNotEmpty()) { // inspection fix: isNotEmpty()
             generalItemMenuAdapter = GeneralItemMenuAdapter(
                 activity,
-                com.sensoguard.hunter.R.layout.item_general_menu,
+                R.layout.item_general_menu, // inspection fix: redundant qualifier removed
                 createLanguagesItemsDeliver(LanguageManager.languagesItems),
                 this
             )
             listPopupWindow = context?.let { ListPopupWindow(it) }
             listPopupWindow?.isModal = true
-            listPopupWindow?.animationStyle = com.sensoguard.hunter.R.style.winPopupAnimation
+            listPopupWindow?.animationStyle = R.style.winPopupAnimation // inspection fix: redundant qualifier removed
             listPopupWindow?.setAdapter(generalItemMenuAdapter)
             listPopupWindow?.anchorView = anchorView
             listPopupWindow?.width = getScreenWidth(activity) * 2 / 3
@@ -471,7 +459,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         } else {
             Toast.makeText(
                 activity,
-                resources.getString(com.sensoguard.hunter.R.string.error),
+                resources.getString(R.string.error), // inspection fix: redundant qualifier removed
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -509,18 +497,7 @@ open class ConfigurationFragment : Fragment(), CallToParentInterface {
         }
     }
 
-    //check if the fields is empty
-    private fun validIsEmpty(editText: EditText): Boolean {
-        var isValid = true
-
-        if (editText.text.isNullOrBlank()) {
-            editText.error =
-                resources.getString(R.string.empty_field_error)
-            isValid = false
-        }
-
-        return isValid
-    }
+    // inspection fix: removed unused validIsEmpty()
 
 
     override fun onDestroy() {

@@ -35,6 +35,7 @@
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- lint fix: not a personal-data field, autofill disabled -->
     <EditText
             android:id="@+id/etName"
             tool:text="dddd"
@@ -50,6 +51,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:visibility="invisible"
             android:inputType="text"
+            android:importantForAutofill="no"
             android:imeOptions="actionDone"
 
     />
@@ -69,12 +71,13 @@
             android:padding="2dp"
     />
 
+    <!-- lint fix: AppCompat drawable attribute -->
     <TextView
             android:id="@+id/tvIsLocate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/not_located"
-            android:drawableStart="@drawable/ic_not_located"
+            app:drawableStartCompat="@drawable/ic_not_located"
             android:textSize="13.3sp"
             android:textColor="@color/red1"
             app:layout_constraintStart_toEndOf="@+id/ibEditName"

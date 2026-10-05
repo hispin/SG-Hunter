@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = '2.1.21'
+    // upgrade: Kotlin 2.3 (AGP 9 has built-in Kotlin; this classpath sets its version)
+    ext.kotlin_version = '2.3.21'
     repositories {
         google()
         mavenCentral()
@@ -10,11 +11,13 @@ buildscript {
 
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.2'
+        // upgrade: AGP 9.1.1 - the newest version supported by the installed Android Studio
+        //noinspection AndroidGradlePluginVersion
+        classpath 'com.android.tools.build:gradle:9.1.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         //firebase
-        classpath 'com.google.gms:google-services:4.4.4'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.6'
+        classpath 'com.google.gms:google-services:4.5.0' // inspection fix: updated version
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.8' // inspection fix: updated version
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -26,14 +29,14 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        maven { url = 'https://jitpack.io' } // upgrade: Gradle 10 assignment syntax
 
 
     }
 }
 
 tasks.register('clean', Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory // inspection fix: buildDir is deprecated
 }
 
 

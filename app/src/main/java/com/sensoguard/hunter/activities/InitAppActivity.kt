@@ -1,23 +1,22 @@
 package com.sensoguard.hunter.activities
 
-import android.Manifest
+//import com.crashlytics.android.Crashlytics
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.TelephonyManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-//import com.crashlytics.android.Crashlytics
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.CryptoHandler
 import com.sensoguard.hunter.classes.MyExceptionHandler
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ACTIVATION_CODE_KEY
+import com.sensoguard.hunter.global.IMEI_KEY
+import com.sensoguard.hunter.global.IS_LOAD_APP
+import com.sensoguard.hunter.global.NO_DATA
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.setupEdgeToEdge
 
 //import io.fabric.sdk.android.Fabric
 
@@ -27,13 +26,15 @@ class InitAppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge() // edge-to-edge: draw behind system bars and pad the content (Play warning fix)
 
         configureGeneralCatch()
         //Fabric.with(this, Crashlytics())
 
        setContentView(R.layout.activity_init_app)
        //configureActivation()
-       setReadPhoneStatePermission()
+       // lint fix: READ_PHONE_STATE is no longer needed (ANDROID_ID is used)
+       configureActivation()
    }
 
     private fun configureGeneralCatch() {
@@ -81,25 +82,12 @@ class InitAppActivity : AppCompatActivity() {
     }
 
 
-    //get the device IMEI
+    //get the device identifier
+    // lint fix: IMEI is not readable by apps since Android 10 (and the old check was inverted),
+    // so use the app-scoped ANDROID_ID, which was already the fallback
+    @SuppressLint("HardwareIds")
     private fun getDeviceIMEI(): String? {
-        var deviceUniqueIdentifier: String? = null
-        val tm = this.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        if (null != tm) {
-            if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-
-                deviceUniqueIdentifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    tm.imei
-                } else {
-                    tm.deviceId
-                }
-            }
-        }
-        if (null == deviceUniqueIdentifier || deviceUniqueIdentifier.isEmpty()) {
-            deviceUniqueIdentifier =
-                Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
-        }
-        return deviceUniqueIdentifier
+        return Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
     }
 
     override fun onStart() {
@@ -132,41 +120,4 @@ class InitAppActivity : AppCompatActivity() {
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            PERMISSIONS_REQUEST_READ_PHONE_STATE -> {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    configureActivation()
-                }
-            }
-        }
-
-    }
-
-    //set permission of READ_PHONE_STATE
-    private fun setReadPhoneStatePermission() {
-        /*
-     * Request location permission, so that we can get the location of the
-     * device. The result of the permission request is handled by a callback,
-     * onRequestPermissionsResult.
-     */
-        if (ContextCompat.checkSelfPermission(
-                this.applicationContext,
-                Manifest.permission.READ_PHONE_STATE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            configureActivation()
-        } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.READ_PHONE_STATE), PERMISSIONS_REQUEST_READ_PHONE_STATE
-            )
-        }
-    }
 }

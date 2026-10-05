@@ -11,11 +11,12 @@
 
 
     <!-- TODO: Update blank fragment layout -->
+    <!-- lint fix: debug view (gone), text moved to tools:text -->
     <TextView
             android:id="@+id/tvShowLogs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wait"
+            tools:text="Wait"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,8 +53,10 @@
 
     </LinearLayout>
 
+    <!-- lint fix: added contentDescription -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:src="@drawable/ic_action_settings"
+            android:contentDescription="@string/settings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"

@@ -7,7 +7,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class SyncProcesses<T> {
-    private static SyncProcesses ourInstance = new SyncProcesses();
+    private static final SyncProcesses ourInstance = new SyncProcesses(); // inspection fix: final
 
     private SyncProcesses() {
     }

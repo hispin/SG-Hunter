@@ -1,12 +1,11 @@
 package com.sensoguard.hunter.activities
 
-import androidx.core.content.ContextCompat
+// inspection fix: removed unused import(s)
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.method.PasswordTransformationMethod
@@ -19,6 +18,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.UserInfoAmazon
@@ -169,8 +169,7 @@ open class LogInActivity : AppCompatActivity() {
         ivClose?.setOnClickListener {
             dialog?.dismiss()
         }
-        val userInput: EditText = promptsView
-            .findViewById(R.id.editTextDialogUserInput) as EditText
+        val userInput = promptsView.findViewById<EditText>(R.id.editTextDialogUserInput) // inspection fix: typed findViewById
 
         /**
          * cancel error message before text change
@@ -184,8 +183,7 @@ open class LogInActivity : AppCompatActivity() {
             }
         })
 
-        val pwInput: EditText = promptsView
-            .findViewById(R.id.editTextDialogPasswordInput) as EditText
+        val pwInput = promptsView.findViewById<EditText>(R.id.editTextDialogPasswordInput) // inspection fix: typed findViewById
 
         val ivToggleHidePassword: ImageView = promptsView
             .findViewById(R.id.ivToggleHidePassword)
@@ -226,18 +224,18 @@ open class LogInActivity : AppCompatActivity() {
         val pw = UserSession.instance.getUserAzure()?.pw
         pw?.let { pwInput.setText(it) }
 
-        tvError = promptsView.findViewById<TextView>(R.id.tvError)
+        tvError = promptsView.findViewById(R.id.tvError) // inspection fix: type argument inferred
         tvError?.visibility = View.INVISIBLE
 
-        pbValidation = promptsView.findViewById<ProgressBar>(R.id.pbValidation)
+        pbValidation = promptsView.findViewById(R.id.pbValidation) // inspection fix: type argument inferred
 
         dialog = AlertDialog.Builder(this)
             .setView(promptsView)
             .setCancelable(false)
             .show()
 
-        positiveButton = promptsView.findViewById(R.id.btnSubmit) as Button
-        positiveButton?.setOnClickListener(View.OnClickListener {
+        positiveButton = promptsView.findViewById(R.id.btnSubmit) // inspection fix: typed findViewById
+        positiveButton?.setOnClickListener { // inspection fix: removed redundant SAM constructor
 
             if (validIsEmpty(userInput, this)
                 && validIsEmpty(pwInput, this)
@@ -260,7 +258,7 @@ open class LogInActivity : AppCompatActivity() {
                 //send post
                 loginAmazon(AMAZON_PRECESS_DIALOG_VALUE,isAllAlarmsProcess)
             }
-        })
+        }
     }
 
 
@@ -289,39 +287,36 @@ open class LogInActivity : AppCompatActivity() {
     //define class broadcast
     private val usbReceiver = object : BroadcastReceiver() {
         override fun onReceive(arg0: Context, arg1: Intent) {
-            when {
-                arg1.action == AZURA_POST_RESULT_OK -> {
+            when (arg1.action) { // inspection fix: 'when' with subject
+                AZURA_POST_RESULT_OK -> {
                     ToastNotify(
                         resources.getString(R.string.verification_successfully),
                         this@LogInActivity
                     )
                     dialog?.dismiss()
                     pbValidation?.visibility = View.INVISIBLE
-                    //remove it in order to force renew the token registeration
+                    //remove it in order to force renew the token registration (inspection fix: spelling)
                     removePreference(this@LogInActivity, REGISTER_ID_KEY)
                     registerTokenAndTagToHubs()
                 }
-                arg1.action == AZURA_POST_RESULT_UNHUTHORIZED -> {
+                AZURA_POST_RESULT_UNHUTHORIZED -> {
                     showErrorMsg(resources.getString(R.string.validation_error))
                 }
 
-                arg1.action == AZURA_POST_RESULT_NO_USER -> {
+                AZURA_POST_RESULT_NO_USER -> {
                     showErrorMsg(resources.getString(R.string.no_user_found))
                 }
 
-                arg1.action == AZURA_POST_RESULT_USER_NO_ACTIVE -> {
+                AZURA_POST_RESULT_USER_NO_ACTIVE -> {
                     showErrorMsg(resources.getString(R.string.no_active_user_found))
                 }
 
-                arg1.action == AZURA_POST_RESULT_ERROR_NO_DATA -> {
+                AZURA_POST_RESULT_ERROR_NO_DATA -> {
                     showErrorMsg(resources.getString(R.string.error_no_data))
                 }
+                // inspection fix: removed duplicate AZURA_POST_RESULT_UNHUTHORIZED branch (it was unreachable)
 
-                arg1.action == AZURA_POST_RESULT_UNHUTHORIZED -> {
-                    showErrorMsg(resources.getString(R.string.validation_error))
-                }
-
-                arg1.action == AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
+                AMAZONE_POST_LOGIN_RESULT_SUCCESS -> {
                     ToastNotify(
                         resources.getString(R.string.verification_successfully),
                         this@LogInActivity
@@ -333,7 +328,7 @@ open class LogInActivity : AppCompatActivity() {
                     }
                 }
 
-                arg1.action == AMAZONE_POST_LOGIN_RESULT_FAILED -> {
+                AMAZONE_POST_LOGIN_RESULT_FAILED -> {
                     showErrorMsg(resources.getString(R.string.verification_failed))
                 }
             }

@@ -52,15 +52,13 @@ class WebFragment : Fragment() {
     private var pbLoadWeb:ProgressBar?=null
     var currentUrl:String?=null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    // inspection fix: removed onCreate override that only called super
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        var view = inflater.inflate(R.layout.fragment_web, container, false)
+        val view = inflater.inflate(R.layout.fragment_web, container, false) // inspection fix: val
 
         webAlarms = view.findViewById(R.id.webAlarms)
         ivBack = view.findViewById(R.id.ivBack)
@@ -82,19 +80,19 @@ class WebFragment : Fragment() {
             executor.execute {
 
                   if(currentUrl!=null) {
-                      val result:Boolean?=savePictureUrlInGallery(requireActivity(), currentUrl!!)
+                      val result = savePictureUrlInGallery(requireActivity(), currentUrl!!) // inspection fix: non-null Boolean
 
 
                       handler.post {
-                          if (result != null && result) {
-                              context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_success)
+                          if (result) {
+                              context?.resources?.getString(R.string.save_file_success) // inspection fix: redundant qualifier removed
                                   ?.let { it1 ->
                                       showToast(
                                           context, it1
                                       )
                                   }
                           } else {
-                              context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_failed)
+                              context?.resources?.getString(R.string.save_file_failed) // inspection fix: redundant qualifier removed
                                   ?.let { it1 ->
                                       showToast(
                                           context, it1
@@ -149,19 +147,21 @@ class WebFragment : Fragment() {
 
     private fun loadWebAlarm() {
         webAlarms?.webViewClient = WebViewClient()
-        webAlarms?.setWebChromeClient(WebChromeClient())
+        webAlarms?.webChromeClient = WebChromeClient() // inspection fix: property access
         webAlarms?.isScrollbarFadingEnabled = true
         webAlarms?.isHorizontalScrollBarEnabled = false
+        // lint: JavaScript is required by the PWA, which is loaded only from PWA_URL
+        //noinspection SetJavaScriptEnabled
         webAlarms?.settings?.javaScriptEnabled = true
         //webAlarms?.settings?.javaScriptCanOpenWindowsAutomatically=true
 
         //prevent softkey
-        webAlarms?.setFocusableInTouchMode(true)
+        webAlarms?.isFocusableInTouchMode = true // inspection fix: property access
         webAlarms?.isFocusable=true
         /////////////////
 
         //enable jQuery&Localhost
-        webAlarms?.getSettings()?.domStorageEnabled=true
+        webAlarms?.settings?.domStorageEnabled=true // inspection fix: property access
         webAlarms?.settings?.userAgentString = "First Webview"
         webAlarms?.settings?.loadWithOverviewMode = true
         webAlarms?.settings?.useWideViewPort = true
@@ -187,9 +187,7 @@ class WebFragment : Fragment() {
                 loadLocalHost()
             }
 
-            override fun onPageCommitVisible(view: WebView?, url: String?) {
-                super.onPageCommitVisible(view, url)
-            }
+            // inspection fix: removed onPageCommitVisible override that only called super
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoadWeb?.visibility=View.GONE
                 super.onPageFinished(view, url)
@@ -209,8 +207,8 @@ class WebFragment : Fragment() {
         }
         webAlarms?.loadUrl(PWA_URL)
         //enable zoom on image
-        webAlarms?.getSettings()?.setSupportZoom(true)
-        webAlarms?.getSettings()?.builtInZoomControls=true
+        webAlarms?.settings?.setSupportZoom(true) // inspection fix: property access
+        webAlarms?.settings?.builtInZoomControls=true // inspection fix: property access
     }
 
 
@@ -275,12 +273,14 @@ class WebFragment : Fragment() {
      */
     class WebAppInterface(private val activity: Activity,private val webAlarms:WebView) {
 
-        //this function is called by javascript
+        //this function is called by JavaScript
+        // inspection: kept - called from the PWA JavaScript (AndroidInterface.getLocation)
+        @Suppress("unused")
         @JavascriptInterface
         fun getLocation(callback: String) {
             // Get location using Android's LocationManager or FusedLocationProvider
             activity.runOnUiThread {
-                var fusedLocationProviderClient=
+                val fusedLocationProviderClient= // inspection fix: val
                     LocationServices.getFusedLocationProviderClient(activity)
                 if (ActivityCompat.checkSelfPermission(
                         activity,

@@ -3,57 +3,31 @@
     <string name="app_name">OutWatch</string>
     <string name="empty_field_error">נא למלא את השדה</string>
     <string name="rename">שנה שם</string>
-    <string name="csv">csv</string>
-    <string name="dialog_new_sensor_title">הגדר חיישנים</string>
-    <string name="invalid_mum_sensors">מס\' חיישנים לא תקין</string>
     <string name="name_title">שם המערכת</string>
     <string name="id_title">מספר</string>
     <string name="map_location_title">מיקום</string>
     <string name="status_title">מצב</string>
-    <string name="type_title">סוג אירוע</string>
-    <string name="time_title">זמן</string>
     <string name="yes">כן</string>
     <string name="no">לא</string>
-    <string name="content_delete_extra_sensor">במערכת מוגדרים יותר חיישנים כרגע, האם למחוק את המיותרים ?
-    </string>
-    <string name="remove_extra_sensors">מחק חיישנים מיותרים</string>
     <string name="csv_date_title"><![CDATA[Date&Time]]></string>
     <string name="csv_name_title">שם חיישן</string>
     <string name="csv_id_title">מספר</string>
     <string name="csv_alarm_type_title">סוג אירוע</string>
     <string name="csv_latitude_title">latitude</string>
     <string name="csv_longitude_title">longitude</string>
-    <string name="camera_title">מערכות ומצלמות</string>
-    <string name="map_title">מפה</string>
     <string name="config_title">הגדרות כללי</string>
     <string name="alarm_log_title">אירועים מאומתים</string>
     <string name="not_located">לא הוגדר</string>
     <string name="located">מוגדר</string>
-    <string name="date_title">תאריך</string>
     <string name="date_title1">תאריך:</string>
     <string name="save">שמור</string>
-    <string name="define_sensor_amount">הגדר כמות חיישנים</string>
     <string name="choose_alarm_sound">בחר צילצול להתרעה</string>
     <string name="vibration_when_alarm">הפעל רטט בהתרעה</string>
     <string name="alarm_flickering_time">זמן חיווי אזעקה</string>
     <string name="default_str">ברירת מחדל</string>
 
 
-    <string-array name="state_types">
-        <item>רכב</item>
-        <item>הליכה</item>
-        <item>חיישן חיצוני</item>
-        <item>חיישן מנותק</item>
-        <item>חודעת מערכת תקינה</item>
-        <item>סוללה חלשה</item>
-        <item>גילוי משולב</item>
-    </string-array>
-    <string name="load_settings_export_settings">טען הגדרות / ייצוא הגדרות </string>
-    <string name="map_view">תצוגת מפה</string>
     <string name="language">שפה</string>
-    <string name="satellite">לווין</string>
-    <string name="map">מפה</string>
-    <string name="sensors_save_successfully">החיישנים נשמרו</string>
     <string name="time_flickering_save_successfully">הוגדר</string>
     <string name="english">English</string>
     <string name="no_selected_sound">לא נבחר צליל</string>
@@ -67,7 +41,6 @@
     <string name="error">שגיאה</string>
     <string name="general_desc">description</string>
     <string name="email_subject">My Code for SG-Patrol App</string>
-    <string name="camera_system_title">מערכות ומצלמות</string>
     <string name="system_camera_configuration">הגדרות מערכת / מצלמה</string>
     <string name="system_camera_name">שם מערכת:</string>
     <string name="tel_num_title">מס’ טלפון:</string>
@@ -75,10 +48,6 @@
     <string name="mail_address_title">כתובת אימייל:</string>
     <string name="password">סיסמה</string>
     <string name="password_title">סיסמה:</string>
-    <string name="incoming_email_server_title">שרת אימייל נכנס:</string>
-    <string name="incoming_email_server_port_title">פורט אימייל נכנס:</string>
-    <string name="use_ssl_title">שימוש ב SSL:</string>
-    <string name="date_last_visit_title">תאריך ביקור אחרון:</string>
     <string name="description">description</string>
     <string name="cancel">ביטול</string>
     <string name="time_title1">שעה:</string>
@@ -89,7 +58,6 @@
     <string name="systems_filter">מערכות</string>
     <string name="date_time">תאריך ושעה</string>
     <string name="filter_by">סינון לפי:</string>
-    <string name="apply">הפעל</string>
     <string name="from">מ-</string>
     <string name="to">ל-</string>
     <string name="ok">אישור</string>
@@ -98,7 +66,6 @@
     <string name="verification_successfully">האימות הצליח</string>
     <string name="no_photo">אין תמונה</string>
     <string name="select_all">בחר הכל</string>
-    <string name="select">בחר</string>
     <string name="do_you_realy_want_delete_selected_alarm">אם אתה בטוח שאתה מעוניין למחוק התראות נבחרות?</string>
     <string name="do_you_realy_want_clear_data">כל נתוני האפליקציה יימחקו לצמיתות. לרבות כל התמונות, ההגדרות ופרטי המשתמש</string>
     <string name="no_selected_alarms">אין התראות שנבחרו</string>
@@ -124,17 +91,12 @@
     <string name="phone_num_1">מספר טלפון 1</string>
     <string name="phone_num_2">מספר טלפון 2</string>
     <string name="phone_num_3">מספר טלפון 3</string>
-    <string name="phone_num_4">מספר טלפון 4</string>
-    <string name="you_need_at_least_one_email">צריך לפחות אימייל אחד</string>
-    <string name="you_need_at_least_one_phone_num">צריך לפחות מספר טלפון אחד</string>
-    <string name="invalid_email">אימייל שגוי</string>
     <string name="set_admin_title">הגדר מנהל</string>
     <string name="incorrect_phone_number_or_password">מספר טלפון או סיסמה שגויים</string>
     <string name="phone_num">:מספר טלפון</string>
     <string name="enable_notification_in_the_background">הפעלת התראות ברקע</string>
     <string name="do_you_want_to_open_setting_battery">האם אתה רוצה לפתוח את הגדרות הבטריה?</string>
     <string name="not_allow_background_activity">פעילות רקע לא מאופשרת</string>
-    <string name="user_title">שם משתמש:</string>
     <string name="no_user_found">לא נמצא משתמש</string>
     <string name="no_active_user_found">לא נמצא משתמש אקטיבי</string>
     <string name="edit_user_name">ערוך פרטי משתמש</string>
@@ -145,11 +107,8 @@
     <string name="save_file_success">שמירת הקובץ הצליחה</string>
     <string name="save_file_failed">שמירת הקובץ נכשלה</string>
     <string name="verification_failed">האימות נכשל</string>
-    <string name="share_title">שליחת וידאו מסנסוגארד</string>
     <string name="notification_disabled">בבקשה הפעל התראה</string>
     <string name="clear_data">נקה נתונים</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="web_page">לאתר</string>
     <string name="all_alarms">כל האירועים</string>
     <string name="desc">desc</string>
 
@@ -162,4 +121,8 @@
         <item>ATC</item>
         <item>HIKVISION</item>
     </string-array>
+    <!-- lint fix: strings moved out of layouts -->
+    <string name="close">סגור</string>
+    <string name="settings">הגדרות</string>
+    <string name="toggle_password_visibility">הצג או הסתר סיסמה</string>
 </resources>

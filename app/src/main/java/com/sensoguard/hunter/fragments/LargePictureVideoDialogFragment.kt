@@ -3,7 +3,6 @@ package com.sensoguard.hunter.fragments
 //import com.sensoguard.hunter.fragments.LargePictureVideoDialogFragment.CheckDownloadComplete.Factory.isComplete
 import android.app.Dialog
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -54,7 +53,7 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
     private var ibSaveLargeImgShare: AppCompatImageButton? = null
     private var pbLoadPhoto: ProgressBar? = null
     var videoManager: VideoManager? = null
-    var videoFileId: Long? = null
+    // inspection fix: removed unused videoFileId
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,21 +109,7 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
     }
 
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setLayoutLandscape()
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            setLayoutPortrait()
-        }
-    }
-
-    private fun setLayoutPortrait() {
-    }
-
-    private fun setLayoutLandscape() {
-    }
+    // inspection fix: removed onConfigurationChanged() and the empty setLayoutPortrait()/setLayoutLandscape() it called
 
     //show the picture by glide
     private fun showPicture(imgPath: String?, ivMyCaptureImage: AppCompatImageView?) {
@@ -202,14 +187,14 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
 
                     handler.post {
                         if (result != null && result) {
-                            context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_success)
+                            context?.resources?.getString(R.string.save_file_success) // inspection fix: redundant qualifier removed
                                 ?.let { it1 ->
                                     showToast(
                                         context, it1
                                     )
                                 }
                         } else {
-                            context?.resources?.getString(com.sensoguard.hunter.R.string.save_file_failed)
+                            context?.resources?.getString(R.string.save_file_failed) // inspection fix: redundant qualifier removed
                                 ?.let { it1 ->
                                     showToast(
                                         context, it1
@@ -247,7 +232,6 @@ class LargePictureVideoDialogFragment(var listener1: OnFragmentListener?) : Dial
             return
         }
         activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        setLayoutPortrait()
     }
 
     private fun enableOrientation() {

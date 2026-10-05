@@ -7,33 +7,39 @@ package com.sensoguard.hunter.fragments
 //import android.support.v7.widget.DividerItemDecoration
 //import android.support.v7.widget.LinearLayoutManager
 //import android.support.v7.widget.RecyclerView
+// inspection fix: removed unused import(s)
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.Dialog
-import android.content.*
-import android.net.Uri
-import android.os.Build
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.adapters.CamerasAdapter
 import com.sensoguard.hunter.classes.Camera
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.CAMERA_KEY
+import com.sensoguard.hunter.global.DETECTORS_LIST_KEY_PREF
+import com.sensoguard.hunter.global.ERROR_RESP
+import com.sensoguard.hunter.global.RESULT_CODE
+import com.sensoguard.hunter.global.SHARED_PREF_FILE_NAME
+import com.sensoguard.hunter.global.TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE
+import com.sensoguard.hunter.global.convertJsonToSensor
+import com.sensoguard.hunter.global.convertJsonToSensorList
+import com.sensoguard.hunter.global.convertToGson
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.storeSensorsToLocally
 import com.sensoguard.hunter.interfaces.OnAdapterListener
 
 
@@ -64,11 +70,11 @@ class SensorsFragment : Fragment(), OnAdapterListener {
     //private var listener: OnAdapterListener? = null
     var tvShowLogs:TextView?=null
     var bs: StringBuilder?=null
-    private var floatAddSensor: FloatingActionButton?=null
+    // inspection fix: removed unused floatAddSensor
     private var cameras: ArrayList<Camera>? = null
     private var rvSensor: RecyclerView?=null
     private var sensorsAdapter: CamerasAdapter? = null
-    private val listenerPref: SharedPreferences.OnSharedPreferenceChangeListener? = null
+    // inspection fix: removed unused listenerPref
     private var selectedCamera: Camera? = null
 
 
@@ -118,120 +124,13 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         val layoutManager= LinearLayoutManager(activity)
         rvSensor?.layoutManager=layoutManager
 
-        sensorsAdapter?.notifyDataSetChanged()
+        // lint fix: removed notifyDataSetChanged - a newly set adapter renders its data anyway
 
 
 
     }
 
-    //show dialog of add a new detector
-    private fun showDialog() {
-
-        var numSensorsRequest:Int?=null
-
-        //ask before delete extra sensors
-        fun askBeforeDeleteExtraSensor() {
-            val dialog= AlertDialog.Builder(activity)
-                //set message, title, and icon
-                .setTitle(activity?.resources?.getString(R.string.remove_extra_sensors)).setMessage(activity?.resources?.getString(R.string.content_delete_extra_sensor)).setIcon(android.R.drawable.ic_menu_delete
-
-                )
-
-                .setPositiveButton(activity?.resources?.getString(R.string.yes)) { dialog, _ ->
-
-                    //remove extra sensors
-                    if(numSensorsRequest!=null) {
-                        val items = cameras?.listIterator()
-                        while (items != null && items.hasNext()) {
-                            val item = items.next()
-
-                            val id = item.getId()
-                            try {
-                                if (id.toInt() > numSensorsRequest!!) {
-                                    items.remove()
-                                }
-                            } catch (ex: NumberFormatException) {
-                                //do nothing
-                            }
-                        }
-                    }
-                    if (activity != null) {
-                        cameras?.let { sen -> storeSensorsToLocally(sen, requireActivity()) }
-                    }
-                    dialog.dismiss()
-                }
-
-
-                .setNegativeButton(activity?.resources?.getString(R.string.no)) {
-                        dialog, _ -> dialog.dismiss() }.create()
-            dialog.show()
-
-        }
-
-
-        if(activity==null){
-            return
-        }
-
-        val dialog = Dialog(requireActivity())
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.dialog_new_sensor)
-
-        val etId = dialog.findViewById(R.id.etId) as EditText
-
-
-        val btnOk = dialog.findViewById(R.id.btnOk) as Button
-
-        btnOk.setOnClickListener {
-
-            if(validIsEmpty(etId) && activity!=null) {
-
-
-                val sensors= populateSensorsFromLocally()
-
-
-                try{
-                    numSensorsRequest=etId.text.toString().toInt()
-                }catch (ex:NumberFormatException){
-                    Toast.makeText(this.context, "exception ${ex.message}", Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-
-                if(numSensorsRequest!=null && numSensorsRequest!! >254){
-                    Toast.makeText(this.context, resources.getString(R.string.invalid_mum_sensors), Toast.LENGTH_LONG).show()
-                    return@setOnClickListener
-                }
-
-
-                if(numSensorsRequest!=null) {
-                    //add numSensors sensors
-                    for (sensorId in 1 until numSensorsRequest!! + 1) {
-                        //add it just if not exist
-                        if (sensors?.let { it1 -> !isIdExist(it1, sensorId.toString()) }!!) {
-                            sensors.add(Camera(sensorId.toString()))
-                        }
-                    }
-                }
-
-                //check if the request of sensors number is smaller then the number of exist
-                if(sensors?.size!=null
-                    && numSensorsRequest!=null
-                    && numSensorsRequest!! < sensors.size){
-                    askBeforeDeleteExtraSensor()
-                }else if(activity!=null) {
-                    sensors?.let { sen -> storeSensorsToLocally(sen, requireActivity()) }
-                }
-
-                dialog.dismiss()
-            }
-        }
-
-        val btnCancel = dialog.findViewById(R.id.btncn) as Button
-        btnCancel.setOnClickListener { dialog.dismiss() }
-
-        dialog.show()
-    }
+    // inspection fix: removed unused showDialog()
 
     private fun isIdExist(detectorsArr: ArrayList<Camera>, id: String): Boolean {
         for(item in detectorsArr){
@@ -290,7 +189,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
 
             val iteratorList=detectorsArr.listIterator()
             while (iteratorList != null && iteratorList.hasNext()) {
-                var detectorItem = iteratorList.next()
+                val detectorItem = iteratorList.next() // inspection fix: val
                 if (detectorItem.getId() == camera.getId()) {
                     camera.getName()?.let { detectorItem.setName(it) }
                     camera.getId().let { detectorItem.setId(it) }
@@ -369,6 +268,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         }
 
         sensorsAdapter?.setDetects(cameras)
+        //noinspection NotifyDataSetChanged - the whole list is replaced
         sensorsAdapter?.notifyDataSetChanged()
     }
 
@@ -378,9 +278,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
         activity?.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)?.unregisterOnSharedPreferenceChangeListener(appStateChangeListener)
     }
 
-    fun onButtonPressed(uri: Uri) {
-        //listener?.onFragmentInteraction(uri)
-    }
+    // inspection fix: removed unused empty onButtonPressed()
 
     private fun setFilter() {
         val filter = IntentFilter("handle.read.data")
@@ -413,7 +311,7 @@ class SensorsFragment : Fragment(), OnAdapterListener {
 
         val fr = CameraExtraSettingsDialogFragment()
 
-        //deliver selected camera to continue add data
+        //deliver selected camera to continue adding data
         val cameraStr = convertToGson(camera)
         val bdl = Bundle()
         bdl.putString(CAMERA_KEY, cameraStr)

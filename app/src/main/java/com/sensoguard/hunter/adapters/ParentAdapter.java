@@ -12,8 +12,9 @@ import java.util.List;
 
 
 public class ParentAdapter<T> extends ArrayAdapter<T> {
-    protected int resId;
-    protected Context context;
+    // inspection fix: final fields
+    protected final int resId;
+    protected final Context context;
     CallToParentInterface callToParentInterface;
 
     public ParentAdapter(Context context, int resId, List<T> objects) {
@@ -30,10 +31,7 @@ public class ParentAdapter<T> extends ArrayAdapter<T> {
     }
 
 
-    @Override
-    public int getCount() {
-        return super.getCount();
-    }
+    // inspection fix: removed getCount override that only called super
 
     @Nullable
     @Override

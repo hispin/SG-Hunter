@@ -1,6 +1,5 @@
 package com.sensoguard.hunter.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
@@ -17,6 +16,7 @@ import com.sensoguard.hunter.global.ACTIVATION_CODE_KEY
 import com.sensoguard.hunter.global.IMEI_KEY
 import com.sensoguard.hunter.global.IS_LOAD_APP
 import com.sensoguard.hunter.global.setStringInPreference
+import com.sensoguard.hunter.global.setupEdgeToEdge
 import org.apache.commons.lang3.StringUtils
 
 
@@ -30,6 +30,7 @@ class ActivationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge() // edge-to-edge: draw behind system bars and pad the content (Play warning fix)
         setContentView(R.layout.activity_activation)
 
         init()
@@ -58,7 +59,7 @@ class ActivationActivity : AppCompatActivity() {
             override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     // do something, e.g. set your TextView here via .setText()
-                    val imm=v?.context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm=v?.context?.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager // inspection fix: redundant qualifier removed
                     imm.hideSoftInputFromWindow(v.windowToken, 0)
 
                     return true

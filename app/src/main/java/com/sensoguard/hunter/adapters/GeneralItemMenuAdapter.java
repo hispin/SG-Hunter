@@ -1,12 +1,10 @@
 package com.sensoguard.hunter.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,8 +21,8 @@ import java.util.List;
 public class GeneralItemMenuAdapter extends ParentAdapter<GeneralItemMenu> {
 
 
-    private ViewHolder viewHolder;
-    private CallToParentInterface callToParentInterface;
+    // inspection fix: viewHolder is a local variable, callToParentInterface is final
+    private final CallToParentInterface callToParentInterface;
 
     public GeneralItemMenuAdapter(Context context, int resId, List<GeneralItemMenu> objects, CallToParentInterface callToParentInterface) {
         super(context, resId, objects, callToParentInterface);
@@ -35,25 +33,22 @@ public class GeneralItemMenuAdapter extends ParentAdapter<GeneralItemMenu> {
     @Override
     public View getView(int position, View rowView, @NonNull ViewGroup parent) {
         final GeneralItemMenu generalItemMenu = getItem(position);
-        Resources rc = context.getResources();
+        final ViewHolder viewHolder;
         if (rowView == null) {
             viewHolder = new ViewHolder();
-            LayoutInflater inflater = (LayoutInflater) context
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            if (inflater != null) {
-                rowView = inflater.inflate(resId, parent, false);
-            } else {
-                this.clear();
-                this.notifyDataSetChanged();
-                ((ListView) parent).setAdapter(null);
-                return rowView;
-            }
+            // inspection fix: LayoutInflater.from never returns null, so getView never returns null
+            rowView = LayoutInflater.from(context).inflate(resId, parent, false);
             viewHolder.tvTitleItemMenu = rowView.findViewById(R.id.tvTitleItemMenu);
             viewHolder.ivIconItemMenu = rowView.findViewById(R.id.ivIconItemMenu);
             viewHolder.constrainItemMenu = rowView.findViewById(R.id.constrainItemMenu);
             rowView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) rowView.getTag();
+        }
+
+        // inspection fix: getItem can return null
+        if (generalItemMenu == null) {
+            return rowView;
         }
 
         if (GeneralItemMenu.selectedItem.equals(generalItemMenu.getValue())) {

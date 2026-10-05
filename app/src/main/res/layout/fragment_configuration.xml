@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -81,9 +82,10 @@
                 app:layout_constraintHorizontal_bias="0.654"
                 android:id="@+id/btnDefault"/>
 
+        <!-- lint fix: text is never shown (textOn/textOff are empty) -->
         <ToggleButton
                 android:id="@+id/togChangeAlarmSound"
-                android:text="ToggleButton"
+                tools:text="ToggleButton"
                 android:layout_width="44dp"
                 android:layout_height="25dp"
                 android:background="@color/transparent"
@@ -134,9 +136,10 @@
                 app:layout_constraintStart_toStartOf="parent"
         />
 
+        <!-- lint fix: text is never shown (textOn/textOff are empty) -->
         <ToggleButton
                 android:id="@+id/togChangeAlarmVibrate"
-                android:text="ToggleButton"
+                tools:text="ToggleButton"
                 android:layout_width="44dp"
                 android:layout_height="25dp"
                 android:background="@color/transparent"
@@ -186,6 +189,7 @@
                 app:layout_constraintStart_toStartOf="parent"
         />
 
+        <!-- lint fix: use string resource -->
         <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/etAlarmFlickerValue"
                 android:layout_width="0dp"
@@ -199,7 +203,7 @@
                 app:layout_constraintHorizontal_bias="0.735"
                 android:inputType="number"
                 android:gravity="center"
-                android:hint="0"
+                android:hint="@string/zero_hint"
                 android:background="@drawable/shape_bottom_border"
 
         />
@@ -483,13 +487,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- lint fix: text is never shown (textOn/textOff are empty) -->
             <ToggleButton
                     android:id="@+id/togChangeBackgroundRestrict"
                     android:layout_width="44dp"
                     android:layout_height="25dp"
                     android:background="@color/transparent"
                     android:button="@drawable/toggle_selector_active"
-                    android:text="ToggleButton"
+                    tools:text="ToggleButton"
                     android:textOff=""
                     android:textOn=""
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -564,11 +569,12 @@
             android:layout_width="match_parent"
             app:layout_constraintTop_toBottomOf="@+id/constClearData">
 
+            <!-- lint fix: placeholder text moved to tools:text (set in code) -->
             <TextView
                 android:id="@+id/tvShowVer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ddd"
+                tools:text="ddd"
                 android:textColor="#000000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

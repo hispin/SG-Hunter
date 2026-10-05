@@ -63,7 +63,7 @@ class AlarmAdapter(
         private var tvTime: TextView? = null
 
         //TODO press twice
-        private var tvType: TextView? = null
+        // lint fix: removed tvType - the inflated item layouts have no such view (it was always null)
         private var ivAlarmPic: AppCompatImageView? = null
         private var ivShare: AppCompatImageView? = null
         private var ivIconVideo: AppCompatImageView? = null
@@ -95,7 +95,6 @@ class AlarmAdapter(
             //tvId = _itemView.findViewById(R.id.tvId)
             tvName = _itemView.findViewById(R.id.tvName)
             tvDate = _itemView.findViewById(R.id.tvDate)
-            tvType = _itemView.findViewById(R.id.tvType)
             tvTime = _itemView.findViewById(R.id.tvTime)
 
 
@@ -112,7 +111,7 @@ class AlarmAdapter(
                 //alarm.imgsPath?.let { it1 -> onAdapterListener.openLargePictureDialog(it1) }
             }
 
-            //because it have onclick listener ,itemView long click does not influence it, it set specify
+            //because it has an onclick listener ,itemView long click does not influence it, it set specify
             ivAlarmPic?.setOnLongClickListener {
                 alarms[adapterPosition].isReadyToDelete = !alarms[adapterPosition].isReadyToDelete
                 notifyItemChanged(adapterPosition, alarms[adapterPosition])
@@ -208,7 +207,6 @@ class AlarmAdapter(
 //            }
 
             //test
-            tvType?.text = myAlarm.type
             tvName?.text = myAlarm.name
 
 
@@ -234,7 +232,7 @@ class AlarmAdapter(
                             dataSource: DataSource,
                             isFirstResource: Boolean
                         ): Boolean {
-                            //if the the image is video then show the video icon
+                            //if the image is video then show the video icon
                             if (myAlarm.imgsPath != null
                                 && (myAlarm.imgsPath!!.endsWith("mp4")
                                         || myAlarm.imgsPath!!.endsWith("mov"))

@@ -1,13 +1,13 @@
 package com.sensoguard.hunter.classes;
 
+import static com.sensoguard.hunter.global.ConstsKt.ALARM_OTHER;
+
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-
-import static com.sensoguard.hunter.global.ConstsKt.ALARM_OTHER;
 
 public class AlarmParsing {
     private static final AlarmParsing ourInstance = new AlarmParsing();
@@ -74,40 +74,7 @@ public class AlarmParsing {
             }
         }
 
-        ////test
-//        String dateStrZuraSent = inn.getStringExtra("sendDate");
-//        long dateZuraSent = -1;
-//        if (dateStrZuraSent != null) {
-//            dateStrZuraSent = dateStrZuraSent.trim();
-//            try {
-//                dateZuraSent = Long.parseLong(dateStrZuraSent);
-//            } catch (NumberFormatException | NullPointerException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//
-//        String dateStrfDateSent = inn.getStringExtra("fDate");
-//        long datefDateSent = -1;
-//        if (dateStrfDateSent != null) {
-//            dateStrfDateSent = dateStrfDateSent.trim();
-//            try {
-//                datefDateSent = Long.parseLong(dateStrfDateSent);
-//            } catch (NumberFormatException | NullPointerException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//        String dateStrsDateSent = inn.getStringExtra("sDate");
-//        long datesDateSent = -1;
-//        if (dateStrsDateSent != null) {
-//            dateStrsDateSent = dateStrsDateSent.trim();
-//            try {
-//                datesDateSent = Long.parseLong(dateStrsDateSent);
-//            } catch (NumberFormatException | NullPointerException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//        long acceptDate = Calendar.getInstance().getTimeInMillis();
-        ////
+        // inspection fix: removed commented-out test code
 
 
         float wifiNotif = -1;//parseToWifiNotif(networkLevel);
@@ -141,7 +108,7 @@ public class AlarmParsing {
             case ("MG-984G-30M"):
                 //parsing the date time
                 myCalendar = parseDateTimeBySubject(mySubject);
-                //parsing wifi by subject
+                //parsing Wi-Fi by subject
                 wifiVal = parseWifiBySubject(mySubject);
                 break;
             case ("MG-983G-30M"):
@@ -149,7 +116,7 @@ public class AlarmParsing {
                 myCalendar = parseDateTimeBySubject(mySubject);
                 //parsing battery by content
                 batteryVal = parseBatteryByContent(myContent);
-                //parsing wifi by subject
+                //parsing Wi-Fi by subject
                 wifiVal = parseWifiBySubject(mySubject);
                 break;
             case ("BG-668"):
@@ -163,7 +130,7 @@ public class AlarmParsing {
                 batteryVal = parseBatteryByContent(myContent);
 
 
-                //parsing wifi
+                //parsing Wi-Fi
                 wifiVal = parseWifiByContent(myContent);
 
 
@@ -180,7 +147,7 @@ public class AlarmParsing {
     }
 
 
-    //parsing wifi by subject
+    //parsing Wi-Fi by subject
     private float parseToWifiNotif(String wifiNotif) {
         float wifiVal = -1;
         try {
@@ -205,7 +172,7 @@ public class AlarmParsing {
         return wifiVal;
     }
 
-    //parsing wifi by subject
+    //parsing Wi-Fi by subject
     private float parseWifiBySubject(String mySubject) {
         float wifiVal = -1;
         try {
@@ -230,7 +197,7 @@ public class AlarmParsing {
         return wifiVal;
     }
 
-    //parsing wifi
+    //parsing Wi-Fi
     private float parseWifiByContent(String myContent) {
         try {
             int tmpIdx = myContent.indexOf("Signal");

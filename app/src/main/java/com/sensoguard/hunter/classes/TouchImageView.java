@@ -11,6 +11,8 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+
 
 public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView {
 
@@ -28,9 +30,10 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     // Remember some things for zooming
     Matrix matrix;
     int mode = NONE;
-    PointF last = new PointF();
-    PointF start = new PointF();
-    float minScale = 1f;
+    // inspection fix: final fields
+    final PointF last = new PointF();
+    final PointF start = new PointF();
+    final float minScale = 1f;
     float maxScale = 15f;
     float[] m;
     int viewWidth, viewHeight;
@@ -322,8 +325,7 @@ public class TouchImageView extends androidx.appcompat.widget.AppCompatImageView
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
         @Override
-
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
+        public boolean onScaleBegin(@NonNull ScaleGestureDetector detector) { // inspection fix: @NonNull
 
             mode = ZOOM;
 

@@ -15,20 +15,16 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.view.MotionEvent
-import android.view.View
 import android.view.View.GONE
-import android.view.View.OnTouchListener
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import android.widget.ToggleButton
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -72,6 +68,7 @@ import com.sensoguard.hunter.global.setBooleanInPreference
 import com.sensoguard.hunter.global.setIntInPreference
 import com.sensoguard.hunter.global.setLongInPreference
 import com.sensoguard.hunter.global.setStringInPreference
+import com.sensoguard.hunter.global.setupEdgeToEdge
 import com.sensoguard.hunter.interfaces.OnFragmentListener
 
 
@@ -132,6 +129,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
 
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge() // edge-to-edge: draw behind system bars and pad the content (Play warning fix)
 
         configurationLanguage()
 
@@ -141,13 +139,10 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
          * define listener for open battery settings
          */
         _openBatterySettings =
-            registerForActivityResult<Intent, ActivityResult>(
-                StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                    override fun onActivityResult(result: ActivityResult?) {
+            registerForActivityResult(StartActivityForResult()) { _ -> // inspection fix: lambda instead of object literal
                         //check if the battery notification is enabled
                         configureNotificationStatus()
                     }
-                })
 
         //if the app is restart because change enabled notification from settings
         isSettingsNotificationLauncher = intent.getBooleanExtra(IS_SETTINGS_NOTIFICATION_LAUNCHER,false)
@@ -208,7 +203,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         CheckDownloadComplete.isComplete.observe(this) {
             //Log.d("testDownload","accept complete")
             if (it) {
-                pbLoadPhoto?.visibility=View.GONE
+                pbLoadPhoto?.visibility=GONE // inspection fix: redundant qualifier removed
                 if (videoFileId != null) {
                     openDownloadedAttachment(this, videoFileId!!)
                 }
@@ -231,7 +226,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
         if (getStringInPreference(this, SELECTED_NOTIFICATION_SOUND_KEY, "-1").equals("-1")) {
 
-            val uri=Uri.parse("android.resource://$packageName/raw/alarm_sound")
+            val uri="android.resource://$packageName/raw/alarm_sound".toUri() // lint fix: KTX toUri
 
             setStringInPreference(this, SELECTED_NOTIFICATION_SOUND_KEY, uri.toString())
         }
@@ -241,7 +236,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         override fun onReceive(arg0: Context, arg1: Intent) {
             when {
                 arg1.action == USB_CONNECTION_FAILED -> {
-                    editActionBar(false)
+                    // inspection fix: editActionBar() was empty and was removed
                 }
 
             }
@@ -268,9 +263,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
 
     }
 
-    private fun editActionBar(state: Boolean) {
-        //togChangeStatus?.isChecked = state
-    }
+    // inspection fix: removed empty editActionBar()
 
     //TODO : the toggle will updated by the status changing
     private fun configureActionBar() {
@@ -297,12 +290,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
         viewPager = findViewById(R.id.vPager)
         collectionPagerAdapter = CollectionPagerAdapter(supportFragmentManager)
         viewPager.adapter = collectionPagerAdapter
-        viewPager.setOnTouchListener(object : OnTouchListener {
-
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                return true
-            }
-        })
+        // lint fix: removed the touch listener - NonSwipeAbleViewPager already blocks swiping
 
         //relate the tab layout to viewpager because we need to add the icons
         tabs.setupWithViewPager(vPager)
@@ -421,14 +409,14 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                     fragment = ConfigurationFragment()
                     fragment.arguments = Bundle().apply {
                         // Our object is just an integer :-P
-                        putInt("ARG_OBJECT", position + 1)
+                        putInt("ARG_OBJECT", 1) // inspection fix: position is always 0 in this branch
                     }
                 }
                 1 -> {
                     fragment = AlarmLogFragment()
                     fragment.arguments = Bundle().apply {
                         // Our object is just an integer :-P
-                        putInt("ARG_OBJECT", position + 1)
+                        putInt("ARG_OBJECT", 2) // inspection fix: constant for this tab
                     }
                 }
                 2 -> {
@@ -438,7 +426,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                     fragment = WebFragment()
                     fragment.arguments = Bundle().apply {
                         // Our object is just an integer :-P
-                        putInt("ARG_OBJECT", position + 1)
+                        putInt("ARG_OBJECT", 3) // inspection fix: constant for this tab
                     }
                 }
 
@@ -469,12 +457,13 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     override fun updateLanguage() {
         setAppLanguage(this, GeneralItemMenu.selectedItem)
         this.finish()
-        this.startActivity(intent)
+        // lint fix: restart with a new explicit intent instead of relaunching the incoming one
+        this.startActivity(Intent(this, MyScreensActivity::class.java))
     }
 
 
     override fun onSaveForShareVideo(alarm: Alarm) {
-        pbLoadPhoto?.visibility=View.VISIBLE
+        pbLoadPhoto?.visibility=VISIBLE // inspection fix: redundant qualifier removed
         alarm.imgsPath?.let { it1 ->
             Thread {
                 //save video file for sharing
@@ -484,7 +473,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     }
 
     override fun onSaveForShareVideo(imgPath: String) {
-        pbLoadPhoto?.visibility=View.VISIBLE
+        pbLoadPhoto?.visibility=VISIBLE // inspection fix: redundant qualifier removed
         Thread {
             //save video file for sharing
             videoFileId=saveVideoInForShare(this, imgPath)
@@ -504,7 +493,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
      * check is has already log in user
      */
     private fun isUserAmazonForLoginExist() {
-        //check is has already tags
+        //check if tags already exist
         val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
         if (userInfo == null) {
             openLogInDialog(true)
@@ -581,7 +570,7 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     private fun checkBackgroundNotifRestrict() {
 
         //check if the system restrict accepting notifications in background
-        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager // inspection fix: redundant qualifier removed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val msg = activityManager.isBackgroundRestricted
             if (msg) {
@@ -589,9 +578,9 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
                 showBeforeDialog()
             } else {
                 // "not restricted"
-                //check if the device has google service
+                //check if the device has Google Play services
                 if (checkPlayServices()) {
-                    //check is has already log in user
+                    //check if a logged-in user already exists
                     isUserAmazonForLoginExist()
                 }
             }

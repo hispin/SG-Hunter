@@ -66,6 +66,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tvAdminPhone" />
 
 
+    <!-- lint fix: default password moved to strings.xml -->
     <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/etPassword"
             android:layout_width="0dp"
@@ -74,7 +75,7 @@
             android:ems="10"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
-            android:text="0518"
+            android:text="@string/default_admin_password"
             android:textSize="14.7sp"
             app:layout_constraintBottom_toBottomOf="@+id/tvPassword"
             app:layout_constraintStart_toStartOf="@+id/etAdminPhone"

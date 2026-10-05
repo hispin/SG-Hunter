@@ -1,9 +1,8 @@
 package com.sensoguard.hunter.fragments
 
-import androidx.core.content.ContextCompat
+// inspection fix: removed unused import(s)
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.ContentValues
@@ -12,7 +11,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -23,17 +21,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.Camera
@@ -50,7 +47,6 @@ import com.sensoguard.hunter.global.convertJsonToSensor
 import com.sensoguard.hunter.global.convertToGson
 import com.sensoguard.hunter.global.getScreenWidth
 import com.sensoguard.hunter.global.removePreference
-import java.util.Calendar
 
 
 class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener {
@@ -127,7 +123,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
 
         ibTakePic = view?.findViewById(R.id.ibTakePic)
         ibTakePic?.setOnClickListener {
-            val myIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            // inspection fix: removed unused myIntent
             pickCamera()
         }
 
@@ -176,24 +172,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
 
     }
 
-    //open date picker to update the dates
-    private fun openDatePicker() {
-        val currentDate = Calendar.getInstance()
-        val year = currentDate[Calendar.YEAR]
-        val month = currentDate[Calendar.MONTH]
-        val dayOfMonth = currentDate[Calendar.DAY_OF_MONTH]
-
-        val picker =
-            DatePickerDialog(
-                requireContext(),
-                OnDateSetListener { _, year1, month1, dayOfMonth1 ->
-                    val selectedCalendar =
-                        dayOfMonth1.toString() + "/" + (month1 + 1) + "/" + year1
-                    //tvLastVisitValue?.text = selectedCalendar
-                }, year, month, dayOfMonth
-            )
-        picker.show()
-    }
+    // inspection fix: removed unused openDatePicker()
 
     //populate camera object to return it main screen
     private fun populateMyFields() {
@@ -246,6 +225,8 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
             val settingsDialog = Dialog(requireContext())
             if (settingsDialog.window != null) {
                 settingsDialog.window!!.requestFeature(FEATURE_NO_TITLE)
+                // lint: no parent exists before setContentView, so null root is intended
+                @SuppressLint("InflateParams")
                 val view = layoutInflater.inflate(R.layout.fragment_large_picture_video, null)
                 settingsDialog.setContentView(view)
                 val ibClose = view.findViewById<AppCompatImageButton>(R.id.ibClose)
@@ -296,15 +277,12 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
      * define listener
      */
     var startCamera: ActivityResultLauncher<Intent> =
-        registerForActivityResult<Intent, ActivityResult>(
-            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                override fun onActivityResult(result: ActivityResult?) {
-                    if (result?.resultCode == Activity.RESULT_OK) run {
+        registerForActivityResult(StartActivityForResult()) { result -> // inspection fix: lambda instead of object literal
+                    if (result.resultCode == Activity.RESULT_OK) run {
                         ibShowPicture?.setImageURI(uri)
                     }
 
                 }
-            })
 
     /**
      * take a picture
@@ -383,31 +361,17 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
             myCamera?.cameraModel.equals("MG-983G-36M")
         ) {
 
-            var command: String? = ""
-            if (v?.id == R.id.btnGetSnapshot) {
-                command = "#T#E#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnDeleteAllImages) {
-                command = "#F#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnGetBatteryStatus) {
-                command = "#C#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnGetParameters) {
-                command = "#L#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnArmCamera) {
-                command = "#A#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnDisarmCamera) {
-                command = "#D#"
-                sendSMS(command)
-            } else if (v?.id == R.id.btnSetEmailRecipients) {
-                showEmailsDialog()
-            } else if (v?.id == R.id.btnSetMmsRecipients) {
-                showPhoneNumDialog()
-            } else if (v?.id == R.id.btnSetAdmin) {
-                showSetAdminDialog()
+            // inspection fix: cascade 'if' replaced with 'when', commands sent directly
+            when (v?.id) {
+                R.id.btnGetSnapshot -> sendSMS("#T#E#")
+                R.id.btnDeleteAllImages -> sendSMS("#F#")
+                R.id.btnGetBatteryStatus -> sendSMS("#C#")
+                R.id.btnGetParameters -> sendSMS("#L#")
+                R.id.btnArmCamera -> sendSMS("#A#")
+                R.id.btnDisarmCamera -> sendSMS("#D#")
+                R.id.btnSetEmailRecipients -> showEmailsDialog()
+                R.id.btnSetMmsRecipients -> showPhoneNumDialog()
+                R.id.btnSetAdmin -> showSetAdminDialog()
             }
 
 
@@ -415,7 +379,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
     }
 
     private fun sendSMS(command: String?) {
-        val uri = Uri.parse("smsto:" + myCamera?.phoneNum)
+        val uri = ("smsto:" + myCamera?.phoneNum).toUri() // lint fix: KTX toUri
         val intent = Intent(Intent.ACTION_SENDTO, uri)
         intent.putExtra("sms_body", command)
         startActivity(intent)
@@ -494,29 +458,7 @@ class CameraExtraSettingsDialogFragment : DialogFragment(), View.OnClickListener
         return myCommand
     }
 
-    //add phone number to command if it is not empty
-    private fun addEmailToCommand(
-        command: String,
-        etField: AppCompatEditText
-    ): String {
-
-        var myCommand = command
-
-        if (etField.text != null
-            && etField.text.toString().isNotEmpty()
-        ) {
-            if (etField.text.toString().contains("@")) {
-                myCommand += etField.text?.toString() + "#"
-            } else {
-                Toast.makeText(
-                    activity,
-                    resources.getString(R.string.invalid_email),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
-        return myCommand
-    }
+    // inspection fix: removed unused addEmailToCommand()
 
     //show dialog with phone numbers fields
     private fun showPhoneNumDialog() {

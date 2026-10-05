@@ -10,9 +10,13 @@ class AuthResult {
     val username: String? = null
 
     @SerializedName("firstName")
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     val firstName: String? = null
 
     @SerializedName("lastName")
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     val lastName: String? = null
 
     @SerializedName("role")
@@ -25,12 +29,16 @@ class AuthResult {
     val success: Boolean? = null
 
     @SerializedName("errors")
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     val errors: String? = null
 
     @SerializedName("customer")
     val customer: Int? = null
 
     @SerializedName("watchCameras")
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     val watchCameras: ArrayList<Int>? = null
 
     @SerializedName("language")

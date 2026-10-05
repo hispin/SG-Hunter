@@ -8,6 +8,8 @@ class Camera {
     private var sysName: String? = null
     private var id: String?=null
     private var isArmed = false
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     var isLocallyDefined:Boolean=false
 
     //TODO make getter and setter
@@ -21,6 +23,8 @@ class Camera {
     var isUseSSL: Boolean = false
     var lastVisitDate: String? = null
     var lastVisitPicturePath: String? = null
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     var isSorted: Boolean = false
 
 

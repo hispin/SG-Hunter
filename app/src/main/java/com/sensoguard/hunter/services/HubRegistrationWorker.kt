@@ -2,6 +2,7 @@ package com.sensoguard.hunter.services
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
@@ -46,10 +47,10 @@ class HubRegistrationWorker(context: Context, workerParams: WorkerParameters) :
                 )
                 val newRegId = hub.register(fcmToken, tags).registrationId
                 Log.d(TAG, "New NH Registration Successfully - RegId : $newRegId")
-                prefs.edit()
-                    .putString(REGISTER_ID_KEY, newRegId)
-                    .putString(FCM_TOKEN_PREF, fcmToken)
-                    .apply()
+                prefs.edit { // lint fix: KTX edit
+                    putString(REGISTER_ID_KEY, newRegId)
+                    putString(FCM_TOKEN_PREF, fcmToken)
+                }
             } else {
                 Log.d(TAG, "Previously Registered Successfully - RegId : $regId")
             }

@@ -81,6 +81,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- lint fix: not a personal-data field, autofill disabled -->
         <EditText
                 android:id="@+id/etEnterCode"
                 android:layout_width="wrap_content"
@@ -89,6 +90,7 @@
                 android:ems="10"
                 android:hint="@string/enter_code"
                 android:inputType="textPersonName"
+            android:importantForAutofill="no"
                 android:padding="10dp"
                 android:textColor="@color/dark1"
                 android:textColorHint="@color/gray5"

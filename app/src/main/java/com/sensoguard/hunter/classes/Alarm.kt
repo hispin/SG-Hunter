@@ -1,13 +1,13 @@
 package com.sensoguard.hunter.classes
 
+// inspection fix: removed unused import(s)
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.Build
 import com.sensoguard.hunter.global.getAlarmsFromLocally
 import com.sensoguard.hunter.global.storeAlarmsToLocally
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 class Alarm {
 
@@ -24,6 +24,8 @@ class Alarm {
     var longitude: Double?=null
     var latitude: Double?=null
     var isLocallyDefined: Boolean = false
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     var isActive: Boolean? = false
     var imgsPath: String? = null
     var myBitmap: Bitmap? = null
@@ -152,11 +154,8 @@ class Alarm {
             WeakReference(context)
         //val tmp = Calendar.getInstance()
         val resources = wContext.get()?.resources
-        val locale =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) resources?.configuration?.locales?.getFirstMatch(
-                resources.assets?.locales
-            )
-            else resources?.configuration?.locale
+        // lint fix: minSdk is 26, so locales is always available
+        val locale = resources?.configuration?.locales?.getFirstMatch(resources.assets?.locales)
         val dateFormat = SimpleDateFormat("kk:mm dd/MM/yyyy", locale)
         val dateString = dateFormat.format(tmp.time)
 

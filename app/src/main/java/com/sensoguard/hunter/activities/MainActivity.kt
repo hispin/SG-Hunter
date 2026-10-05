@@ -4,24 +4,21 @@ import android.app.ActivityManager
 import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.util.MonthDisplayHelper
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.WindowManager
 import android.widget.TextView
 import android.widget.ToggleButton
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.sensoguard.hunter.R
@@ -38,6 +35,7 @@ import com.sensoguard.hunter.global.getAppLanguage
 import com.sensoguard.hunter.global.getStringInPreference
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.setAppLanguage
+import com.sensoguard.hunter.global.setupEdgeToEdge
 
 //import net.danlew.android.joda.JodaTimeAndroid
 
@@ -45,7 +43,7 @@ import com.sensoguard.hunter.global.setAppLanguage
 class MainActivity : LogInActivity() {
 
     private var consDisableNotification: ConstraintLayout?=null
-    private var dialog: AlertDialog? = null
+    // inspection fix: removed unused dialog property
     private val TAG = "MainActivity"
     private val CODE_REQUEST: Int = 1
     private val PLAY_SERVICES_RESOLUTION_REQUEST = 9000
@@ -81,9 +79,10 @@ class MainActivity : LogInActivity() {
 
         //var year=Calendar.getInstance().get(Calendar.YEAR)
         //JodaTimeAndroid.init(this)
-        var d: MonthDisplayHelper
+        // inspection fix: removed unused variable d
 
         super.onCreate(savedInstanceState)
+        setupEdgeToEdge() // edge-to-edge: draw behind system bars and pad the content (Play warning fix)
 
         configurationLanguage()
 
@@ -102,10 +101,8 @@ class MainActivity : LogInActivity() {
         hideBudgetNotification()
 
         //hide status bar
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        // edge-to-edge: FLAG_FULLSCREEN is deprecated, hide the status bar with WindowInsetsControllerCompat
+        WindowCompat.getInsetsController(window, window.decorView).hide(WindowInsetsCompat.Type.statusBars())
 
         //check if the google play is installed in the device
         if (checkPlayServices()) {
@@ -157,7 +154,7 @@ class MainActivity : LogInActivity() {
     private fun checkBackgroundNotifRestrict() {
 
         //check if the system restrict accepting notifications in background
-        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager // inspection fix: redundant qualifier removed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val msg = activityManager.isBackgroundRestricted
             if (msg) {
@@ -166,7 +163,7 @@ class MainActivity : LogInActivity() {
             } else {
                 // "not restricted"
                 initViews(true)
-                //check if the device has google service
+                //check if the device has Google Play services
                 if (checkPlayServices()) {
                     isUserAmazonForLoginExist()
                 }
@@ -213,10 +210,8 @@ class MainActivity : LogInActivity() {
      * define listener for open battery settings
      */
     var _openBatterySettings: ActivityResultLauncher<Intent> =
-        registerForActivityResult<Intent, ActivityResult>(
-            StartActivityForResult(), object : ActivityResultCallback<ActivityResult?> {
-                override fun onActivityResult(result: ActivityResult?) {
-                    if (result?.resultCode == CODE_REQUEST) {
+        registerForActivityResult(StartActivityForResult()) { result -> // inspection fix: lambda instead of object literal
+                    if (result.resultCode == CODE_REQUEST) {
                         initViews(true)
                         //do login AZURE or AMAZON
                         //val loginType = getStringInPreference(this@MainActivity, LOGIN_TYPE_KEY, AZURE)
@@ -227,7 +222,6 @@ class MainActivity : LogInActivity() {
 //                        }
                     }
                 }
-            })
 
 
 
@@ -235,7 +229,7 @@ class MainActivity : LogInActivity() {
 
     //AMAZON : open log in dialog if there is no tags or user&password
     private fun  isUserAmazonForLoginExist(): Boolean {
-        //check is has already tags
+        //check if tags already exist
         val userInfo = getUserAmazonResultFromLocally(this, USER_INFO_AMAZON_KEY)
         if (userInfo == null) {
             openLogInDialog(false)
@@ -265,19 +259,16 @@ class MainActivity : LogInActivity() {
         val id = "my_channel_01"
         val name = getString(R.string.channel_name)
         val descriptionText = getString(R.string.channel_description)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_LOW
-            val mChannel =
-                NotificationChannel(id, name, importance).apply {
-                    description = descriptionText
-                    setShowBadge(false)
-                }
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(mChannel)
-        } else {
-
-        }
+        // lint fix: minSdk is 26, so the SDK check for channels was removed
+        val importance = NotificationManager.IMPORTANCE_LOW
+        val mChannel =
+            NotificationChannel(id, name, importance).apply {
+                description = descriptionText
+                setShowBadge(false)
+            }
+        val notificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager // inspection fix: redundant qualifier removed
+        notificationManager.createNotificationChannel(mChannel)
 
     }
 

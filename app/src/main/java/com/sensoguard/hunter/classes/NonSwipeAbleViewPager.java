@@ -29,6 +29,9 @@ public class NonSwipeAbleViewPager extends ViewPager {
         return false;
     }
 
+    // kept on purpose: lint (ClickableViewAccessibility) requires performClick when onTouchEvent calls it,
+    // even though Inspect Code reports it as a redundant override
+    @SuppressWarnings("RedundantMethodOverride")
     @Override
     public boolean performClick() {
         return super.performClick();

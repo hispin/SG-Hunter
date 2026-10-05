@@ -1,40 +1,22 @@
 package com.sensoguard.hunter.global
 
-import android.content.ContentValues
 import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.Camera
 import com.sensoguard.hunter.classes.MyEmailAccount
-import com.sensoguard.hunter.classes.UserInfoAmazon
 import com.sensoguard.hunter.classes.UserInfoAmazonResult
 import com.sensoguard.hunter.classes.UserInfoAzure
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.lang.ref.WeakReference
 
-//get myEmail from locally
-fun getMyEmailAccountFromLocally(context: Context): MyEmailAccount? {
-
-    val myEmailAccountStr = getStringInPreference(context, EMAIL_ACCOUNT_KEY, null)
-    myEmailAccountStr?.let {
-        var myEmailAccount = convertJsonToMyEmailAccount(myEmailAccountStr)
-        return myEmailAccount
-    }
-    return null
-}
+// inspection fix: removed unused function
 
 //store the sensors to locally
 fun storeSensorsToLocally(sensors: ArrayList<Camera>, context: Context) {
 
     var detectorsJsonStr:String?=""
-    if(sensors!=null && sensors.size>0){
+    if(sensors!=null && sensors.isNotEmpty()){ // inspection fix: isNotEmpty()
         detectorsJsonStr= convertToGson(sensors)
     }
     setStringInPreference(context,DETECTORS_LIST_KEY_PREF,detectorsJsonStr)
@@ -96,7 +78,7 @@ fun storeAlarmsToLocally(alarms: java.util.ArrayList<Alarm>, context: Context) {
     }
 }
 
-//store the my email account to locally
+//store my email account locally
 fun storeMyEmailAccountToLocaly(myEmailAccount: MyEmailAccount, context: Context) {
     //use WeakReference if the activity is no longer alive
     val wContext: WeakReference<Context> =
@@ -138,12 +120,7 @@ fun storeUserAzureToLocally(userInfo: UserInfoAzure, context: Context, key: Stri
     setSecureStringInPreference(wContext.get(), key, jsonObject.toString())
 }
 
-fun storeUserAmazonToLocally(userInfo: UserInfoAmazon, context: Context, key: String) {
-    val jsonObject = Gson().toJson(userInfo)
-    val wContext: WeakReference<Context> =
-        WeakReference(context)
-    setSecureStringInPreference(wContext.get(), key, jsonObject.toString())
-}
+// inspection fix: removed unused function
 
 fun storeUserAmazonResultToLocally(userInfo: UserInfoAmazonResult, context: Context, key: String) {
     val jsonObject = Gson().toJson(userInfo)
@@ -165,18 +142,7 @@ fun getUserAzureFromLocally(context: Context, key: String): UserInfoAzure? {
     return null
 }
 
-//get user  info amazon to locally
-fun getUserAmazonFromLocally(context: Context, key: String): UserInfoAmazon? {
-    val wContext: WeakReference<Context> =
-        WeakReference(context)
-    val userJ = getSecureStringInPreference(context, key)
-    userJ?.let {
-        val userInfo = convertJsonToUserInfoAmazon(it)
-        return userInfo
-    }// Gson().fromJson<UserInfo>(userJ, UserInfo::class.java)
-
-    return null
-}
+// inspection fix: removed unused function
 
 //get user  info amazon to locally
 fun getUserAmazonResultFromLocally(context: Context, key: String): UserInfoAmazonResult? {
@@ -192,67 +158,7 @@ fun getUserAmazonResultFromLocally(context: Context, key: String): UserInfoAmazo
 }
 
 
-//write to log
-fun writeFile(logMsg: String, context: Context) {
-//    val thread = object : Thread() {
-//        override fun run() {
-//            val externalStorageDir = Environment.getExternalStorageDirectory()
-//            val myFile = File(externalStorageDir, "hunter_logs.txt")
-//
-//            if (myFile.exists()) {
-//                try {
-//                    val currDateStr =
-//                        getStringFromCalendar(Calendar.getInstance(), "dd/MM/yy kk:mm:ss", context)
-//                    val fostream = FileOutputStream(myFile, true)
-//                    val oswriter = OutputStreamWriter(fostream)
-//                    val bwriter = BufferedWriter(oswriter)
-//                    bwriter.write("$currDateStr:log:$logMsg")
-//                    bwriter.newLine()
-//                    bwriter.close()
-//                    oswriter.close()
-//                    fostream.close()
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
-//            } else {
-//                try {
-//                    myFile.createNewFile()
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    thread.start()
+// inspection fix: removed empty writeFile() and its calls
 
-
-}
-
-//convert bitmap to Uri
-fun getImageUriByBitmap2(inContext: Context, inImage: Bitmap): Uri? {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        var file = File(inContext.filesDir, "attached.jpeg")
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-        }
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, FileOutputStream(file))
-
-        var contentValues = ContentValues()
-        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, file.name)
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, file.path)
-        contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
-
-        return inContext.contentResolver.insert(Uri.fromFile(file), contentValues)
-    } else {
-        var bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        var path =
-            MediaStore.Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
-        return Uri.parse(path)
-    }
-}
+// inspection fix: removed unused function
 

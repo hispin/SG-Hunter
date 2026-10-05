@@ -1,12 +1,8 @@
 package com.sensoguard.hunter.global
 
-const val CHECK_AVAILABLE_KEY = "find.drivers.command"
-const val STOP_READ_DATA_KEY = "stop.data.command"
-const val HANDLE_READ_DATA_EXCEPTION = "handle.read.data.exception"
-const val GET_CURRENT_LOCATION_KEY = "handle.get.current.location"
+// inspection fix: removed unused constants
 const val CURRENT_ITEM_TOP_MENU_KEY = "currentItemTopKey"
 
-const val READ_DATA_KEY = "handle.read.data"
 const val CREATE_ALARM_KEY = "handle.create.alarm"
 const val DETECT_ALARM_KEY = "handle.detect.alarm"
 const val ADD_ATTACHED_PHOTOS_KEY = "add.attached.photos"
@@ -15,7 +11,6 @@ const val ERROR_RESULT_VALIDATION_EMAIL_ACTION = "error_result.validation.email"
 const val LOGIN_COMPLETE_KEY = "login.complete"
 
 
-const val RESET_MARKERS_KEY = "resetMarkersKey"
 const val IS_VIBRATE_WHEN_ALARM_KEY = "isVibrateWhenAlarm"
 const val MAP_SHOW_VIEW_TYPE_KEY = "mapShowViewType"
 const val MAP_SHOW_NORMAL_VALUE = 0
@@ -37,8 +32,6 @@ const val REGISTER_ID_KEY = "registrationID"
 const val VALIDATION_EMAIL_RESULT = "validationEmailResult"
 
 const val CURRENT_LANG_KEY_PREF = "currentLangKey"
-const val CURRENT_LATITUDE_PREF = "currentLatitudePref"
-const val CURRENT_LONGTUDE_PREF = "currentLongtudePref"
 const val TOKEN_AMAZON_KEY_PREF = "tokenAmazonKeyPref"
 const val NO_DATA = "-1"
 
@@ -52,10 +45,8 @@ const val USB_CONNECTION_FAILED = "usbConnectionFailed"
 const val CREATE_ALARM_ID_KEY = "CreateAlarmIdKey"
 const val CREATE_ALARM_NAME_KEY = "CreateAlarmNameKey"
 const val CREATE_ALARM_TYPE_KEY = "CreateAlarmTypeKey"
-const val AMAZON_PRECESS_TYPE_KEY = "AmazonProcessTypeKey"
 const val AMAZON_PRECESS_DIALOG_VALUE = "AmazonProcessDialogValue"
 const val AMAZON_PRECESS_WITH_USER_VALUE = "AmazonProcessWithUserValue"
-const val MAP_TYPE_KEY = "mapTypeKey"
 
 
 const val ERROR_RESP = "-1"
@@ -82,22 +73,13 @@ const val ACTION_VIDEO_KEY = 2
 const val IMAGE_PATH_KEY = "imagePathKey"
 const val IMAGE_TIME_KEY = "imageTimeKey"
 
-const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0
-const val PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1
-const val PERMISSIONS_REQUEST_READ_PHONE_STATE = 2
 
-const val CURRENT_LOCATION = "currentLocation"
 
 const val MAIN_MENU_NUM_ITEM = 3
 
-const val ALARM_CAR = "car"
-const val ALARM_INTRUDER = "intruder"
-const val ALARM_SENSOR_OFF = "sensor off"
-const val ALARM_LOW_BATTERY = "low battery"
 const val ALARM_OTHER = "other"
 
 const val TARGET_CAMERA_EXTRA_SETTING_REQUEST_CODE = "targetCameraExtra"
-const val TAKE_PICTURE_REQUEST_CODE = 2
 const val SORT_BY_SYSTEM_REQUEST_CODE = "sortBySystem"
 const val SORT_PICK_DATE_TIME_REQUEST_CODE = "sortPickDateTime"
 const val RESULT_CODE = "resultCode"
@@ -112,7 +94,6 @@ const val CHANNEL_ID = "1.0"
 
 const val IS_MYSCREENACTIVITY_FOREGROUND = "isMyScreenActivityForeground"
 const val IS_LOAD_APP = "isLoadApp"
-const val HUNTER_LOG = "hunterLog"
 
 const val NO_SORTED = 0
 const val DATE_SORTED = 1

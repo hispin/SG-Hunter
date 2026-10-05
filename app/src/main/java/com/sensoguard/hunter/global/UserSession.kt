@@ -1,6 +1,5 @@
 package com.sensoguard.hunter.global
 
-import com.sensoguard.hunter.classes.AlarmSensor
 import com.sensoguard.hunter.classes.UserInfoAmazon
 import com.sensoguard.hunter.classes.UserInfoAmazonResult
 import com.sensoguard.hunter.classes.UserInfoAzure
@@ -13,8 +12,7 @@ class UserSession private constructor() {
 
     private var tags: ArrayList<String>? = null
 
-    //list of sensors alarm
-    var alarmSensors: ArrayList<AlarmSensor>? = ArrayList()
+    // inspection fix: removed unused alarmSensors (AlarmSensor class deleted)
 
     private object Holder {
         val INSTANCE = UserSession()
@@ -36,9 +34,7 @@ class UserSession private constructor() {
         return userInfoAmazonResult
     }
 
-    fun getTags(): ArrayList<String>? {
-        return tags
-    }
+    // inspection fix: removed unused getTags()
 
     fun setInstanceUserAzure(name: String, pw: String) {
         userInfoAzure = UserInfoAzure(

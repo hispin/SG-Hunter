@@ -7,15 +7,16 @@ import static com.sensoguard.hunter.global.ConstsKt.CURRENT_ITEM_TOP_MENU_KEY;
 import static com.sensoguard.hunter.global.ConstsKt.DETECT_ALARM_KEY;
 import static com.sensoguard.hunter.global.ConstsKt.LOGIN_TYPE_KEY;
 import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getStringInPreference;
+import static com.sensoguard.hunter.global.SysMethodsStorageKt.getTagsFromLocally;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.SystemClock;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -25,6 +26,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sensoguard.hunter.activities.MyScreensActivity;
 import com.sensoguard.hunter.classes.AlarmParsing;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -32,29 +34,39 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public static final String NOTIFICATION_CHANNEL_NAME = "Notification Hubs Demo Channel";
     public static final String NOTIFICATION_CHANNEL_DESCRIPTION = "Notification Hubs Demo Channel";
     public static final int NOTIFICATION_ID = 1;
-    static Context ctx;
+    // lint fix: removed static Context field (memory leak); the service itself is used as context
     NotificationCompat.Builder builder;
     private final String TAG = "FirebaseService";
-    private NotificationManager mNotificationManager;
+    // inspection fix: mNotificationManager is now a local variable
 
-    public static void createChannelAndHandleNotifications(Context context) {
-        ctx = context;
+    private static void createChannelAndHandleNotifications(Context context) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    NOTIFICATION_CHANNEL_ID,
-                    NOTIFICATION_CHANNEL_NAME,
-                    NotificationManager.IMPORTANCE_HIGH);
-            channel.setDescription(NOTIFICATION_CHANNEL_DESCRIPTION);
-            channel.setShowBadge(true);
+        // lint fix: minSdk is 26, so the SDK check for channels was removed
+        NotificationChannel channel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription(NOTIFICATION_CHANNEL_DESCRIPTION);
+        channel.setShowBadge(true);
 
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    // lint fix: handle FCM token refresh - re-register with the notification hub.
+    // The backend login with the new token runs on the next app start (LoginViewModel compares tokens).
+    // inspection fix: onNewToken is deprecated in firebase-messaging 25.1, onRegistered replaces it
+    @Override
+    public void onRegistered(@NonNull String token) {
+        super.onRegistered(token);
+        ArrayList<String> tags = getTagsFromLocally(this);
+        if (tags != null && !tags.isEmpty()) {
+            HubRegistrationWorker.Companion.enqueue(this, tags);
         }
     }
 
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
+    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) { // inspection fix: @NonNull
 
         //nhMessage = remoteMessage.getData().values().iterator().next();
         Intent myIntent = remoteMessage.toIntent();
@@ -84,7 +96,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (myIntent == null)
             return;
 
-        Intent intent = new Intent(ctx, MyScreensActivity.class);
+        Intent intent = new Intent(this, MyScreensActivity.class);
         intent.putExtra(CURRENT_ITEM_TOP_MENU_KEY, 1);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -92,7 +104,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         String message = "";
-        String result = getStringInPreference(ctx, LOGIN_TYPE_KEY, "-1");
+        String result = getStringInPreference(this, LOGIN_TYPE_KEY, "-1");
         if (result != null) {
             if (result.equals(AZURE)) {
                 message = Objects.requireNonNull(myIntent.getExtras()).getString("message");
@@ -106,20 +118,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //add extras data that accepted from push
         intent.putExtras(myIntent);
 
-        mNotificationManager = (NotificationManager)
-                ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager mNotificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
 
 
         long oneTimeID = SystemClock.uptimeMillis();
 
         //set different request code to make different extra for each notification
-        PendingIntent contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
+        PendingIntent contentIntent = PendingIntent.getActivity(this, (int) oneTimeID,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 
         //Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-                ctx,
+                this,
                 NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -142,6 +154,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void startWorkerMedia() {
         OneTimeWorkRequest mediaWorkRequest = new OneTimeWorkRequest.Builder(MediaWorker.class).build();//OneTimeWorkRequestBuilder < MediaWorker > ().build();
-        WorkManager.getInstance(ctx).enqueue(mediaWorkRequest);
+        WorkManager.getInstance(this).enqueue(mediaWorkRequest);
     }
 }

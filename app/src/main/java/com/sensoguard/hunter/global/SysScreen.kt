@@ -20,18 +20,4 @@ fun getScreenWidth(context: Context?): Int {
     return metrics.widthPixels
 }
 
-//Get the height of current screen
-fun getScreenHeight(context: Context?): Int {
-
-    if (context == null) {
-        return -1
-    }
-
-    val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
-    val metrics = DisplayMetrics()
-
-    wm.defaultDisplay.getMetrics(metrics)
-
-    return metrics.heightPixels
-}
+// inspection fix: removed unused getScreenHeight()

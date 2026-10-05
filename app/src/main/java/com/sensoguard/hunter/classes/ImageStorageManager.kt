@@ -30,11 +30,7 @@ class ImageStorageManager {
             return BitmapFactory.decodeStream(FileInputStream(file))
         }
 
-        fun deleteImageFromInternalStorage(context: Context, imageFileName: String): Boolean {
-            val dir = context.filesDir
-            val file = File(dir, imageFileName)
-            return file.delete()
-        }
+        // inspection fix: removed unused function
 
         //save the image in external and then you can share it
         fun getImageUriByBitmap(bmp: Bitmap, context: Context?): Uri? {

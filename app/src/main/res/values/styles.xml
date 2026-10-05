@@ -1,11 +1,14 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
 <!--    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 <!--    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
-        <!-- Status bar stuff. -->
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <!-- edge-to-edge: transparent system bars for Android 8-14 (Android 15+ ignores these and is
+             always transparent), set in the theme instead of the deprecated Window.setStatusBarColor()
+             and setNavigationBarColor() calls; content padding is done in setupEdgeToEdge() -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -30,7 +33,8 @@
 
 
     <!--style of tab layout-->
-    <style name="Base.Widget.Design.TabLayout" parent="android:Widget" >
+    <!-- lint fix: intentional override of the Material tab style (sets tab colors) -->
+    <style name="Base.Widget.Design.TabLayout" parent="android:Widget" tools:ignore="PrivateResource,UnusedResources">
         <item name="tabBackground">@color/turquoise_blue</item>
         <item name="tabTextAppearance">@style/TabLayoutTextAppearance</item>
     </style>
@@ -48,10 +52,6 @@
         <!--        <item name="android:fontFamily">@font/arialmt</item>-->
     </style>
 
-    <style name="MyActionBar" parent="Widget.AppCompat.ActionBar">
-        <item name="contentInsetStart">0dp</item>
-        <item name="contentInsetEnd">0dp</item>
-    </style>
 
 
     <!--for content of menu of configuration screen-->

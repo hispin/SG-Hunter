@@ -294,6 +294,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
+                        <!-- lint fix: text is never shown (textOn/textOff are empty) -->
                         <ToggleButton
                             android:id="@+id/togChangeBackgroundRestrict"
                             android:layout_width="44dp"
@@ -301,7 +302,7 @@
                             android:layout_marginTop="16dp"
                             android:background="@color/transparent"
                             android:button="@drawable/toggle_selector_active"
-                            android:text="ToggleButton"
+                            tools:text="ToggleButton"
                             android:textOff=""
                             android:textOn=""
                             app:layout_constraintEnd_toEndOf="parent"
@@ -313,12 +314,13 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- lint fix: placeholder text moved to tools:text (set in code) -->
         <TextView
                 android:id="@+id/tvShowVer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="32dp"
-                android:text="ddd"
+                tools:text="ddd"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -58,7 +58,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                             UserSession.instance.getUserAmazonResult()?.password,
                             FCM_token
                         )
-                    }else if (amazonProcessType.equals(AMAZON_PRECESS_DIALOG_VALUE) ) {
+                    }else if (amazonProcessType == AMAZON_PRECESS_DIALOG_VALUE) { // inspection fix: == instead of equals()
                         Log.d("testToken", FCM_token + "")
                         // if the process come from dialog then send request immediately
                         //send request
@@ -72,7 +72,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                             UserSession.instance.getUserAmazon()?.password,
                             FCM_token
                         )
-                    } else if (amazonProcessType.equals(AMAZON_PRECESS_WITH_USER_VALUE)) {
+                    } else if (amazonProcessType == AMAZON_PRECESS_WITH_USER_VALUE) { // inspection fix: == instead of equals()
                         if (!currentToken.equals(FCM_token)) {
                             setStringInPreference(
                                 getApplication<Application>().applicationContext,
@@ -127,13 +127,11 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                             UserSession.instance.setInstanceUserAmazonResult(
                                 email,pass,
                                 fcm_token,result.token,result.imagesBaseUrl,result.role,result.userAppId,result.username,result.roleName,result.customer,result.language,result.env)
-                            getApplication<Application>().applicationContext
-                                .let { it1 ->
-                                    storeUserAmazonResultToLocally(
-                                        UserSession.instance.getUserAmazonResult()!!,
-                                        it1, USER_INFO_AMAZON_KEY
-                                    )
-                                }
+                            // inspection fix: removed redundant let
+                            storeUserAmazonResultToLocally(
+                                UserSession.instance.getUserAmazonResult()!!,
+                                getApplication<Application>().applicationContext, USER_INFO_AMAZON_KEY
+                            )
                         }
                         response?.value = AMAZONE_POST_LOGIN_RESULT_SUCCESS
                     } else {

@@ -7,17 +7,5 @@ class MyEmailAccount {
     var emailPort: String? = null
     var isUseSSL: Boolean = false
 
-    constructor(
-        emailAddress: String?,
-        password: String?,
-        emailServer: String?,
-        emailPort: String?,
-        isUseSSL: Boolean
-    ) {
-        this.emailAddress = emailAddress
-        this.password = password
-        this.emailServer = emailServer
-        this.emailPort = emailPort
-        this.isUseSSL = isUseSSL
-    }
+    // inspection fix: removed unused constructor (Gson uses the default one)
 }

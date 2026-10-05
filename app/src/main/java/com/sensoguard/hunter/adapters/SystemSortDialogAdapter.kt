@@ -10,13 +10,12 @@ import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.classes.SystemSort
-import java.util.*
 
 
 class SystemSortDialogAdapter(
     private var systems: ArrayList<SystemSort>,
-    val context: Context,
-    var itemClick: (SystemSort) -> Unit
+    val context: Context
+    // inspection fix: removed the unused itemClick callback
 ) : RecyclerView.Adapter<SystemSortDialogAdapter.ViewHolder>() {
 
 
@@ -39,7 +38,7 @@ class SystemSortDialogAdapter(
 
 
 
-        return ViewHolder(view, itemClick)
+        return ViewHolder(view)
     }
 
     fun setDetects(_detectors: ArrayList<SystemSort>?) {
@@ -47,9 +46,9 @@ class SystemSortDialogAdapter(
         //TODO how to define with this
     }
 
-    inner class ViewHolder(
-        private val _itemView: View,
-        private val itemClick: (SystemSort) -> Unit
+    // inspection fix: not an inner class, unused itemClick removed
+    class ViewHolder(
+        private val _itemView: View
     ) :
         RecyclerView.ViewHolder(_itemView) {
         //private var tvId: TextView? = null

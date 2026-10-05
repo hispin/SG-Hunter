@@ -18,14 +18,12 @@ import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.getLongInPrefe
 import static com.sensoguard.hunter.global.SysMethodsSharedPrefKt.setLongInPreference;
 import static com.sensoguard.hunter.global.SysMethodsStorageKt.getAlarmsFromLocally;
 import static com.sensoguard.hunter.global.SysMethodsStorageKt.getSensorsFromLocally;
-import static com.sensoguard.hunter.global.SysMethodsStorageKt.writeFile;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
@@ -71,7 +69,7 @@ import javax.mail.search.ReceivedDateTerm;
 public class EmailsManage {
     private static final EmailsManage ourInstance = new EmailsManage();
     private static Alarm prevAlarm = new Alarm();
-    private static Calendar lastEmailDate = null;
+    // inspection fix: lastEmailDate is now a local variable in the email check
 
     private EmailsManage() {
     }
@@ -106,7 +104,6 @@ public class EmailsManage {
         try {
             store = imapSession.getStore(protocol);
         } catch (NoSuchProviderException e) {
-            writeFile("readeLastDayUnreadEmails", context);
             e.printStackTrace();
         }
 
@@ -127,6 +124,7 @@ public class EmailsManage {
             if (inbox != null) {
 
                 long longLastDateAlarm = getLongInPreference(context, LAST_DATE_ALARM, -1);
+                Calendar lastEmailDate;
                 if (longLastDateAlarm == -1) {
                     lastEmailDate = Calendar.getInstance();
                     lastEmailDate.roll(Calendar.DATE, false);
@@ -135,14 +133,10 @@ public class EmailsManage {
                     lastEmailDate.setTimeInMillis(longLastDateAlarm);
                 }
 
-                //String lastDate = getStringFromCalendar(lastEmailDate, "kk:mm dd/MM/yy", context);
-                //Log.d("testEmails", "lastDate" + lastDate);
+                // inspection fix: removed commented-out code
 
                 Calendar currentDate = Calendar.getInstance();
                 currentDate.roll(Calendar.DATE, false);
-                //String da = getStringFromCalendar(currentDate, "kk:mm dd/MM/yy", context);
-                //Log.d("testEmails", "currentDate" + da);
-
 
                 Message[] unReadLastDayMsgs = inbox.search(new ReceivedDateTerm(ComparisonTerm.GT, currentDate.getTime()));
 
@@ -206,7 +200,7 @@ public class EmailsManage {
 
                     boolean isMyScreenActivityForeground = getBooleanInPreference(context, IS_MYSCREENACTIVITY_FOREGROUND, false);
                     if (!isMyScreenActivityForeground) {
-                        sendNotification("new alarm detected", context);
+                        sendNotification(context);
                     }
 
                     Intent inn = new Intent(DETECT_ALARM_KEY);
@@ -219,7 +213,7 @@ public class EmailsManage {
                     List<String> attachments = getAttachedFiles(unReadLastDayMsg, context);
 
                     //in version 1 support only one attached picture
-                    //do not wait to save photo ,to make the process of showing alarm more faster
+                    //do not wait to save photo ,to make the process of showing alarm faster
                     myAlarm.updateAlarm(attachments.get(0), context);
                     inn = new Intent(ADD_ATTACHED_PHOTOS_KEY);
                     inn.setPackage(context.getPackageName());
@@ -232,7 +226,6 @@ public class EmailsManage {
 
         } catch (MessagingException e) {
             Log.d("textDate", "exception" + e.getMessage());
-            writeFile("readeLastDayUnreadEmails", context);
             e.printStackTrace();
             closeConnection(store, context);
         }
@@ -247,7 +240,6 @@ public class EmailsManage {
                 store.close();
             }
         } catch (MessagingException e) {
-            writeFile("MessagingException", context);
             e.printStackTrace();
         }
     }
@@ -290,7 +282,6 @@ public class EmailsManage {
         try {
             mySubject = unReadLastDayMsg.getSubject();
         } catch (MessagingException e) {
-            writeFile("isEmailModelIsIdentity", context);
             e.printStackTrace();
         }
 
@@ -308,7 +299,7 @@ public class EmailsManage {
                     || (camera.getCameraModel().equals("HIKVISION") && mySubject.contains("Network Video Recorder"))
             ) {
 
-                //in HIKVISION you do'nt need to specify the subject
+                //in HIKVISION you don't need to specify the subject (inspection fix: spelling)
                 if (!camera.getCameraModel().equals("HIKVISION")) {
                     int index = mySubject.indexOf(camera.getCameraModel());
                     if (index == -1) {
@@ -336,7 +327,6 @@ public class EmailsManage {
             try {
                 address = unReadLastDayMsg.getFrom();
             } catch (MessagingException e) {
-                writeFile("isEmailFromIsIdentity", context);
                 e.printStackTrace();
             }
             if (address.length > 0) {
@@ -360,7 +350,6 @@ public class EmailsManage {
                 inbox = store.getFolder("Inbox");
             }
         } catch (MessagingException e) {
-            writeFile("isEmailFromIsIdentity", context);
             e.printStackTrace();
             return null;
         }
@@ -369,7 +358,6 @@ public class EmailsManage {
                 inbox.open(Folder.READ_WRITE);
             }
         } catch (MessagingException e) {
-            writeFile("isEmailFromIsIdentity", context);
             e.printStackTrace();
             return null;
         }
@@ -406,7 +394,6 @@ public class EmailsManage {
                 try {
                     port = Integer.valueOf(Objects.requireNonNull(myEmailAccount.getEmailPort()));
                 } catch (NumberFormatException ex) {
-                    writeFile("connectToServer", context);
                     ex.printStackTrace();
                     return null;
                 }
@@ -415,7 +402,6 @@ public class EmailsManage {
             }
         } catch (MessagingException e) {
             e.printStackTrace();
-            writeFile("connectToServer", context);
             return null;
         }
         return store;
@@ -542,7 +528,7 @@ public class EmailsManage {
 //                                continue;
 //                            }
 //
-//                            //if the the the interval time between alarms is short and  previous alarm is the same the return (there is another test if the interval time is bigger)
+//                            //if the interval time between alarms is short and  previous alarm is the same the return (there is another test if the interval time is bigger)
 //                            if (checkIfPrevIsSame(prevAlarm, unReadLastDayMsg, addressFrom)) {
 //                                continue;
 //                            }
@@ -589,7 +575,7 @@ public class EmailsManage {
 //                                    || (camera.getCameraModel().equals("HIKVISION") && mySubject.contains("Network Video Recorder"))
 //                            ) {
 //
-//                                //in HIKVISION you do'nt need to specify the subject
+//                                //in HIKVISION you don't need to specify the subject (inspection fix: spelling)
 //                                if (!camera.getCameraModel().equals("HIKVISION")) {
 //                                    int index = mySubject.indexOf(camera.getCameraModel());
 //                                    if (index == -1) {
@@ -638,7 +624,7 @@ public class EmailsManage {
 //                                //Log.d("checkVideo", attachments.get(0));
 //
 //                                //in version 1 support only one attached picture
-//                                //do not wait to save photo ,to make the process of showing alarm more faster
+//                                //do not wait to save photo ,to make the process of showing alarm faster
 //                                myAlarm.updateAlarm(attachments.get(0), context);
 //                                inn = new Intent(ADD_ATTACHED_PHOTOS_KEY);
 //                                context.sendBroadcast(inn);
@@ -663,7 +649,7 @@ public class EmailsManage {
 //        }
 //    }
 
-    //if the the the interval time between alarms is short and  previous alarm is the same the return (there is another test if the interval time is bigger)
+    //if the interval time between alarms is short and  previous alarm is the same the return (there is another test if the interval time is bigger)
     private boolean checkIfPrevIsSame(Alarm prevAlarm, Message unReadLastDayMsg, String addressFrom) {
         return prevAlarm != null
                 && prevAlarm.getMsgNumber() != null
@@ -815,7 +801,7 @@ public class EmailsManage {
 //                                    || (camera.getCameraModel().equals("HIKVISION") && mySubject.contains("Network Video Recorder"))
 //                            ) {
 //
-//                                //in HIKVISION you do'nt need to specify the subject
+//                                //in HIKVISION you don't need to specify the subject (inspection fix: spelling)
 //                                if (!camera.getCameraModel().equals("HIKVISION")) {
 //                                    int index = mySubject.indexOf(camera.getCameraModel());
 //                                    if (index == -1) {
@@ -860,7 +846,7 @@ public class EmailsManage {
 //                                //Log.d("checkVideo", attachments.get(0));
 //
 //                                //in version 1 support only one attached picture
-//                                //do not wait to save photo ,to make the process of showing alarm more faster
+//                                //do not wait to save photo ,to make the process of showing alarm faster
 //                                myAlarm.updateAlarm(attachments.get(0), context);
 //                                inn = new Intent(ADD_ATTACHED_PHOTOS_KEY);
 //                                context.sendBroadcast(inn);
@@ -907,7 +893,6 @@ public class EmailsManage {
         try {
             multipart = (Multipart) message.getContent();
         } catch (IOException | MessagingException e) {
-            writeFile("getAttachedFiles", context);
             Log.d("testSubject", e.getMessage());
             e.printStackTrace();
         }
@@ -924,7 +909,6 @@ public class EmailsManage {
                     is = bodyPart.getInputStream();
 
                 } catch (IOException e) {
-                    writeFile("getAttachedFiles", context);
                     e.printStackTrace();
                 }
 
@@ -933,9 +917,6 @@ public class EmailsManage {
                 File file = saveImageExternal(is, bodyPart.getFileName(), context);
                 attachments.add(file.getAbsolutePath());
 
-                //store in internal storage
-                //String picName = saveImageInternal(is, bodyPart.getFileName(), context);
-                //attachments.add(picName);
             }
         }
 
@@ -943,28 +924,7 @@ public class EmailsManage {
     }
 
 
-//    //save the picture in internal
-//    private String saveImageInternal(InputStream is, String fileName, Context context) {
-//
-//
-//        BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-//
-//        Bitmap bmp = BitmapFactory.decodeStream(bufferedInputStream);
-//
-//        //String fullFileName = fileName+".jpg";
-//
-//        FileOutputStream fileOutputStream;
-//        try {
-//            fileOutputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-//            bmp.compress(Bitmap.CompressFormat.JPEG, 90, fileOutputStream);
-//            fileOutputStream.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return fileName;
-//
-//    }
+    // inspection fix: removed commented-out saveImageInternal
 
     //save the picture in external
     private File saveImageExternal(InputStream is, String fileName, Context context) {
@@ -981,7 +941,6 @@ public class EmailsManage {
         try {
             fos = new FileOutputStream(file);
         } catch (FileNotFoundException e) {
-            writeFile("saveImageExternal", context);
             e.printStackTrace();
         }
         byte[] buf = new byte[4096];
@@ -990,7 +949,6 @@ public class EmailsManage {
             try {
                 if (is != null && (bytesRead = is.read(buf)) == -1) break;
             } catch (IOException e) {
-                writeFile("saveImageExternal", context);
                 e.printStackTrace();
             }
             try {
@@ -998,7 +956,6 @@ public class EmailsManage {
                     fos.write(buf, 0, bytesRead);
                 }
             } catch (IOException e) {
-                writeFile("saveImageExternal", context);
                 e.printStackTrace();
             }
         }
@@ -1015,14 +972,14 @@ public class EmailsManage {
 
     //in android 7 need a white-transparent icon
     private int getNotificationIcon() {
-        boolean useWhiteIcon = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
-        if (useWhiteIcon) {
-            return R.drawable.ic_app_notification;
-        } else return R.mipmap.ic_launcher;
+        // lint fix: always true since minSdk 26
+        return R.drawable.ic_app_notification;
     }
 
     //snd notification when accept alarm
-    private void sendNotification(String content, Context context) {
+    // inspection fix: the content parameter was always "new alarm detected"
+    private void sendNotification(Context context) {
+        final String content = "new alarm detected";
 
 
         if (context == null)
@@ -1093,7 +1050,6 @@ public class EmailsManage {
         try {
             store = imapSession.getStore(protocol);
         } catch (NoSuchProviderException e) {
-            writeFile("emailValidation", context);
             sendErrorMsg(e.getMessage(), context);
             e.printStackTrace();
         }
@@ -1106,7 +1062,6 @@ public class EmailsManage {
                 try {
                     port = Integer.valueOf(Objects.requireNonNull(camera.getEmailPort()));
                 } catch (NumberFormatException ex) {
-                    writeFile("emailValidation", context);
                     ex.printStackTrace();
                     sendErrorMsg(ex.getMessage(), context);
                     return false;
@@ -1117,7 +1072,6 @@ public class EmailsManage {
                 return store.isConnected();
             }
         } catch (MessagingException e) {
-            writeFile("emailValidation", context);
             e.printStackTrace();
             sendErrorMsg(e.getMessage(), context);
             return false;
@@ -1161,7 +1115,6 @@ public class EmailsManage {
         try {
             store = imapSession.getStore(protocol);
         } catch (NoSuchProviderException e) {
-            writeFile("emailValidation", context);
             sendErrorMsg(e.getMessage(), context);
             e.printStackTrace();
         }
@@ -1184,7 +1137,6 @@ public class EmailsManage {
                 return store.isConnected();
             }
         } catch (MessagingException e) {
-            writeFile("emailValidation", context);
             e.printStackTrace();
             sendErrorMsg(e.getMessage(), context);
             return false;
@@ -1211,18 +1163,17 @@ public class EmailsManage {
         if (context == null)
             return;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            String name = CHANNEL_NAME;
-            String descriptionText = "new alarm detected";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(descriptionText);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            if (notificationManager != null) {
-                notificationManager.createNotificationChannel(channel);
-            }
+        // lint fix: minSdk is 26, so the SDK check for channels was removed
+        String name = CHANNEL_NAME;
+        String descriptionText = "new alarm detected";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(descriptionText);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(channel);
         }
     }
 

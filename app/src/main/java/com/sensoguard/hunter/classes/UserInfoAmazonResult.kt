@@ -3,6 +3,8 @@ package com.sensoguard.hunter.classes
 class UserInfoAmazonResult(
     val email: String?,
     val password: String?,
+    // inspection: kept - (de)serialized by Gson
+    @Suppress("unused")
     val token_fcm: String?,
     val token: String?,
     val imagesBaseUrl: String?,

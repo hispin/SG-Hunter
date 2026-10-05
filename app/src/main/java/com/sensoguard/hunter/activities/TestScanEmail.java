@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sensoguard.hunter.R;
+import com.sensoguard.hunter.global.SysEdgeToEdgeKt;
 
 import java.util.Calendar;
 import java.util.Properties;
@@ -30,6 +31,7 @@ public class TestScanEmail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SysEdgeToEdgeKt.setupEdgeToEdge(this); // edge-to-edge: draw behind system bars and pad the content (Play warning fix)
         setContentView(R.layout.activity_test_scan_email2);
 
         Thread thread = new Thread() {
@@ -80,7 +82,7 @@ public class TestScanEmail extends AppCompatActivity {
             return;
         }
 
-//Get all mails in Inbox Forlder
+//Get all mails in Inbox Folder (inspection fix: spelling)
         Folder inbox = null;
         try {
             if (store != null) {
@@ -114,13 +116,9 @@ public class TestScanEmail extends AppCompatActivity {
                     Log.d("testSubject", unReadLastDayMsgs[i].getSubject());
                 }
 
-//                int result = inbox.getMessageCount();
-//                //String f=result.getSubject();
+                // inspection fix: removed commented-out code
                 Log.d("", "");
 
-//                Message result = inbox.getMessage(1);
-//                String f=result.getSubject();
-//                Log.d("","");
             }
 
         } catch (MessagingException e) {
@@ -161,8 +159,7 @@ public class TestScanEmail extends AppCompatActivity {
             Log.d("testConnectMail", "session null");
             return;
         }
-        //Session session = Session.getDefaultInstance(props, new GMailAuthenticator("xxxxx@gmail.com", "xxxxx"));
-        //session.setDebug(true);
+        // inspection fix: removed commented-out code
         Store store = null;
         try {
             store = imapSession.getStore("imap");

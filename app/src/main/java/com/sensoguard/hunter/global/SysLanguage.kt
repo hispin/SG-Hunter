@@ -1,9 +1,9 @@
 package com.sensoguard.hunter.global
 
+// inspection fix: removed unused import(s)
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
-import java.util.*
+import java.util.Locale
 
 
 //Get the current language of the app
@@ -22,10 +22,9 @@ fun setAppLanguage(c: Context, lang: String) {
     newConfig.setLayoutDirection(localeNew)
     res.updateConfiguration(newConfig, res.displayMetrics)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        newConfig.setLocale(localeNew)
-        c.createConfigurationContext(newConfig)
-    }
+    // lint fix: minSdk is 26, so the SDK check was removed
+    newConfig.setLocale(localeNew)
+    c.createConfigurationContext(newConfig)
 }
 
 

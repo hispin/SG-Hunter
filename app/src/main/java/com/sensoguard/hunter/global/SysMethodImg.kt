@@ -2,52 +2,29 @@ package com.sensoguard.hunter.global
 
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.net.Uri
-import android.os.Build
 import android.os.Environment
 import android.util.Log
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.FileProvider
-import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.net.toUri
 import com.sensoguard.hunter.classes.ImageStorageManager
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
 
-//convert bitmap to bitmap discriptor
+//convert bitmap to bitmap descriptor (inspection fix: spelling)
 //fun convertBitmapToBitmapDiscriptor(context: Context, resId: Int): BitmapDescriptor? {
 //    val bitmap = context.let { getBitmapFromVectorDrawable(it, resId) }
 //    return BitmapDescriptorFactory.fromBitmap(bitmap)
 //}
 
-//convert resId to bitmap
-fun getBitmapFromVectorDrawable(context: Context, drawableId: Int): Bitmap? {
-    var drawable =  AppCompatResources.getDrawable(context, drawableId)
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-        drawable = (drawable?.let { DrawableCompat.wrap(it) })?.mutate()
-    }
-
-    val bitmap = drawable?.intrinsicWidth?.let {
-        Bitmap.createBitmap(
-            it,
-            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
-        )
-    } ?: return null
-
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-
-    return bitmap
-}
+// inspection fix: removed unused getBitmapFromVectorDrawable()
 
 //share image from selected alarm
 fun shareImage(bitmap: Bitmap, activity: Activity?) {
@@ -66,26 +43,7 @@ fun shareImage(bitmap: Bitmap, activity: Activity?) {
     }
 }
 
-/**
- * share link of video
- */
-fun shareVideo(imgPath: String, context: Context) {
-
-    val intentToEmailFile = Intent(Intent.ACTION_SEND)
-    intentToEmailFile.type = "text/plain"
-    //intentToEmailFile.setPackage("com.google.android.gm")
-    intentToEmailFile.putExtra(
-        Intent.EXTRA_TEXT, imgPath
-    )
-    intentToEmailFile.putExtra(
-        Intent.EXTRA_SUBJECT,
-        context.resources.getString(com.sensoguard.hunter.R.string.share_title)
-    )
-    val chooserIntent: Intent =
-        Intent.createChooser(intentToEmailFile, "Send email")
-    context.startActivity(chooserIntent)
-
-}
+// inspection fix: removed unused shareVideo()
 
 /////////////////////
 
@@ -94,7 +52,7 @@ fun shareVideo(imgPath: String, context: Context) {
  */
 fun saveImageInGallery(bitmap: Bitmap, fileNameToSave: String): Boolean? { // File name like "image.png"
     //create a file to write bitmap data
-    var file: File? = null
+    var file: File? // inspection fix: redundant initializer removed
     return try {
         file = File(
             Environment.getExternalStorageDirectory()
@@ -168,7 +126,7 @@ fun saveImageInGallery(bitmap: Bitmap, fileNameToSave: String): Boolean? { // Fi
  */
 fun savePictureUrlInGallery(context: Context, url: String): Boolean {
     try {
-        val request = DownloadManager.Request(Uri.parse(url))
+        val request = DownloadManager.Request(url.toUri()) // lint fix: KTX toUri
         request.setTitle("download")
         request.setDescription("your file is downloading ...")
         request.allowScanningByMediaScanner()
@@ -184,7 +142,7 @@ fun savePictureUrlInGallery(context: Context, url: String): Boolean {
 
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         val result = manager!!.enqueue(request)
-        Log.d("testSavePic", "result:" + result)
+        Log.d("testSavePic", "result:$result") // inspection fix: string template
     } catch (ex: Exception) {
         ex.printStackTrace()
         return false
@@ -196,7 +154,7 @@ fun savePictureUrlInGallery(context: Context, url: String): Boolean {
  */
 fun saveVideoInGallery(context: Context, videoUrl: String): Boolean {
     try {
-        val request = DownloadManager.Request(Uri.parse(videoUrl))
+        val request = DownloadManager.Request(videoUrl.toUri()) // lint fix: KTX toUri
         request.setTitle("download")
         request.setDescription("your file is downloading ...")
         request.allowScanningByMediaScanner()
@@ -212,7 +170,7 @@ fun saveVideoInGallery(context: Context, videoUrl: String): Boolean {
 
         val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager?
         val result = manager!!.enqueue(request)
-        Log.d("testSaveVideo", "result:" + result)
+        Log.d("testSaveVideo", "result:$result") // inspection fix: string template
     } catch (ex: Exception) {
         ex.printStackTrace()
         return false
@@ -227,7 +185,7 @@ fun saveVideoInGallery(context: Context, videoUrl: String): Boolean {
 fun saveVideoInForShare(context: Context, videoUrl: String): Long {
     var result = -1L
     try {
-        val request = DownloadManager.Request(Uri.parse(videoUrl))
+        val request = DownloadManager.Request(videoUrl.toUri()) // lint fix: KTX toUri
         request.setTitle("download")
         request.setDescription("your file is downloading ...")
         request.allowScanningByMediaScanner()
@@ -245,7 +203,7 @@ fun saveVideoInForShare(context: Context, videoUrl: String): Long {
         if (manager != null) {
             result = manager.enqueue(request)
         }
-        Log.d("testSaveVideo", "result:" + result)
+        Log.d("testSaveVideo", "result:$result") // inspection fix: string template
 
     } catch (ex: Exception) {
         ex.printStackTrace()
@@ -270,7 +228,7 @@ fun openDownloadedAttachment(context: Context, downloadId: Long) {
         val downloadMimeType: String =
             cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_MEDIA_TYPE))
         if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL && downloadLocalUri != null) {
-            openDownloadedAttachment(context, Uri.parse(downloadLocalUri), downloadMimeType)
+            openDownloadedAttachment(context, downloadLocalUri.toUri(), downloadMimeType) // lint fix: KTX toUri
         }
     }
     cursor.close()
@@ -296,36 +254,10 @@ private fun openDownloadedAttachment(
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "video/mp4g"
         intent.putExtra(Intent.EXTRA_STREAM, attachmentUri)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK // inspection fix: property access
         context.startActivity(Intent.createChooser(intent, "Share video"))
     }
 }
 
-/**
- * attach video file
- */
-private fun openDownloadedAttachment1(
-    context: Context,
-    attachmentUri: Uri,
-    attachmentMimeType: String
-) {
-    var attachmentUri: Uri? = attachmentUri
-    if (attachmentUri != null) {
-        // Get Content Uri.
-        if (ContentResolver.SCHEME_FILE == attachmentUri.scheme) {
-            // FileUri - Convert it to contentUri.
-            val file = File(attachmentUri.path)
-            attachmentUri = //Uri.fromFile(file)
-                FileProvider.getUriForFile(context, "${context.packageName}.contentprovider", file)
-        }
-        val openAttachmentIntent = Intent(Intent.ACTION_VIEW)
-        openAttachmentIntent.setDataAndType(attachmentUri, attachmentMimeType)
-        openAttachmentIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        try {
-            context.startActivity(openAttachmentIntent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
-    }
-}
+// inspection fix: removed unused openDownloadedAttachment1()
 

@@ -18,7 +18,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 
-//convert camera to json
+//convert camera to JSON
 fun convertToGson(myEmailAccount: MyEmailAccount): String? {
     try {
         val gSon = Gson()
@@ -36,7 +36,7 @@ fun convertToGson(myEmailAccount: MyEmailAccount): String? {
 }
 
 
-//convert camera to json
+//convert camera to JSON
 fun convertToGson(camera: Camera): String? {
     try {
         val gSon = Gson()
@@ -54,16 +54,16 @@ fun convertToGson(camera: Camera): String? {
 }
 
 
-//convert json to UserInfo azure
+//convert JSON to UserInfo azure
 fun convertJsonToUserInfoAzure(inputJsonString: String): UserInfoAzure? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonString.isEmpty()) { // inspection fix: parameter is non-null
         return null
     }
 
     var userInfo: UserInfoAzure? = null
-    //mySensors?.add(Camera("ID","NAME"))
+    //mySensors.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
     try {
@@ -94,16 +94,16 @@ fun convertJsonToUserInfoAzure(inputJsonString: String): UserInfoAzure? {
 }//convertJsonToUriList
 
 
-//convert json to UserInfo amazon
+//convert JSON to UserInfo amazon
 fun convertJsonToUserInfoAmazon(inputJsonString: String): UserInfoAmazon? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonString.isEmpty()) { // inspection fix: parameter is non-null
         return null
     }
 
     var userInfo: UserInfoAmazon? = null
-    //mySensors?.add(Camera("ID","NAME"))
+    //mySensors.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
     try {
@@ -133,16 +133,16 @@ fun convertJsonToUserInfoAmazon(inputJsonString: String): UserInfoAmazon? {
     //when jsonArr is null will return value of new ArrayList<>()
 }//convertJsonToUriList
 
-//convert json to UserInfo amazon
+//convert JSON to UserInfo amazon
 fun convertJsonToUserInfoResultAmazon(inputJsonString: String): UserInfoAmazonResult? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonString.isEmpty()) { // inspection fix: parameter is non-null
         return null
     }
 
     var userInfo: UserInfoAmazonResult? = null
-    //mySensors?.add(Camera("ID","NAME"))
+    //mySensors.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
     try {
@@ -173,16 +173,16 @@ fun convertJsonToUserInfoResultAmazon(inputJsonString: String): UserInfoAmazonRe
 }//convertJsonToUriList
 
 
-//convert json to Camera
+//convert JSON to Camera
 fun convertJsonToSensor(inputJsonString: String): Camera? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonString.isEmpty()) { // inspection fix: parameter is non-null
         return null
     }
 
     var mySensor: Camera? = null
-    //mySensors?.add(Camera("ID","NAME"))
+    //mySensors.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
     try {
@@ -213,16 +213,16 @@ fun convertJsonToSensor(inputJsonString: String): Camera? {
 }//convertJsonToUriList
 
 
-//convert json to Camera
+//convert JSON to Camera
 fun convertJsonToMyEmailAccount(inputJsonString: String): MyEmailAccount? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonString.isEmpty()) { // inspection fix: parameter is non-null
         return null
     }
 
     var myEmailAccount: MyEmailAccount? = null
-    //mySensors?.add(Camera("ID","NAME"))
+    //mySensors.add(Camera("ID","NAME"))
 
     var json: JSONObject? = null
     try {
@@ -303,16 +303,16 @@ fun convertToAlarmsGson(alarmsArr:ArrayList<Alarm>): String? {
 }
 
 
-//convert json to list of uri and list of Sensors
+//convert JSON to list of uri and list of Sensors
 fun convertJsonToSystemSortList(inputJsonArrayString: String): ArrayList<SystemSort>? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonArrayString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonArrayString.isEmpty()) { // inspection fix: parameter is non-null
         return ArrayList()
     }
 
-    val mySensors: ArrayList<SystemSort>? = ArrayList()
-    //mySensors?.add(Camera("ID","NAME"))
+    val mySensors: ArrayList<SystemSort> = ArrayList() // inspection fix: non-null type
+    //mySensors.add(Camera("ID","NAME"))
 
     var jsonArr: JSONArray? = null
     try {
@@ -326,7 +326,7 @@ fun convertJsonToSystemSortList(inputJsonArrayString: String): ArrayList<SystemS
         val listType = object : TypeToken<List<SystemSort>>() {
 
         }.type
-        mySensors?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<SystemSort>)
+        mySensors.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<SystemSort>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
         e.message?.let { Log.e("convertJsonToUriList", it) }
@@ -342,16 +342,16 @@ fun convertJsonToSystemSortList(inputJsonArrayString: String): ArrayList<SystemS
     //when jsonArr is null will return value of new ArrayList<>()
 }//convertJsonToUriList
 
-//convert json to list of uri and list of Sensors
+//convert JSON to list of uri and list of Sensors
 fun convertJsonToSensorList(inputJsonArrayString: String): ArrayList<Camera>? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonArrayString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonArrayString.isEmpty()) { // inspection fix: parameter is non-null
         return ArrayList()
     }
 
-    val mySensors: ArrayList<Camera>? = ArrayList()
-    //mySensors?.add(Camera("ID","NAME"))
+    val mySensors: ArrayList<Camera> = ArrayList() // inspection fix: non-null type
+    //mySensors.add(Camera("ID","NAME"))
 
     var jsonArr: JSONArray?=null
     try {
@@ -365,7 +365,7 @@ fun convertJsonToSensorList(inputJsonArrayString: String): ArrayList<Camera>? {
         val listType = object : TypeToken<List<Camera>>() {
 
         }.type
-        mySensors?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<Camera>)
+        mySensors.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<Camera>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
         e.message?.let { Log.e("convertJsonToUriList", it) }
@@ -382,16 +382,16 @@ fun convertJsonToSensorList(inputJsonArrayString: String): ArrayList<Camera>? {
 }//convertJsonToUriList
 
 
-//convert json to list of uri and list of Sensors
+//convert JSON to list of uri and list of Sensors
 fun convertJsonToStringList(inputJsonArrayString: String): ArrayList<String>? {
 
-    //if the json string is empty, then return empty array list
-    if (inputJsonArrayString.isNullOrEmpty()) {
+    //if the JSON string is empty, then return empty array list
+    if (inputJsonArrayString.isEmpty()) { // inspection fix: parameter is non-null
         return ArrayList()
     }
 
-    val myTags: ArrayList<String>? = ArrayList()
-    //mySensors?.add(Camera("ID","NAME"))
+    val myTags: ArrayList<String> = ArrayList() // inspection fix: non-null type
+    //mySensors.add(Camera("ID","NAME"))
 
     var jsonArr: JSONArray? = null
     try {
@@ -405,7 +405,7 @@ fun convertJsonToStringList(inputJsonArrayString: String): ArrayList<String>? {
         val listType = object : TypeToken<List<String>>() {
 
         }.type
-        myTags?.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<String>)
+        myTags.addAll(Gson().fromJson(jsonArr.toString(), listType) as ArrayList<String>)
     } catch (e: JsonIOException) {
         e.printStackTrace()
         e.message?.let { Log.e("convertJsonToUriList", it) }
@@ -421,7 +421,7 @@ fun convertJsonToStringList(inputJsonArrayString: String): ArrayList<String>? {
     //when jsonArr is null will return value of new ArrayList<>()
 }//convertJsonToUriList
 
-//convert json to list of uri and list of Alarms
+//convert JSON to list of uri and list of Alarms
 fun convertJsonToAlarmList(inputJsonArrayString: String): ArrayList<Alarm>? {
 
     var myAlarms: ArrayList<Alarm>? = null

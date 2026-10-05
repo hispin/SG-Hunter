@@ -1,9 +1,9 @@
 package com.sensoguard.hunter.fragments
 
+// inspection fix: removed unused import(s)
 import android.app.Activity
 import android.app.TimePickerDialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +15,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -133,11 +134,11 @@ class SystemSortDialogFragment : DialogFragment(),
         }
 
         conTitle = view?.findViewById(R.id.conTitle)
-        myCalendar = view?.findViewById(R.id.calendar_view) as CalendarPickerView
+        myCalendar = requireView().findViewById(R.id.calendar_view) // inspection fix: typed findViewById, requireView() instead of the old non-null cast
 
-        tvFromDate = view.findViewById(R.id.tvFromDate)
-        tvToDate = view.findViewById(R.id.tvToDate)
-        btnFromTime = view.findViewById(R.id.btnFromTime)
+        tvFromDate = requireView().findViewById(R.id.tvFromDate)
+        tvToDate = requireView().findViewById(R.id.tvToDate)
+        btnFromTime = requireView().findViewById(R.id.btnFromTime)
         btnFromTime?.setOnClickListener {
             val hour = fromCalendar?.get(Calendar.HOUR_OF_DAY)
             val minutes = fromCalendar?.get(Calendar.MINUTE)
@@ -145,7 +146,7 @@ class SystemSortDialogFragment : DialogFragment(),
                 openTimeDialog(hour, minutes, true)
             }
         }
-        btnToTime = view.findViewById(R.id.btnToTime)
+        btnToTime = requireView().findViewById(R.id.btnToTime)
         btnToTime?.setOnClickListener {
             val hour = toCalendar?.get(Calendar.HOUR_OF_DAY)
             val minutes = toCalendar?.get(Calendar.MINUTE)
@@ -153,7 +154,7 @@ class SystemSortDialogFragment : DialogFragment(),
                 openTimeDialog(hour, minutes, false)
             }
         }
-        linerCalendarContainer = view.findViewById(R.id.linerCalendarContainer)
+        linerCalendarContainer = requireView().findViewById(R.id.linerCalendarContainer)
     }
 
     //set the current selected date
@@ -206,13 +207,13 @@ class SystemSortDialogFragment : DialogFragment(),
             val fromDateStr = activity?.let { it1 -> getStringFromCalendar(it, "dd/MM/yy", it1) }
             tvFromDate?.text = fromDateStr
             val fromTimeStr = activity?.let { it1 -> getStringFromCalendar(it, "kk:mm", it1) }
-            btnFromTime?.setText(fromTimeStr)
+            btnFromTime?.text = fromTimeStr // inspection fix: property access
         }
         toCalendar?.let {
             val toDateStr = activity?.let { it1 -> getStringFromCalendar(it, "dd/MM/yy", it1) }
             tvToDate?.text = toDateStr
             val toTimeStr = activity?.let { it1 -> getStringFromCalendar(it, "kk:mm", it1) }
-            btnToTime?.setText(toTimeStr)
+            btnToTime?.text = toTimeStr // inspection fix: property access
         }
     }
 
@@ -282,15 +283,14 @@ class SystemSortDialogFragment : DialogFragment(),
 
         systemFilterDialogAdapter = activity?.let { adapter ->
             myAlarmsNameSorted?.let { arr ->
-                SystemSortDialogAdapter(arr, adapter) { _ ->
-                }
+                SystemSortDialogAdapter(arr, adapter) // inspection fix: removed empty click callback
             }
         }
         rvSystemCameras?.adapter = systemFilterDialogAdapter
         val layoutManager = LinearLayoutManager(activity)
         rvSystemCameras?.layoutManager = layoutManager
 
-        systemFilterDialogAdapter?.notifyDataSetChanged()
+        // lint fix: removed notifyDataSetChanged - a newly set adapter renders its data anyway
 
 
     }
@@ -298,25 +298,25 @@ class SystemSortDialogFragment : DialogFragment(),
     private var myAlarmsName: ArrayList<String>? = null
     private var myAlarmsNameSorted: ArrayList<SystemSort>? = null
     private fun refreshSystemAlarmsFromPref() {
-        var myAlarms: ArrayList<Alarm>? = null
         myAlarmsName = ArrayList()
         myAlarmsNameSorted = ArrayList()
 
-        myAlarms = activity?.let { populateAlarmsFromLocally(it) }
+        // inspection fix: declared at first assignment
+        val myAlarms: ArrayList<Alarm>? = activity?.let { populateAlarmsFromLocally(it) }
 
 
-        var tmp: ArrayList<String>? = ArrayList()
-        var iteratorList = myAlarms?.listIterator()
+        val tmp: ArrayList<String> = ArrayList() // inspection fix: val
+        val iteratorList = myAlarms?.listIterator() // inspection fix: val
 
         while (iteratorList != null && iteratorList.hasNext()) {
             val item = iteratorList.next()
-            item.name?.let { tmp?.add(it) }
+            item.name?.let { tmp.add(it) }
         }
         //prevent duplicate
-        myAlarmsName = ArrayList(LinkedHashSet<String>(tmp))
+        myAlarmsName = ArrayList(LinkedHashSet(tmp))
 
         //build objects of SystemSort
-        var iteratorList1 = myAlarmsName?.listIterator()
+        val iteratorList1 = myAlarmsName?.listIterator() // inspection fix: val
 
         while (iteratorList1 != null && iteratorList1.hasNext()) {
             val item = iteratorList1.next()
@@ -324,6 +324,7 @@ class SystemSortDialogFragment : DialogFragment(),
         }
 
         systemFilterDialogAdapter?.setDetects(myAlarmsNameSorted)
+        //noinspection NotifyDataSetChanged - the whole list is replaced
         systemFilterDialogAdapter?.notifyDataSetChanged()
     }
 
@@ -361,7 +362,7 @@ class SystemSortDialogFragment : DialogFragment(),
         val tp = TimePickerDialog(
             context,
             R.style.DateTimeDialog,
-            TimePickerDialog.OnTimeSetListener { timePicker, hour, minute ->
+            { _, hour, minute -> // inspection fix: removed redundant SAM constructor
 
                 tp?.cancel()
 
@@ -382,7 +383,7 @@ class SystemSortDialogFragment : DialogFragment(),
             true
         )
 
-        tp.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        tp.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable()) // lint fix: KTX toDrawable
         tp.show()
     }
 

@@ -2,11 +2,15 @@ package com.sensoguard.hunter.fragments
 
 //import android.support.v4.app.Fragment
 
+// inspection fix: removed unused import(s)
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
-import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.text.util.Linkify
@@ -14,8 +18,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -25,12 +32,39 @@ import com.sensoguard.hunter.R
 import com.sensoguard.hunter.adapters.AlarmAdapter
 import com.sensoguard.hunter.classes.Alarm
 import com.sensoguard.hunter.classes.Camera
-import com.sensoguard.hunter.classes.ImageStorageManager
 import com.sensoguard.hunter.classes.SystemSort
-import com.sensoguard.hunter.global.*
+import com.sensoguard.hunter.global.ACTION_PICTURE_KEY
+import com.sensoguard.hunter.global.ACTION_TYPE_KEY
+import com.sensoguard.hunter.global.ACTION_VIDEO_KEY
+import com.sensoguard.hunter.global.ALARM_DISPLAY_KEY
+import com.sensoguard.hunter.global.ALARM_LIST_KEY_PREF
+import com.sensoguard.hunter.global.CAMERA_KEY
+import com.sensoguard.hunter.global.CAMERA_SORTED
+import com.sensoguard.hunter.global.DATE_SORTED
+import com.sensoguard.hunter.global.DETECT_ALARM_KEY
+import com.sensoguard.hunter.global.ERROR_RESP
+import com.sensoguard.hunter.global.FROM_CALENDAR
+import com.sensoguard.hunter.global.HOUR_OFFSET
+import com.sensoguard.hunter.global.IMAGE_PATH_KEY
+import com.sensoguard.hunter.global.IMAGE_TIME_KEY
+import com.sensoguard.hunter.global.NO_SORTED
+import com.sensoguard.hunter.global.RESULT_CODE
+import com.sensoguard.hunter.global.SHARED_PREF_FILE_NAME
+import com.sensoguard.hunter.global.SORT_BY_DATETIME_KEY
+import com.sensoguard.hunter.global.SORT_BY_SYSTEM_KEY
+import com.sensoguard.hunter.global.SORT_BY_SYSTEM_REQUEST_CODE
+import com.sensoguard.hunter.global.SORT_PICK_DATE_TIME_REQUEST_CODE
+import com.sensoguard.hunter.global.SORT_TYPE_KEY
+import com.sensoguard.hunter.global.TO_CALENDAR
+import com.sensoguard.hunter.global.convertJsonToAlarmList
+import com.sensoguard.hunter.global.convertJsonToSystemSortList
+import com.sensoguard.hunter.global.getStringInPreference
+import com.sensoguard.hunter.global.shareImage
+import com.sensoguard.hunter.global.showToast
+import com.sensoguard.hunter.global.storeAlarmsToLocally
 import com.sensoguard.hunter.interfaces.OnAdapterListener
 import com.sensoguard.hunter.interfaces.OnFragmentListener
-import java.util.*
+import java.util.Calendar
 
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,7 +93,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
     private var mySortedAlarms: ArrayList<Alarm>? = null
     private var rvAlarm:RecyclerView?=null
     private var alarmAdapter: AlarmAdapter?=null
-    private var btnCsv: Button?=null
+    // inspection fix: removed unused btnCsv
     private var viewBetweenContainer: View? = null
     private var btnFilterSystem: Button? = null
     private var btnFilterDateTime: Button? = null
@@ -125,7 +159,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                         return@AlarmAdapter
                     }
                     if (type == 1) {
-                        alarm.let { openLargePictureDialog(it) }
+                        openLargePictureDialog(alarm) // inspection fix: removed redundant let
                         //share option
                     } else if (type == 2) {
                         shareImageOrVideo(alarm)
@@ -137,7 +171,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         val layoutManager = androidx.recyclerview.widget.GridLayoutManager(activity, 2)
         rvAlarm?.layoutManager = layoutManager
 
-        alarmAdapter?.notifyDataSetChanged()
+        // lint fix: removed notifyDataSetChanged - a newly set adapter renders its data anyway
 
     }
 
@@ -178,7 +212,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                         return@AlarmAdapter
                     }
                     if (type == 1) {
-                        alarm.let { openLargePictureDialog(it) }
+                        openLargePictureDialog(alarm) // inspection fix: removed redundant let
                     } else if (type == 2) {
                         shareImageOrVideo(alarm)
                     }
@@ -189,7 +223,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         val layoutManager = LinearLayoutManager(activity)
         rvAlarm?.layoutManager = layoutManager
 
-        alarmAdapter?.notifyDataSetChanged()
+        // lint fix: removed notifyDataSetChanged - a newly set adapter renders its data anyway
 
     }
 
@@ -211,21 +245,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         }
     }
 
-    private fun sendEmail(msg: String) {
-        val i = Intent(Intent.ACTION_SEND)
-        i.type = "message/rfc822"
-        i.putExtra(
-            Intent.EXTRA_EMAIL,
-            arrayOf("hag.swead@gmail.com", "tomer@sensoguard.com")
-        )
-        i.putExtra(Intent.EXTRA_SUBJECT, "SensoGuard app has been crashed")
-        i.putExtra(Intent.EXTRA_TEXT, msg)
-        try {
-            startActivity(Intent.createChooser(i, "Send mail..."))
-        } catch (ex: ActivityNotFoundException) {
-            ex.printStackTrace()
-        }
-    }
+    // inspection fix: removed unused sendEmail()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -420,15 +440,18 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                 DATE_SORTED -> {
                     sortByDateAlarm()
                     alarmAdapter?.setDetects(mySortedAlarms)
+                    //noinspection NotifyDataSetChanged - the whole list is replaced
                     alarmAdapter?.notifyDataSetChanged()
                 }
                 CAMERA_SORTED -> {
                     sortByCamerasAlarm()
                     alarmAdapter?.setDetects(mySortedAlarms)
+                    //noinspection NotifyDataSetChanged - the whole list is replaced
                     alarmAdapter?.notifyDataSetChanged()
                 }
                 else -> {
                     alarmAdapter?.setDetects(this.myAlarms)
+                    //noinspection NotifyDataSetChanged - the whole list is replaced
                     alarmAdapter?.notifyDataSetChanged()
                 }
             }
@@ -489,30 +512,14 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         if (alarm.imgsPath != null &&
             (alarm.imgsPath!!.endsWith("mp4") || alarm.imgsPath!!.endsWith("mov"))
         ) {
-            openLargePictureVideoByType(ACTION_VIDEO_KEY, alarm.imgsPath, 0, 0)
+            openLargePictureVideoByType(ACTION_VIDEO_KEY, alarm.imgsPath, 0)
         } else {
-            openLargePictureVideoByType(ACTION_PICTURE_KEY, alarm.imgsPath, alarm.timeInMillis, 0)
+            openLargePictureVideoByType(ACTION_PICTURE_KEY, alarm.imgsPath, alarm.timeInMillis)
         }
     }
 
 
-    //share image from selected alarm
-    private fun shareImage(bitmap: Bitmap) {
-
-        //val uri = activity?.let { getImageUriByBitmap(it,bitmap) }
-
-        //convert bitmap to Uri:save the image in external and then you can share it
-        val uri = activity?.let { ImageStorageManager.getImageUriByBitmap(bitmap, it) }
-
-
-
-        if (uri != null) {
-            val intent = Intent(Intent.ACTION_SEND)
-            intent.type = "image/jpeg"
-            intent.putExtra(Intent.EXTRA_STREAM, uri)
-            startActivity(Intent.createChooser(intent, "Share Image"))
-        }
-    }
+    // inspection fix: removed unused shareImage()
 
 
     //open fragment dialog to sort the list of alarm log
@@ -520,7 +527,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
         val fr = SystemSortDialogFragment()
 
-        //deliver selected camera to continue add data
+        //deliver selected camera to continue adding data
         //val cameraStr = convertToGson(camera)
         val bdl = Bundle()
         bdl.putInt(SORT_TYPE_KEY, type)
@@ -568,22 +575,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
                             typeOfSorted = DATE_SORTED
                             refreshAlarmsFromPref()
                         }
-                        val fromDateStr = activity?.let { it1 ->
-                            getStringFromCalendar(
-                                fromCalendar!!,
-                                "dd/MM/yy kk:mm:ss",
-                                it1
-                            )
-                        }
-                        val toDateStr = activity?.let { it1 ->
-                            getStringFromCalendar(
-                                toCalendar!!,
-                                "dd/MM/yy kk:mm:ss",
-                                it1
-                            )
-                        }
-                        //Log.d("testCalendar", fromDateStr)
-                        //Log.d("testCalendar", toDateStr)
+                        // inspection fix: removed unused fromDateStr/toDateStr (only used by commented-out logs)
                         //Log.d("testCalendar", getOffsetHour().toString())
                     } catch (ex: Exception) {
                         Toast.makeText(activity, resources.getString(R.string.error), Toast.LENGTH_LONG)
@@ -640,8 +632,8 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
     private fun openLargePictureVideoByType(
         type: Int,
         imgPath: String?,
-        timeInMillis: Long?,
-        requestCode: Int
+        timeInMillis: Long?
+        // inspection fix: removed requestCode parameter, it was always 0
     ) {
 
 
@@ -653,14 +645,14 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
 
         val fr=LargePictureVideoDialogFragment(listener)
 
-        //deliver selected camera to continue add data
+        //deliver selected camera to continue adding data
         //val cameraStr = convertToGson(camera)
         val bdl = Bundle()
         bdl.putInt(ACTION_TYPE_KEY, type)
         bdl.putString(IMAGE_PATH_KEY, imgPath)
         bdl.putString(IMAGE_TIME_KEY, timeInMillis.toString())
         fr.arguments = bdl
-        fr.setTargetFragment(this, requestCode)
+        fr.setTargetFragment(this, 0)
         val fm = activity?.supportFragmentManager
         fm?.let { fr.show(it, "LargePictureVideoDialogFragment") }
     }
@@ -799,7 +791,7 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         }
     }
 
-    //check if the the alarm is sorted
+    //check if the alarm is sorted
     private fun isAlarmSorted(itemP: Alarm, mySystemSort: ArrayList<SystemSort>?): Boolean {
 
         val iteratorList = mySystemSort?.listIterator()
@@ -818,9 +810,10 @@ class AlarmLogFragment : Fragment(), OnAdapterListener {
         while (iteratorList != null && iteratorList.hasNext()) {
             val item = iteratorList.next()
             item.isReadyToDelete = isSelected
-            alarmAdapter?.setDetects(alarms)
-            alarmAdapter?.notifyDataSetChanged()
         }
+        // lint fix: refresh once after the loop instead of a full refresh per item
+        alarmAdapter?.setDetects(alarms)
+        alarmAdapter?.notifyItemRangeChanged(0, alarms.size)
     }
 
     //get the counter of selected alarms

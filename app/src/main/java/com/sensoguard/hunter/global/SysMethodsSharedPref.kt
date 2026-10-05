@@ -1,6 +1,7 @@
 package com.sensoguard.hunter.global
 
 import android.content.Context
+import androidx.core.content.edit
 
 
 //read Long ic_share preference
@@ -19,9 +20,7 @@ fun setLongInPreference(context: Context?, key: String, value: Long) {
         return
     }
     val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.putLong(key, value)
-    edit.apply()
+    pref.edit { putLong(key, value) } // lint fix: KTX edit
 }
 
 
@@ -31,9 +30,7 @@ fun setStringInPreference(context: Context?, key: String, value: String?) {
         return
     }
     val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.putString(key, value)
-    edit.apply()
+    pref.edit { putString(key, value) } // lint fix: KTX edit
 }
 
 //remove ic_share preference
@@ -42,9 +39,7 @@ fun removePreference(context: Context?, key: String) {
         return
     }
     val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.remove(key)
-    edit.apply()
+    pref.edit { remove(key) } // lint fix: KTX edit
 }
 
 
@@ -57,16 +52,7 @@ fun getStringInPreference(context: Context?, key: String, default: String?): Str
     return pref.getString(key, default)
 }
 
-//read String ic_share preference
-fun removeStringInPreference(context: Context?, key: String) {
-    if (context == null) {
-        return
-    }
-    val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.remove(key)
-    edit.apply()
-}
+// inspection fix: removed unused duplicate of removePreference()
 
 //read Boolean ic_share preference
 fun getBooleanInPreference(context: Context?, key: String, default: Boolean): Boolean {
@@ -84,9 +70,7 @@ fun setBooleanInPreference(context: Context?, key: String, value: Boolean) {
         return
     }
     val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.putBoolean(key, value)
-    edit.apply()
+    pref.edit { putBoolean(key, value) } // lint fix: KTX edit
 }
 
 
@@ -106,8 +90,6 @@ fun setIntInPreference(context: Context?, key: String, value: Int) {
         return
     }
     val pref=context.getSharedPreferences(SHARED_PREF_FILE_NAME, Context.MODE_PRIVATE)
-    val edit=pref.edit()
-    edit.putInt(key, value)
-    edit.apply()
+    pref.edit { putInt(key, value) } // lint fix: KTX edit
 }
 

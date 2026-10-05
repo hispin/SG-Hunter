@@ -1,11 +1,11 @@
 package com.sensoguard.hunter.classes
 
 import android.app.Activity
-import android.net.Uri
 import androidx.annotation.OptIn
-import androidx.media3.common.util.UnstableApi
+import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
@@ -25,27 +25,10 @@ class VideoManager(val callback: Callback) {
 
     private fun playbackStateListener() = object : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
-            val stateString: String = when (playbackState) {
-                ExoPlayer.STATE_IDLE -> {
-                    "ExoPlayer.STATE_IDLE      -"
-                }
-
-                ExoPlayer.STATE_BUFFERING -> {
-                    "ExoPlayer.STATE_BUFFERING -"
-                }
-
-                ExoPlayer.STATE_READY -> {
-                    callback.stopProgressBar()
-                    "ExoPlayer.STATE_READY     -"
-                }
-
-                ExoPlayer.STATE_ENDED -> {
-                    "ExoPlayer.STATE_ENDED     -"
-                }
-
-                else -> "UNKNOWN_STATE             -"
+            // inspection fix: removed the unused state string, only READY has an action
+            if (playbackState == ExoPlayer.STATE_READY) {
+                callback.stopProgressBar()
             }
-            //Log.d(TAG, "changed state to $stateString")
         }
     }
 
@@ -93,7 +76,7 @@ class VideoManager(val callback: Callback) {
             .also { exoPlayer ->
                 ivMyVideo?.player = exoPlayer
 
-                val mediaItem: MediaItem = MediaItem.fromUri(Uri.parse(imgPath))
+                val mediaItem: MediaItem = MediaItem.fromUri(imgPath.toUri()) // lint fix: KTX toUri
                 ivMyVideo?.player?.setMediaItem(mediaItem)
                 ivMyVideo?.player?.playWhenReady = playWhenReady
                 ivMyVideo?.player?.seekTo(currentItem, playbackPosition)

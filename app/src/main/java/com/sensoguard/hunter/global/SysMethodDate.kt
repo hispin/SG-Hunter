@@ -1,13 +1,15 @@
 package com.sensoguard.hunter.global
 
+// inspection fix: removed unused import(s)
 import android.content.Context
-import android.os.Build
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 
 fun getStringFromCalendar(calendar: Calendar,format:String,context: Context):String{
-    val locale=if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) context.resources.configuration.locales.getFirstMatch(context.resources.assets.locales)
-    else context.resources.configuration.locale
+    // lint fix: minSdk is 26, so locales is always available
+    val locale=context.resources.configuration.locales.getFirstMatch(context.resources.assets.locales)
     val dateFormat = SimpleDateFormat(format, locale)//"kk:mm dd/MM/yy"
     //dateFormat.timeZone = TimeZone.getTimeZone("UTC")
     val dateString = dateFormat.format(calendar.time)
@@ -16,11 +18,9 @@ fun getStringFromCalendar(calendar: Calendar,format:String,context: Context):Str
 
 //get string format by current date time in milliseconds format
 fun getStrDateTimeByMilliSeconds(milliSeconds: Long, format: String, context: Context): String? {
+    // lint fix: minSdk is 26, so locales is always available
     val locale =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            context.resources.configuration.locales.getFirstMatch(context.resources.assets.locales)
-        else
-            context.resources.configuration.locale
+        context.resources.configuration.locales.getFirstMatch(context.resources.assets.locales)
     if (locale != null) {
         val dateFormat = SimpleDateFormat(format, locale)
         dateFormat.timeZone = TimeZone.getTimeZone("UTC")
@@ -30,28 +30,4 @@ fun getStrDateTimeByMilliSeconds(milliSeconds: Long, format: String, context: Co
     return null
 }
 
-/**
- * An overloaded version of getDateByTimestamp by String
- *
- * @return String "yyyy:MM:dd HH:mm:ss"
- */
-fun getDateByTimestamp(
-    stringDate: String?,
-    context: Context,
-    format: String
-): Calendar? {
-
-    val locale =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) context.resources.configuration.locales.getFirstMatch(
-            context.resources.assets.locales
-        )
-        else context.resources.configuration.locale
-
-    val dateFormat_yyyyMMddHHmmss = SimpleDateFormat(
-        format, locale
-    )
-    val date = dateFormat_yyyyMMddHHmmss.parse(stringDate)
-    val calendar = Calendar.getInstance()
-    calendar.time = date
-    return calendar
-}
+// inspection fix: removed unused getDateByTimestamp()

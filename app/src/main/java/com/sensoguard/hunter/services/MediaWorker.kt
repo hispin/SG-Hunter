@@ -4,13 +4,13 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
-import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.core.net.toUri
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.sensoguard.hunter.global.ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
@@ -50,7 +50,7 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
 
         val VIBRO_TIME=2000L
 
-        var vibrator:Vibrator?=null
+        val vibrator: Vibrator // inspection fix: assigned once in each branch
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
             vibrator = vibratorManager.defaultVibrator
@@ -60,17 +60,14 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
         }
 
         if (vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val audioAttributes: AudioAttributes=
-                    AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                        .setUsage(AudioAttributes.USAGE_ALARM).build()
-                val ve=VibrationEffect.createOneShot(
-                    VIBRO_TIME, VibrationEffect.DEFAULT_AMPLITUDE
-                )
-                vibrator.vibrate(ve, audioAttributes)
-            } else {
-                vibrator.vibrate(VIBRO_TIME)
-            }
+            // lint fix: minSdk is 26, so VibrationEffect is always available
+            val audioAttributes: AudioAttributes=
+                AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_ALARM).build()
+            val ve=VibrationEffect.createOneShot(
+                VIBRO_TIME, VibrationEffect.DEFAULT_AMPLITUDE
+            )
+            vibrator.vibrate(ve, audioAttributes)
         }
         return true
     }
@@ -98,7 +95,7 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
         if (!selectedSound.equals("-1")) {
 
             try {
-                val uri = Uri.parse(selectedSound)
+                val uri = selectedSound?.toUri() // lint fix: KTX toUri (null-safe)
                 if (rington != null && rington!!.isPlaying) {
                     //if the sound it is already played,
                     rington?.stop()
@@ -142,7 +139,7 @@ class MediaWorker (val context: Context, workerParams: WorkerParameters) :
             ALARM_FLICKERING_DURATION_DEFAULT_VALUE_SECONDS
         )
         // This schedule a task to run every 1 second:
-        scheduleTaskExecutor?.scheduleAtFixedRate({
+        scheduleTaskExecutor?.scheduleWithFixedDelay({ // lint fix: fixed delay avoids burst runs after the process was paused
             stopPlayingAlarm()
             shutDownTimer()
             //stopSelf()
