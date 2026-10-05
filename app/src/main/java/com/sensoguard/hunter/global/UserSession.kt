@@ -55,14 +55,20 @@ class UserSession private constructor() {
         )
     }
 
-    fun setInstanceUserAmazonResult(name: String?, pw: String?, token_fcm: String?,token: String?,imagesBaseUrl:String?,role:Int?) {
+    fun setInstanceUserAmazonResult(name: String?, pw: String?, token_fcm: String?,token: String?,imagesBaseUrl:String?,role:Int?,userAppId:Int?,username:String?,roleName:String?,customer:Int?,language:String?,env:String?) {
         userInfoAmazonResult = UserInfoAmazonResult(
             name,
             pw,
             token_fcm,
             token,
             imagesBaseUrl,
-            role
+            role,
+            userAppId,
+            username,
+            roleName,
+            customer,
+            language,
+            env
         )
     }
 

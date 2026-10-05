@@ -1,10 +1,16 @@
 package com.sensoguard.hunter.classes
 
-class UserInfoAmazonResult (
-val email: String?,
-val password: String?,
-val token_fcm: String?,
-val token: String?,
-val imagesBaseUrl:String?,
-val role:Int?
+class UserInfoAmazonResult(
+    val email: String?,
+    val password: String?,
+    val token_fcm: String?,
+    val token: String?,
+    val imagesBaseUrl: String?,
+    val role: Int?,
+    val userAppId: Int?,
+    val username: String?,
+    val roleName: String?,
+    val customer: Int?,
+    val language: String?,
+    val env: String?
 )

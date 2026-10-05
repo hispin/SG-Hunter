@@ -89,7 +89,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                 } else {
-                    //TODO send ERROR message
+                    // could not get FCM token, so login cannot proceed
+                    Log.e("testToken", "failed to get FCM token", task.exception)
+                    response?.value = AMAZONE_POST_LOGIN_RESULT_FAILED
                 }
             }
 
@@ -124,7 +126,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                             val fcm_token=UserSession.instance.getUserAmazon()!!.token_fcm
                             UserSession.instance.setInstanceUserAmazonResult(
                                 email,pass,
-                                fcm_token,result.token,result.imagesBaseUrl,result.role)
+                                fcm_token,result.token,result.imagesBaseUrl,result.role,result.userAppId,result.username,result.roleName,result.customer,result.language,result.env)
                             getApplication<Application>().applicationContext
                                 .let { it1 ->
                                     storeUserAmazonResultToLocally(

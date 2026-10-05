@@ -350,7 +350,7 @@ open class LogInActivity : AppCompatActivity() {
      * load web all alarms
      */
     private fun loadWebAllAlarm() {
-        sendBroadcast(Intent(LOGIN_COMPLETE_KEY))
+        sendBroadcast(Intent(LOGIN_COMPLETE_KEY).setPackage(packageName))
     }
 
 

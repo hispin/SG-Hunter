@@ -111,16 +111,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         long oneTimeID = SystemClock.uptimeMillis();
 
-        PendingIntent contentIntent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            //set different request code to make different extra for each notification
-            contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
-        } else {
-            //set different request code to make different extra for each notification
-            contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        }
+        //set different request code to make different extra for each notification
+        PendingIntent contentIntent = PendingIntent.getActivity(ctx, (int) oneTimeID,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
 
         //Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

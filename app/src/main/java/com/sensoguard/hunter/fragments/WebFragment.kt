@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,10 +22,11 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageView
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices
+import com.sensoguard.hunter.BuildConfig
 import com.sensoguard.hunter.R
 import com.sensoguard.hunter.global.LOGIN_COMPLETE_KEY
 import com.sensoguard.hunter.global.PWA_URL
@@ -34,6 +34,7 @@ import com.sensoguard.hunter.global.USER_INFO_AMAZON_KEY
 import com.sensoguard.hunter.global.getUserAmazonResultFromLocally
 import com.sensoguard.hunter.global.savePictureUrlInGallery
 import com.sensoguard.hunter.global.showToast
+import org.json.JSONObject
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -139,7 +140,10 @@ class WebFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activity?.unregisterReceiver(receiver)
+        if (isReceiverRegistered) {
+            activity?.unregisterReceiver(receiver)
+            isReceiverRegistered = false
+        }
     }
 
 
@@ -166,12 +170,10 @@ class WebFragment : Fragment() {
         webAlarms?.settings?.javaScriptCanOpenWindowsAutomatically = true  // Important for popups
 //        webAlarms?.settings?.setSupportMultipleWindows(true)
         webAlarms?.settings?.setGeolocationEnabled(true)
-        webAlarms?.settings?.allowFileAccess = true
+        webAlarms?.settings?.allowFileAccess = false
         webAlarms?.clearCache(true)
-        //enable debug
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
+        //enable debug only in debug builds
+        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
         if(activity!=null) {
             // Add the interface to WebView
             webAlarms?.addJavascriptInterface(
@@ -222,11 +224,23 @@ class WebFragment : Fragment() {
             val userInfo=
                 getUserAmazonResultFromLocally(requireActivity(), USER_INFO_AMAZON_KEY)
 
-            val js="localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");localStorage.setItem(\"customVisionOnly\", \"כש\");localStorage.setItem(\"role\", \"${userInfo?.role}\");"
-
-
-//            val js=
-//                        "localStorage.setItem(\"loggedIn\", \"true\"); localStorage.setItem(\"token\", \"Bearer ${userInfo?.token}\");localStorage.setItem(\"imagesBaseUrl\", \"${userInfo?.imagesBaseUrl}\");"
+            val items = linkedMapOf(
+                "loggedIn" to "true",
+                "token" to "Bearer ${userInfo?.token ?: ""}",
+                "imagesBaseUrl" to userInfo?.imagesBaseUrl,
+                "customVisionOnly" to "false",
+                "role" to userInfo?.role,
+                "userAppId" to userInfo?.userAppId,
+                "username" to userInfo?.username,
+                "roleName" to userInfo?.roleName,
+                "customer" to userInfo?.customer,
+                "language" to userInfo?.language,
+                "environment" to userInfo?.env
+            )
+            // quote() escapes the values so they cannot break the script; null becomes ""
+            val js = items.entries.joinToString("") { (key, value) ->
+                "localStorage.setItem(${JSONObject.quote(key)}, ${JSONObject.quote(value?.toString() ?: "")});"
+            }
 
             webAlarms?.evaluateJavascript(js, null)
 
@@ -235,16 +249,16 @@ class WebFragment : Fragment() {
 
     private fun setFilter() {
         val filter=IntentFilter(LOGIN_COMPLETE_KEY)
-        if (activity != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    Log.d("testAllAlarms", "registerReceiver")
-                    requireActivity().registerReceiver(
-                        receiver, filter, AppCompatActivity.RECEIVER_EXPORTED)
-            } else {
-                activity?.registerReceiver(receiver, filter)
-            }
+        if (activity != null && !isReceiverRegistered) {
+            Log.d("testAllAlarms", "registerReceiver")
+            ContextCompat.registerReceiver(
+                requireActivity(), receiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+            isReceiverRegistered = true
         }
     }
+
+    private var isReceiverRegistered = false
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(arg0: Context, inn: Intent) {

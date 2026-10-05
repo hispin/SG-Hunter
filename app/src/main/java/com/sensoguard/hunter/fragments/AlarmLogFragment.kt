@@ -48,13 +48,10 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class AlarmLogFragment : Fragment(), OnAdapterListener {
-    override fun saveCamera(detector: Camera) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    // camera editing is not available from the alarm log
+    override fun saveCamera(detector: Camera) = Unit
 
-    override fun saveNameSensor(detector: Camera) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun saveNameSensor(detector: Camera) = Unit
 
     private var typeOfSorted: Int = NO_SORTED
     // TODO: Rename and change types of parameters

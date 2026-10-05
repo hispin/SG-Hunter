@@ -25,6 +25,7 @@ import android.widget.ToggleButton
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
@@ -120,6 +121,13 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
     }
 
     private lateinit var _openBatterySettings: ActivityResultLauncher<Intent>
+
+    private val _requestNotificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            configureNotificationStatus()
+        }
+
+    private var isNotificationPermissionRequested = false
 
     private var isSettingsNotificationLauncher:Boolean?=null
 
@@ -549,6 +557,22 @@ class MyScreensActivity : LogInActivity(), OnFragmentListener {
             setLocationPermission()
         }else{
             consDisableNotification?.visibility=VISIBLE
+            requestNotificationPermission()
+        }
+    }
+
+    /**
+     * from android 13 notifications are off until the user grants POST_NOTIFICATIONS,
+     * so show the system dialog once before falling back to the settings banner
+     */
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && !isNotificationPermissionRequested
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            isNotificationPermissionRequested = true
+            _requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
