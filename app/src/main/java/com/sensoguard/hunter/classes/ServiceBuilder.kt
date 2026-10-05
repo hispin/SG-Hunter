@@ -9,7 +9,6 @@ object ServiceBuilder {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl("https://pushfunction.azurewebsites.net/api/")
-        //"https://pushfunction.azurewebsites.net/api/GetTags?code=0S61lCYNRk0vb4rTa9Wqg9SH44wIMszSS1SUjg4vuvwWFafeFPQ1Vg==/") // change this IP for testing by your actual machine IP
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()

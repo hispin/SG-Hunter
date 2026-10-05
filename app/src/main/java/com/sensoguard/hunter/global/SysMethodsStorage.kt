@@ -135,28 +135,28 @@ fun storeUserAzureToLocally(userInfo: UserInfoAzure, context: Context, key: Stri
     val jsonObject = Gson().toJson(userInfo)
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    setStringInPreference(wContext.get(), key, jsonObject.toString())
+    setSecureStringInPreference(wContext.get(), key, jsonObject.toString())
 }
 
 fun storeUserAmazonToLocally(userInfo: UserInfoAmazon, context: Context, key: String) {
     val jsonObject = Gson().toJson(userInfo)
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    setStringInPreference(wContext.get(), key, jsonObject.toString())
+    setSecureStringInPreference(wContext.get(), key, jsonObject.toString())
 }
 
 fun storeUserAmazonResultToLocally(userInfo: UserInfoAmazonResult, context: Context, key: String) {
     val jsonObject = Gson().toJson(userInfo)
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    setStringInPreference(wContext.get(), key, jsonObject.toString())
+    setSecureStringInPreference(wContext.get(), key, jsonObject.toString())
 }
 
 //get user info azure to locally
 fun getUserAzureFromLocally(context: Context, key: String): UserInfoAzure? {
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    val userJ = getStringInPreference(wContext.get(), key, null)
+    val userJ = getSecureStringInPreference(wContext.get(), key)
     userJ?.let {
         val userInfo = convertJsonToUserInfoAzure(it)
         return userInfo
@@ -169,7 +169,7 @@ fun getUserAzureFromLocally(context: Context, key: String): UserInfoAzure? {
 fun getUserAmazonFromLocally(context: Context, key: String): UserInfoAmazon? {
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    val userJ = getStringInPreference(context, key, null)
+    val userJ = getSecureStringInPreference(context, key)
     userJ?.let {
         val userInfo = convertJsonToUserInfoAmazon(it)
         return userInfo
@@ -182,7 +182,7 @@ fun getUserAmazonFromLocally(context: Context, key: String): UserInfoAmazon? {
 fun getUserAmazonResultFromLocally(context: Context, key: String): UserInfoAmazonResult? {
     val wContext: WeakReference<Context> =
         WeakReference(context)
-    val userJ = getStringInPreference(context, key, null)
+    val userJ = getSecureStringInPreference(context, key)
     userJ?.let {
         val userInfo = convertJsonToUserInfoResultAmazon(it)
         return userInfo

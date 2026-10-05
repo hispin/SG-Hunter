@@ -1,7 +1,9 @@
 package com.sensoguard.hunter.global;
 
+import com.sensoguard.hunter.BuildConfig;
+
 public class NotificationSettings {
     public static String HubName = "sensoguardnhub";
-    public static String HubListenConnectionString = "Endpoint=sb://sensoguardnhns.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=pa4AD3M7nZAxGsZM8SUECcCAZuDytjUU2VZF+sdtPpc=";
+    public static String HubListenConnectionString = BuildConfig.AZURE_HUB_CONNECTION_STRING;
 
 }

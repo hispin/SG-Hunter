@@ -105,7 +105,7 @@
 
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyC7lrolhXNPEeiNJuBccG6LgOwGRrBRQos" /> <!-- TODO restrict the api key -->
+                android:value="${mapsApiKey}" /> <!-- restrict this key in Google Cloud Console -->
 
         <service
                 android:name=".services.RegistrationIntentService"
@@ -141,9 +141,6 @@
         <!-- <category android:name="android.intent.category.DEFAULT" /> -->
         <!-- </intent-filter> -->
         <!-- </receiver> -->
-        <meta-data
-                android:name="io.fabric.ApiKey"
-                android:value="a2ca8d68e6eb68bf1b812b6e6f088bb62a139961" />
 
         <provider
                 android:name="androidx.core.content.FileProvider"
